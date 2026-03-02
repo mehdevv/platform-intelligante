@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DataVault | Technology Sector Analysis</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#003399",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#0f1623",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Public Sans', sans-serif;
+        }
+        .chart-gradient-line {
+            background: linear-gradient(180deg, rgba(0, 51, 153, 0.1) 0%, rgba(0, 51, 153, 0) 100%);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 w-full bg-white dark:bg-background-dark border-b border-slate-200 dark:border-slate-800">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<!-- Logo and Nav Links -->
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3">
+<div class="bg-primary p-1.5 rounded-lg text-white">
+<span class="material-symbols-outlined block" style="font-size: 24px;">database</span>
+</div>
+<h1 class="text-xl font-bold tracking-tight text-primary">DataVault</h1>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Sectors</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Reports</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Insights</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Pricing</a>
+</nav>
+</div>
+<!-- Search and Profile -->
+<div class="flex items-center gap-4">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" style="font-size: 20px;">search</span>
+<input class="bg-slate-100 dark:bg-slate-800 border-none rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary w-64" placeholder="Search sectors..." type="text"/>
+</div>
+<button class="bg-primary text-white px-5 py-2 rounded-lg text-sm font-bold hover:bg-blue-800 transition-all">Log In</button>
+<div class="size-9 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden border border-slate-300">
+<img class="w-full h-full object-cover" data-alt="User profile avatar photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmLwbEOhUKE9gfm5ZCcj48qM2XggG9QLtvIFUYfX5AbSEDS3qc-zJBvK9Eq02eWrxxt_ihOiUwcLx9rgMXKDcxaA1ug_9TrFoNIHGhn-UAEmE6pFLEeVHqPaqq8mWk69cB7om7IwuNnZbeFVNY7Oq2xX3FIPJjtlsOAB7rmlWbHueTB3ON76w5Sx_lEaJBEC0Fn24J81ScTPYCJrdyU2ou3XjmdeUO4nvzv6VlyoaE_O1iJtWo7ofpjqgUav7263KyfyvVDhO0rLs"/>
+</div>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Breadcrumbs -->
+<nav class="flex items-center gap-2 text-sm text-slate-500 mb-6">
+<a class="hover:text-primary" href="#">Home</a>
+<span class="material-symbols-outlined" style="font-size: 16px;">chevron_right</span>
+<a class="hover:text-primary" href="#">Sectors</a>
+<span class="material-symbols-outlined" style="font-size: 16px;">chevron_right</span>
+<span class="text-slate-900 dark:text-slate-200 font-medium">Technology</span>
+</nav>
+<!-- Sector Hero -->
+<div class="bg-white dark:bg-slate-900 rounded-xl p-8 border border-slate-200 dark:border-slate-800 mb-8 shadow-sm">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+<div class="flex gap-6 items-start">
+<div class="size-20 bg-primary/10 rounded-xl flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined" style="font-size: 40px;">chip_extraction</span>
+</div>
+<div>
+<h2 class="text-3xl font-bold text-slate-900 dark:text-white">Technology Sector</h2>
+<p class="text-slate-600 dark:text-slate-400 mt-2 max-w-2xl leading-relaxed">
+                            Analyzing the global shift towards Artificial Intelligence, Cloud Computing, Edge infrastructure, and the next generation of SaaS solutions.
+                        </p>
+<div class="flex items-center gap-4 mt-4 text-xs font-medium text-slate-400 uppercase tracking-wider">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined" style="font-size: 14px;">calendar_today</span> Last updated: Oct 2023</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined" style="font-size: 14px;">public</span> Global Market</span>
+</div>
+</div>
+</div>
+<button class="bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all px-6 py-3 rounded-lg font-bold flex items-center gap-2 group whitespace-nowrap">
+<span class="material-symbols-outlined group-hover:fill-1" style="font-size: 20px;">bookmark</span>
+                    Follow Sector
+                </button>
+</div>
+</div>
+<!-- KPI Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:border-primary/30 transition-colors">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">Market Size ($B)</p>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-bold text-slate-900 dark:text-white">$5,200B</span>
+<span class="text-emerald-500 text-sm font-bold flex items-center">+8.2%</span>
+</div>
+<div class="mt-4 w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[85%] rounded-full"></div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:border-primary/30 transition-colors">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">Annual Growth (%)</p>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-bold text-slate-900 dark:text-white">12.4%</span>
+<span class="text-emerald-500 text-sm font-bold flex items-center">+1.5%</span>
+</div>
+<div class="mt-4 w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[65%] rounded-full"></div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:border-primary/30 transition-colors">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">Key Segments</p>
+<div class="flex items-baseline gap-2">
+<span class="text-xl font-bold text-slate-900 dark:text-white">AI, SaaS, Fintech</span>
+</div>
+<div class="mt-7 flex -space-x-2">
+<div class="size-6 rounded-full bg-primary/20 border-2 border-white dark:border-slate-900 flex items-center justify-center text-[10px] font-bold text-primary">AI</div>
+<div class="size-6 rounded-full bg-primary/20 border-2 border-white dark:border-slate-900 flex items-center justify-center text-[10px] font-bold text-primary">CL</div>
+<div class="size-6 rounded-full bg-primary/20 border-2 border-white dark:border-slate-900 flex items-center justify-center text-[10px] font-bold text-primary">ED</div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:border-primary/30 transition-colors">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">2025 Forecast</p>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-bold text-slate-900 dark:text-white">+15.2%</span>
+<span class="text-emerald-500 text-sm font-bold flex items-center">+2.1%</span>
+</div>
+<div class="mt-4 w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[92%] rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Visualization Section -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+<!-- Market Evolution Line Chart Placeholder -->
+<div class="bg-white dark:bg-slate-900 p-8 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex items-center justify-between mb-8">
+<h3 class="text-lg font-bold text-slate-900 dark:text-white">Market Evolution (5Y)</h3>
+<div class="flex items-center gap-2">
+<span class="flex items-center gap-1 text-xs font-medium text-slate-500"><span class="size-2 rounded-full bg-primary"></span> Revenue</span>
+<span class="flex items-center gap-1 text-xs font-medium text-slate-500"><span class="size-2 rounded-full bg-slate-300"></span> Proj.</span>
+</div>
+</div>
+<div class="relative h-64 w-full flex items-end justify-between gap-1 pb-6 border-b border-slate-100 dark:border-slate-800">
+<!-- Simplified Visual Graph -->
+<div class="relative flex-1 group">
+<div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 bg-primary/20 rounded-t-sm h-[40%] transition-all group-hover:bg-primary/40"></div>
+<div class="absolute bottom-[40%] left-1/2 -translate-x-1/2 size-2 bg-primary rounded-full border-2 border-white dark:border-slate-900 z-10"></div>
+<span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-slate-400">2020</span>
+</div>
+<div class="relative flex-1 group">
+<div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 bg-primary/20 rounded-t-sm h-[52%] transition-all group-hover:bg-primary/40"></div>
+<div class="absolute bottom-[52%] left-1/2 -translate-x-1/2 size-2 bg-primary rounded-full border-2 border-white dark:border-slate-900 z-10"></div>
+<span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-slate-400">2021</span>
+</div>
+<div class="relative flex-1 group">
+<div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 bg-primary/20 rounded-t-sm h-[65%] transition-all group-hover:bg-primary/40"></div>
+<div class="absolute bottom-[65%] left-1/2 -translate-x-1/2 size-2 bg-primary rounded-full border-2 border-white dark:border-slate-900 z-10"></div>
+<span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-slate-400">2022</span>
+</div>
+<div class="relative flex-1 group">
+<div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 bg-primary/30 rounded-t-sm h-[80%] transition-all group-hover:bg-primary/50"></div>
+<div class="absolute bottom-[80%] left-1/2 -translate-x-1/2 size-2 bg-primary rounded-full border-2 border-white dark:border-slate-900 z-10"></div>
+<span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-slate-400">2023</span>
+</div>
+<div class="relative flex-1 group">
+<div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 bg-primary/40 rounded-t-sm h-[95%] transition-all group-hover:bg-primary/60 border-t-2 border-dashed border-primary"></div>
+<div class="absolute bottom-[95%] left-1/2 -translate-x-1/2 size-2 bg-primary rounded-full border-2 border-white dark:border-slate-900 z-10"></div>
+<span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-slate-400 font-bold text-primary">2024*</span>
+</div>
+<!-- SVG Overlay Line -->
+<svg class="absolute top-0 left-0 w-full h-full pointer-events-none overflow-visible" preserveaspectratio="none">
+<path d="M50,153 L150,123 L250,90 L350,51 L450,13" fill="none" stroke="#003399" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+</div>
+</div>
+<!-- Segment Split Doughnut Chart Placeholder -->
+<div class="bg-white dark:bg-slate-900 p-8 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex items-center justify-between mb-8">
+<h3 class="text-lg font-bold text-slate-900 dark:text-white">Segment Split</h3>
+<button class="text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined" style="font-size: 20px;">more_horiz</span>
+</button>
+</div>
+<div class="flex flex-col sm:flex-row items-center justify-around gap-8">
+<div class="relative size-48">
+<!-- Custom CSS for doughnut visualization effect -->
+<div class="absolute inset-0 rounded-full border-[18px] border-slate-100 dark:border-slate-800"></div>
+<div class="absolute inset-0 rounded-full border-[18px] border-primary border-l-transparent border-b-transparent border-r-transparent rotate-45"></div>
+<div class="absolute inset-0 rounded-full border-[18px] border-blue-400 border-t-transparent border-b-transparent border-r-transparent -rotate-12"></div>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-2xl font-bold text-slate-900 dark:text-white">100%</span>
+<span class="text-[10px] uppercase text-slate-500 font-bold tracking-widest">Total Share</span>
+</div>
+</div>
+<div class="flex flex-col gap-3">
+<div class="flex items-center gap-3">
+<div class="size-3 rounded-full bg-primary"></div>
+<span class="text-sm font-medium text-slate-600 dark:text-slate-400">Cloud &amp; Infrastructure (42%)</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="size-3 rounded-full bg-blue-400"></div>
+<span class="text-sm font-medium text-slate-600 dark:text-slate-400">Software &amp; SaaS (28%)</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="size-3 rounded-full bg-slate-400"></div>
+<span class="text-sm font-medium text-slate-600 dark:text-slate-400">Hardware &amp; Edge (18%)</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="size-3 rounded-full bg-slate-200 dark:bg-slate-700"></div>
+<span class="text-sm font-medium text-slate-600 dark:text-slate-400">Other Services (12%)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Related Content: Top Reports -->
+<section class="mb-16">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h3 class="text-2xl font-bold text-slate-900 dark:text-white">Top Technology Reports</h3>
+<p class="text-slate-500 mt-1">Our latest proprietary research and market intelligence.</p>
+</div>
+<a class="text-primary font-bold text-sm flex items-center gap-1 hover:underline" href="#">
+                    View All Reports <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Report Card 1 -->
+<div class="group bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all">
+<div class="h-48 overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Abstract AI neural network visualization" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDVubnBae_Mv2QIV_DhNmdyxfBRVzzcYury2DPqGR8obOAB-f3ANKTTExupopIlSLQixbaoPnaBsI7js0XcyzqWoMK78lgqRi8SRnC_R3s8i0bRPGq6tR8xE3cF4Qqwuun99e0U4EMQQ3DGRjbF94RxKq1_Uqdke85QrPJPs0m-EoCjjgHoflRlC1sq8ZW3K6OMjb_xBwVa1d7rnSJ97hvA64tnaKnRe2-8MsCRs15KM-7WTwF4CvYgvB5L9bEo16gh9XJx867L14"/>
+<div class="absolute top-4 left-4 bg-primary text-white text-[10px] font-bold px-2 py-1 rounded-sm uppercase">Research</div>
+</div>
+<div class="p-6">
+<p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-2">October 12, 2023</p>
+<h4 class="text-lg font-bold text-slate-900 dark:text-white mb-3 group-hover:text-primary transition-colors">2024 AI Adoption Trends: Enterprise Strategy</h4>
+<p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6 line-clamp-2">How Fortune 500 companies are integrating generative AI into their core workflows and infrastructure budgets.</p>
+<div class="flex items-center justify-between">
+<span class="flex items-center gap-1 text-slate-500 text-xs"><span class="material-symbols-outlined" style="font-size: 16px;">download</span> 2.4MB PDF</span>
+<button class="text-primary text-sm font-bold flex items-center gap-1">Read Now <span class="material-symbols-outlined" style="font-size: 16px;">open_in_new</span></button>
+</div>
+</div>
+</div>
+<!-- Report Card 2 -->
+<div class="group bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all">
+<div class="h-48 overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Deep space and cloud data representation" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBynMzl-4u01mEokm5WU7niEkRpzs99vE75ctx6RhaE_TO1Hie8dm0hJk7cKXoUgkqseK-yENNLLtry9BUWIfoM3rUXSl0LYygppBvgogxJN8-Uftohr8bdCXgE_8750iBJXMomPeGxVYnoLcerjsHwRVk9FIFNp8Y5GbejyTVl0incwSfymFCtlvgwscBOEoE4I8BuY5cjpucbXBrQinCjx525spuP0cuoZ_QNmu7U_9D8fvkSDrvqVHJrPBrBIuzU1AoOpGnaHMY"/>
+<div class="absolute top-4 left-4 bg-emerald-600 text-white text-[10px] font-bold px-2 py-1 rounded-sm uppercase">Analysis</div>
+</div>
+<div class="p-6">
+<p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-2">September 28, 2023</p>
+<h4 class="text-lg font-bold text-slate-900 dark:text-white mb-3 group-hover:text-primary transition-colors">The Future of Quantum Computing &amp; Cryptography</h4>
+<p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6 line-clamp-2">Assessing the timeline for quantum supremacy and its implications for global cybersecurity and encryption standards.</p>
+<div class="flex items-center justify-between">
+<span class="flex items-center gap-1 text-slate-500 text-xs"><span class="material-symbols-outlined" style="font-size: 16px;">download</span> 1.8MB PDF</span>
+<button class="text-primary text-sm font-bold flex items-center gap-1">Read Now <span class="material-symbols-outlined" style="font-size: 16px;">open_in_new</span></button>
+</div>
+</div>
+</div>
+<!-- Report Card 3 -->
+<div class="group bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all">
+<div class="h-48 overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Digital grid and security locks" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8IP4PWXL7Z5f6grKdCa8t99syebCyDVeapLUFlv1d_9u_DSkKEfO9fR3ofBOcYfFvj2LAQMk6iysasQWLa9XGtL--m4hi0XZrv0CXPxglyQQvIMdyiVpOSh-Lh84mPWvzodakW5jqU-XX0LRoAF7IIXyk1a6QdYKikqcxz-RjbGUp9VkjspYjzDb3fjJ4OsGlI2dC4EHO8TQ5YYk6evsmp9OlbTao8kTCui8FkqQdtzl8SbHMdoA3Rd-RAw0Ey49XRofLpditOY0"/>
+<div class="absolute top-4 left-4 bg-amber-500 text-white text-[10px] font-bold px-2 py-1 rounded-sm uppercase">Forecast</div>
+</div>
+<div class="p-6">
+<p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-2">October 05, 2023</p>
+<h4 class="text-lg font-bold text-slate-900 dark:text-white mb-3 group-hover:text-primary transition-colors">SaaS 2.0: Verticalization of Software Markets</h4>
+<p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6 line-clamp-2">Why verticalized SaaS solutions are outperforming horizontal giants in the current market climate.</p>
+<div class="flex items-center justify-between">
+<span class="flex items-center gap-1 text-slate-500 text-xs"><span class="material-symbols-outlined" style="font-size: 16px;">download</span> 4.1MB PDF</span>
+<button class="text-primary text-sm font-bold flex items-center gap-1">Read Now <span class="material-symbols-outlined" style="font-size: 16px;">open_in_new</span></button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Premium Upsell Card -->
+<div class="relative rounded-2xl bg-primary overflow-hidden">
+<div class="absolute inset-0 opacity-20 pointer-events-none">
+<svg height="100%" preserveaspectratio="none" viewbox="0 0 100 100" width="100%">
+<path d="M0,0 L100,0 L100,100 L0,100 Z" fill="url(#grad1)"></path>
+<defs>
+<lineargradient id="grad1" x1="0%" x2="100%" y1="0%" y2="100%">
+<stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:1"></stop>
+<stop offset="100%" style="stop-color:rgb(255,255,255);stop-opacity:0"></stop>
+</lineargradient>
+</defs>
+</svg>
+</div>
+<div class="relative px-8 py-12 md:px-16 flex flex-col md:flex-row items-center justify-between gap-10">
+<div class="max-w-xl text-center md:text-left">
+<h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Unlock Deeper Insights</h2>
+<p class="text-blue-100 text-lg mb-8 leading-relaxed">
+                        Get the full Technology Insights Dashboard for real-time tracking, custom data filtering, and proprietary segment-level performance benchmarking.
+                    </p>
+<div class="flex flex-col sm:flex-row items-center gap-4 justify-center md:justify-start">
+<button class="bg-white text-primary px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-50 transition-colors shadow-lg">Upgrade to Pro</button>
+<button class="text-white border border-white/30 px-8 py-3 rounded-lg font-bold text-lg hover:bg-white/10 transition-colors">Request a Demo</button>
+</div>
+</div>
+<div class="flex-shrink-0 bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/20 hidden lg:block">
+<div class="flex gap-4">
+<div class="flex flex-col gap-2">
+<div class="h-2 w-24 bg-white/40 rounded-full"></div>
+<div class="h-2 w-16 bg-white/20 rounded-full"></div>
+<div class="h-16 w-32 bg-white/10 rounded-lg mt-2"></div>
+</div>
+<div class="flex flex-col gap-2">
+<div class="h-2 w-20 bg-white/40 rounded-full"></div>
+<div class="h-24 w-32 bg-white/10 rounded-lg mt-2 flex items-center justify-center">
+<span class="material-symbols-outlined text-white/40" style="font-size: 32px;">trending_up</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="bg-white dark:bg-background-dark border-t border-slate-200 dark:border-slate-800 mt-12 py-12">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex items-center gap-3">
+<div class="bg-primary/20 p-1 rounded-lg text-primary">
+<span class="material-symbols-outlined block" style="font-size: 20px;">database</span>
+</div>
+<span class="font-bold text-slate-900 dark:text-white">DataVault</span>
+</div>
+<div class="flex gap-8 text-sm text-slate-500">
+<a class="hover:text-primary" href="#">Privacy Policy</a>
+<a class="hover:text-primary" href="#">Terms of Service</a>
+<a class="hover:text-primary" href="#">Contact Support</a>
+<a class="hover:text-primary" href="#">API Documentation</a>
+</div>
+<div class="text-sm text-slate-400">
+                    © 2023 DataVault Intelligence Unit. All rights reserved.
+                </div>
+</div>
+</div>
+</footer>
+</body></html>

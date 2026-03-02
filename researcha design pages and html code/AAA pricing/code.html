@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pricing | DataVault - Secure Your Data</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&amp;family=Source+Sans+Pro:wght@400;600;700&amp;family=Public+Sans:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#003399",
+                        "accent": "#FF6600",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#0f1623",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "Source Sans Pro", "sans-serif"],
+                        "heading": ["Playfair Display", "serif"],
+                        "body": ["Source Sans Pro", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+        }
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased">
+<!-- Navigation -->
+<header class="sticky top-0 z-50 w-full bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-16">
+<div class="flex items-center gap-2">
+<div class="text-primary">
+<svg class="w-8 h-8" fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"></path>
+</svg>
+</div>
+<span class="text-xl font-bold tracking-tight text-slate-900 dark:text-white font-display">DataVault</span>
+</div>
+<nav class="hidden md:flex space-x-8">
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Features</a>
+<a class="text-sm font-medium text-primary border-b-2 border-primary" href="#">Pricing</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Solutions</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Security</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="text-sm font-semibold px-4 py-2 text-slate-700 dark:text-slate-200 hover:text-primary">Log in</button>
+<button class="bg-primary text-white text-sm font-bold px-5 py-2.5 rounded-lg hover:bg-blue-800 transition-all shadow-md">Get Started</button>
+</div>
+</div>
+</div>
+</header>
+<main>
+<!-- Pricing Hero Section -->
+<section class="py-16 md:py-24 px-4 bg-gradient-to-b from-white to-background-light dark:from-background-dark dark:to-slate-900">
+<div class="max-w-4xl mx-auto text-center">
+<h1 class="text-4xl md:text-6xl font-bold text-slate-900 dark:text-white mb-6">Secure Your Data with DataVault</h1>
+<p class="text-lg text-slate-600 dark:text-slate-400 mb-10 max-w-2xl mx-auto">
+                    Simple, transparent pricing for teams of all sizes. Protect your company's most valuable assets with military-grade encryption.
+                </p>
+<!-- Toggle Switch -->
+<div class="flex items-center justify-center gap-4 mb-12">
+<span class="text-sm font-semibold text-slate-600 dark:text-slate-400">Monthly</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-14 h-7 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
+<div class="flex items-center gap-2">
+<span class="text-sm font-semibold text-slate-900 dark:text-white">Annual</span>
+<span class="bg-accent/10 text-accent text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Save 20%</span>
+</div>
+</div>
+</div>
+<!-- Pricing Grid -->
+<div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-4 lg:px-8">
+<!-- Basic Plan -->
+<div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-8 flex flex-col h-full hover:shadow-xl transition-shadow">
+<div class="mb-8">
+<h3 class="text-2xl font-bold mb-2">Basic</h3>
+<p class="text-slate-500 text-sm mb-6">Essential security for individuals</p>
+<div class="flex items-baseline">
+<span class="text-4xl font-black text-slate-900 dark:text-white">$0</span>
+<span class="text-slate-500 ml-2">/month</span>
+</div>
+</div>
+<ul class="space-y-4 mb-10 flex-grow">
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-sm mt-1">check_circle</span>
+<span class="text-sm text-slate-600 dark:text-slate-300">5GB Secure Storage</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-sm mt-1">check_circle</span>
+<span class="text-sm text-slate-600 dark:text-slate-300">1 User Access</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-sm mt-1">check_circle</span>
+<span class="text-sm text-slate-600 dark:text-slate-300">AES-256 Encryption</span>
+</li>
+<li class="flex items-start gap-3 text-slate-400">
+<span class="material-symbols-outlined text-sm mt-1">block</span>
+<span class="text-sm">Priority Support</span>
+</li>
+</ul>
+<button class="w-full py-3 px-4 border-2 border-slate-200 dark:border-slate-700 rounded-lg font-bold text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                        Get Started
+                    </button>
+</div>
+<!-- Professional Plan (Recommended) -->
+<div class="bg-white dark:bg-slate-800 rounded-xl border-2 border-primary p-8 flex flex-col h-full relative shadow-2xl scale-105 z-10">
+<div class="absolute -top-4 left-1/2 -translate-x-1/2">
+<span class="bg-accent text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-lg">Most Popular</span>
+</div>
+<div class="mb-8">
+<h3 class="text-2xl font-bold mb-2">Professional</h3>
+<p class="text-slate-500 text-sm mb-6">Advanced features for growing teams</p>
+<div class="flex items-baseline">
+<span class="text-4xl font-black text-slate-900 dark:text-white">$29</span>
+<span class="text-slate-500 ml-2">/month</span>
+</div>
+</div>
+<ul class="space-y-4 mb-10 flex-grow">
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-sm mt-1">check_circle</span>
+<span class="text-sm font-semibold text-slate-900 dark:text-white">500GB Secure Storage</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-sm mt-1">check_circle</span>
+<span class="text-sm font-semibold text-slate-900 dark:text-white">Up to 10 Users</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-sm mt-1">check_circle</span>
+<span class="text-sm font-semibold text-slate-900 dark:text-white">Priority 24/7 Support</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-sm mt-1">check_circle</span>
+<span class="text-sm font-semibold text-slate-900 dark:text-white">Advanced Audit Logs</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-sm mt-1">check_circle</span>
+<span class="text-sm font-semibold text-slate-900 dark:text-white">Team Sharing Permissions</span>
+</li>
+</ul>
+<button class="w-full py-3 px-4 bg-primary text-white rounded-lg font-bold hover:bg-blue-800 transition-colors shadow-lg shadow-primary/20">
+                        Start 14-Day Free Trial
+                    </button>
+</div>
+<!-- Enterprise Plan -->
+<div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-8 flex flex-col h-full hover:shadow-xl transition-shadow">
+<div class="mb-8">
+<h3 class="text-2xl font-bold mb-2">Enterprise</h3>
+<p class="text-slate-500 text-sm mb-6">Full control for large organizations</p>
+<div class="flex items-baseline">
+<span class="text-4xl font-black text-slate-900 dark:text-white">Custom</span>
+</div>
+</div>
+<ul class="space-y-4 mb-10 flex-grow">
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-sm mt-1">check_circle</span>
+<span class="text-sm text-slate-600 dark:text-slate-300">Unlimited Storage Capacity</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-sm mt-1">check_circle</span>
+<span class="text-sm text-slate-600 dark:text-slate-300">SSO &amp; SAML Integration</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-sm mt-1">check_circle</span>
+<span class="text-sm text-slate-600 dark:text-slate-300">Dedicated Account Manager</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-sm mt-1">check_circle</span>
+<span class="text-sm text-slate-600 dark:text-slate-300">Custom SLA Agreements</span>
+</li>
+</ul>
+<button class="w-full py-3 px-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-lg font-bold hover:opacity-90 transition-opacity">
+                        Contact Sales
+                    </button>
+</div>
+</div>
+<!-- Trust Badges -->
+<div class="mt-24 max-w-5xl mx-auto px-4">
+<p class="text-center text-sm font-semibold text-slate-500 uppercase tracking-widest mb-8">Trusted by 5,000+ industry leaders</p>
+<div class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+<img alt="Cyber Security Logo" class="h-8" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApYVpavQT5dS7_ncrSKem2Q_WCsRakdOBnTtbIs6QH3ZO1NKkVDttkLsQooWmv2GKmMwb9CXV3seMLeHxgSWypH4ka4W5MdR2Wl-fZfm85VVQJoFFnVFDsCI4J3HmksBltogy6RyZ9A3vGYtJTIMoy2X1KryXWoTZmu0-HJNmlnC2CETcJ1ezTiDzcY3DzZ5IYepCv-9oG7GjRu8LgKoSEE2QJHJpB-QnelE2twHxuSBvSvqErfuz4rd0y3fQYfXlIfZaLkBHiPzs"/>
+<img alt="Global Tech Logo" class="h-8" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0sgT_gGAmBFC9bqF0ngZPY4SUiFjHf5_T7jXSRXq0kISgUsrGP7528qM36barXkJDimKdB0efovEfhp75O8DGsQCB42EeNyA0uGu6tW_1qN8Y0AUsDnaWkLeEPBrPXW92f8bRWl7SVgPHHWaZpBqctLLrGArYZGqak8hNGsVIXl-T_FUsTuqO18X_8kvfLjQBckWj_fwSjXd6LT5utk7-K90UzDfYMOF3zFwjNyR5-SPZOOcd9sBFHWQ9ig48Yk0MOGkoTR_vAjI"/>
+<img alt="SafeFlow Logo" class="h-8" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB30AYuRwRdrWzoEBf-S3UAuZKu27_Cq7Dpvl40j23WiNHXhTAPOjCNW79XkpkxdsLDAcj0v_g0N8SQ1sVc96WRvTQZ9vYK5sBIUjBYdXPnUE3uZuzl_Z5RC_mViGoNhODfTRv5J25-O3sw3eqGcV3V1ys77D3WPaCX0nMVT4dA9bbcJH-dCFwPX7vFwnXeC6AFjmkiTnZPjSvpWHvwz5o3GbupmE-7ir-lXi-_gKLd2PSGUvHU2XlCZQKJKAIxOIkJhJ40ytJvXik"/>
+<img alt="Data Core Logo" class="h-8" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_eqvgeG3NXHAUzSsBXUcskTKWAW15BDRe50K726calUWxfg6WJ2eIvziEWEiMflxRMWR3Eoy2SQ66QC7166AR6arAYtl8t-tOx0R-kUenjtn672Fbx4xG8f4WVX1OqSzMVeO-vZVpx4c_aNPtdtGnOUc1ixI86jt-2fHta8AhLZdLMsSII8wp64UVj-6cmie7V89NjFGPW_dumYGzQkD9-FTYOtQ4fj_Eg98sAuzD9-xkDFdSR_1aR0Y3KLb2yAh9B-v5LWFbRyo"/>
+<img alt="Nexus Logo" class="h-8" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOQbGltP5migDqCYa9gc5xhbHE3rV1ds4SxuhiBxSRzuojazj6QehzVAfN9Lo4mLWbnWCKUxT2o3jvibWMtA-AHoWitNvznQLqKcytQaur4fV_DgIGWd0mxLT8icwg9eY8CC-wG6C0fsBrX6SqJPisyyx-HcI1hqivCS9IybcLxsVoadkrMY_D34PNrs-doREy4c3f8HMNz7eokx54XQYdXgb2QYAzcq7DES9E-asXU8myO5qGDoG2Pl9MA_I2545K53i6D7EJy-k"/>
+</div>
+</div>
+</section>
+<!-- FAQ Section -->
+<section class="py-20 bg-white dark:bg-background-dark">
+<div class="max-w-3xl mx-auto px-4">
+<h2 class="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
+<div class="space-y-4">
+<!-- FAQ 1 -->
+<div class="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+<button class="w-full flex items-center justify-between p-5 text-left bg-slate-50/50 dark:bg-slate-900/50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+<span class="font-bold text-slate-900 dark:text-white">How secure is my data with DataVault?</span>
+<span class="material-symbols-outlined text-slate-400">expand_more</span>
+</button>
+<div class="p-5 border-t border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                            We use industry-standard AES-256 bit encryption for all data at rest and TLS 1.3 for data in transit. Your data is sharded across multiple secure locations, ensuring that even in the unlikely event of a breach, no complete file is accessible.
+                        </div>
+</div>
+<!-- FAQ 2 -->
+<div class="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+<button class="w-full flex items-center justify-between p-5 text-left bg-slate-50/50 dark:bg-slate-900/50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+<span class="font-bold text-slate-900 dark:text-white">Can I change plans later?</span>
+<span class="material-symbols-outlined text-slate-400">expand_more</span>
+</button>
+<div class="p-5 border-t border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                            Yes, you can upgrade or downgrade your plan at any time. When upgrading, the new features will be available immediately and the cost will be prorated. When downgrading, the changes will take effect at the start of your next billing cycle.
+                        </div>
+</div>
+<!-- FAQ 3 -->
+<div class="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+<button class="w-full flex items-center justify-between p-5 text-left bg-slate-50/50 dark:bg-slate-900/50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+<span class="font-bold text-slate-900 dark:text-white">What happens if I lose access to my account?</span>
+<span class="material-symbols-outlined text-slate-400">expand_more</span>
+</button>
+<div class="p-5 border-t border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                            We offer multi-factor authentication and secure recovery keys. If you lose your primary access methods, our support team can verify your identity through your secondary security protocols established during account setup.
+                        </div>
+</div>
+<!-- FAQ 4 -->
+<div class="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+<button class="w-full flex items-center justify-between p-5 text-left bg-slate-50/50 dark:bg-slate-900/50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+<span class="font-bold text-slate-900 dark:text-white">Is there a limit on file types?</span>
+<span class="material-symbols-outlined text-slate-400">expand_more</span>
+</button>
+<div class="p-5 border-t border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                            No, DataVault supports any file type. From large database backups to small text documents, everything is encrypted and stored with the same level of rigorous security.
+                        </div>
+</div>
+</div>
+</div>
+</section>
+<!-- Final CTA -->
+<section class="py-20 px-4">
+<div class="max-w-5xl mx-auto bg-primary rounded-3xl p-8 md:p-16 text-center text-white relative overflow-hidden">
+<!-- Abstract decorative shapes -->
+<div class="absolute top-0 right-0 -mt-12 -mr-12 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+<div class="absolute bottom-0 left-0 -mb-12 -ml-12 w-64 h-64 bg-accent/20 rounded-full blur-3xl"></div>
+<h2 class="text-3xl md:text-5xl font-bold mb-6 relative z-10">Ready to secure your business future?</h2>
+<p class="text-lg text-blue-100 mb-10 max-w-xl mx-auto relative z-10">Join thousands of companies who trust DataVault with their most sensitive information. Start your free trial today.</p>
+<div class="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10">
+<button class="w-full sm:w-auto px-8 py-4 bg-accent text-white font-bold rounded-xl hover:bg-orange-600 transition-colors shadow-xl">Start Free Trial</button>
+<button class="w-full sm:w-auto px-8 py-4 bg-white/10 backdrop-blur-md text-white border border-white/20 font-bold rounded-xl hover:bg-white/20 transition-colors">View Demo</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-12">
+<div class="col-span-2 lg:col-span-2">
+<div class="flex items-center gap-2 text-white mb-6">
+<svg class="w-6 h-6" fill="currentColor" viewbox="0 0 48 48">
+<path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z"></path>
+</svg>
+<span class="text-xl font-bold font-display">DataVault</span>
+</div>
+<p class="max-w-xs text-sm">Enterprise-grade security solutions for modern teams. Protect, manage, and scale your data with confidence.</p>
+</div>
+<div>
+<h4 class="text-white font-bold mb-4">Product</h4>
+<ul class="space-y-2 text-sm">
+<li><a class="hover:text-primary" href="#">Features</a></li>
+<li><a class="hover:text-primary" href="#">Integrations</a></li>
+<li><a class="hover:text-primary" href="#">Enterprise</a></li>
+<li><a class="hover:text-primary" href="#">Solutions</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-white font-bold mb-4">Support</h4>
+<ul class="space-y-2 text-sm">
+<li><a class="hover:text-primary" href="#">Help Center</a></li>
+<li><a class="hover:text-primary" href="#">API Docs</a></li>
+<li><a class="hover:text-primary" href="#">Security</a></li>
+<li><a class="hover:text-primary" href="#">Status</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-white font-bold mb-4">Company</h4>
+<ul class="space-y-2 text-sm">
+<li><a class="hover:text-primary" href="#">About Us</a></li>
+<li><a class="hover:text-primary" href="#">Careers</a></li>
+<li><a class="hover:text-primary" href="#">Legal</a></li>
+<li><a class="hover:text-primary" href="#">Contact</a></li>
+</ul>
+</div>
+</div>
+<div class="pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
+<p>© 2024 DataVault Inc. All rights reserved.</p>
+<div class="flex gap-6">
+<a class="hover:text-white" href="#">Privacy Policy</a>
+<a class="hover:text-white" href="#">Terms of Service</a>
+<a class="hover:text-white" href="#">Cookie Policy</a>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

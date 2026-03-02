@@ -9,6 +9,7 @@ export default {
     extend: {
       colors: {
         "primary": "#003399",
+        "accent": "#FF6600",
         "accent-orange": "#ff6b00",
         "premium-gold": "#d4af37",
         "background-light": "#f5f6f8",
@@ -16,7 +17,9 @@ export default {
       },
       fontFamily: {
         "display": ["Public Sans", "sans-serif"],
-        "logo": ["Playfair Display", "serif"]
+        "logo": ["Playfair Display", "serif"],
+        "serif": ["Playfair Display", "serif"],
+        "body": ["Source Sans Pro", "sans-serif"]
       },
       borderRadius: {
         "DEFAULT": "0.25rem",

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DataVault Admin Back-office</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Public Sans -->
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#003399",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#0f1623",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Public Sans', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .active-nav {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid white;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased">
+<div class="flex h-screen overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="w-64 bg-primary text-white flex flex-col shrink-0">
+<div class="p-6 flex items-center gap-3">
+<div class="size-10 bg-white/20 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-2xl">database</span>
+</div>
+<div>
+<h1 class="text-lg font-bold leading-tight">DataVault</h1>
+<p class="text-xs text-white/70 font-medium">Admin Back-office</p>
+</div>
+</div>
+<nav class="flex-1 px-3 mt-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg active-nav transition-colors hover:bg-white/10" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="text-sm font-medium">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-white/10" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-sm font-medium">Users</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-white/10" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-sm font-medium">Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-white/10" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+</nav>
+<div class="p-4 border-t border-white/10">
+<div class="flex items-center gap-3 p-2 rounded-lg hover:bg-white/10 cursor-pointer transition-colors">
+<img alt="Admin profile" class="size-8 rounded-full border border-white/20" data-alt="Professional male avatar for admin user profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWMnAfQW3q8L_U4BpUiizD-l455-0V4pJ1eaYoVzsrLVKk063A4FIBkdVRkr5ls9Px714DlK8eznIf937TjU8yM-gcnJdm1rs9WLH0MYuJtnV5FQlW3oeT8i8XQo3y0y2FO3hQ2-rzLW1SNtl6MK5pRhxFvWfiZMjjFRlkH6IYWDNvgphKs1ZubBKmztQ01NmhpbBbkYWAvEjyQP_NwVoSYB1emkyhvgOPygJqx8KE9mhbqPhD7Nct5IKbutEx_PQ5TRCzbRM_dYM"/>
+<div class="flex-1 overflow-hidden">
+<p class="text-xs font-semibold truncate">Alex Chen</p>
+<p class="text-[10px] text-white/60 truncate">System Administrator</p>
+</div>
+<span class="material-symbols-outlined text-sm">unfold_more</span>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col min-w-0 overflow-hidden">
+<!-- Header -->
+<header class="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-8 shrink-0">
+<h2 class="text-xl font-bold text-slate-800 dark:text-white">Report Management</h2>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 size-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
+</button>
+<button class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-all shadow-sm">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                        Add New Report
+                    </button>
+</div>
+</header>
+<!-- Content -->
+<div class="flex-1 overflow-y-auto p-8 space-y-6">
+<!-- Filters Bar -->
+<div class="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-wrap items-center gap-4">
+<div class="flex-1 min-w-[300px]">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-primary focus:border-primary transition-all" placeholder="Search reports by title, ID, or sector..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<select class="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg text-sm px-3 py-2 pr-10 focus:ring-primary min-w-[140px]">
+<option value="">All Sectors</option>
+<option value="finance">Finance</option>
+<option value="tech">Technology</option>
+<option value="health">Healthcare</option>
+<option value="energy">Energy</option>
+</select>
+<select class="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg text-sm px-3 py-2 pr-10 focus:ring-primary min-w-[140px]">
+<option value="">All Statuses</option>
+<option value="published">Published</option>
+<option value="draft">Draft</option>
+<option value="archived">Archived</option>
+</select>
+<button class="flex items-center gap-2 text-slate-600 dark:text-slate-400 font-medium text-sm hover:text-primary transition-colors px-2">
+<span class="material-symbols-outlined text-[20px]">filter_list</span>
+                            More Filters
+                        </button>
+</div>
+</div>
+<!-- Data Table -->
+<div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+<th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Document Title</th>
+<th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Sector</th>
+<th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
+<th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Upload Date</th>
+<th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+<!-- Row 1 -->
+<tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary/60">description</span>
+<span class="font-semibold text-slate-800 dark:text-slate-200">Q3 Financial Growth Analysis 2023</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="text-sm text-slate-600 dark:text-slate-400">Finance</span>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                                        Published
+                                    </span>
+</td>
+<td class="px-6 py-4">
+<span class="text-sm text-slate-600 dark:text-slate-400">14 Oct 2023</span>
+</td>
+<td class="px-6 py-4 text-right space-x-2">
+<button class="p-1 hover:text-primary transition-colors" title="Edit">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-1 hover:text-red-600 transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary/60">description</span>
+<span class="font-semibold text-slate-800 dark:text-slate-200">AI Trends in Modern Healthcare</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="text-sm text-slate-600 dark:text-slate-400">Health</span>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400">
+                                        Draft
+                                    </span>
+</td>
+<td class="px-6 py-4">
+<span class="text-sm text-slate-600 dark:text-slate-400">08 Nov 2023</span>
+</td>
+<td class="px-6 py-4 text-right space-x-2">
+<button class="p-1 hover:text-primary transition-colors" title="Edit">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-1 hover:text-red-600 transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary/60">description</span>
+<span class="font-semibold text-slate-800 dark:text-slate-200">Global Tech Infrastructure Survey</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="text-sm text-slate-600 dark:text-slate-400">Technology</span>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                                        Published
+                                    </span>
+</td>
+<td class="px-6 py-4">
+<span class="text-sm text-slate-600 dark:text-slate-400">02 Nov 2023</span>
+</td>
+<td class="px-6 py-4 text-right space-x-2">
+<button class="p-1 hover:text-primary transition-colors" title="Edit">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-1 hover:text-red-600 transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary/60">description</span>
+<span class="font-semibold text-slate-800 dark:text-slate-200">Renewable Energy Forecasts</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="text-sm text-slate-600 dark:text-slate-400">Energy</span>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                                        Published
+                                    </span>
+</td>
+<td class="px-6 py-4">
+<span class="text-sm text-slate-600 dark:text-slate-400">28 Oct 2023</span>
+</td>
+<td class="px-6 py-4 text-right space-x-2">
+<button class="p-1 hover:text-primary transition-colors" title="Edit">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-1 hover:text-red-600 transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Pagination -->
+<div class="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/30 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
+<p class="text-sm text-slate-500 dark:text-slate-400">Showing <span class="font-semibold">1-4</span> of <span class="font-semibold">24</span> reports</p>
+<div class="flex items-center gap-2">
+<button class="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<div class="flex gap-1">
+<button class="px-3 py-1 text-sm font-bold bg-primary text-white rounded">1</button>
+<button class="px-3 py-1 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 rounded transition-colors">2</button>
+<button class="px-3 py-1 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 rounded transition-colors">3</button>
+</div>
+<button class="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Status Summary Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex items-center justify-between mb-2">
+<span class="text-sm font-medium text-slate-500">Total Reports</span>
+<span class="material-symbols-outlined text-primary">folder</span>
+</div>
+<p class="text-2xl font-black text-slate-800 dark:text-white">1,284</p>
+<p class="text-xs text-green-600 font-bold mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+                            +12% from last month
+                        </p>
+</div>
+<div class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex items-center justify-between mb-2">
+<span class="text-sm font-medium text-slate-500">Active Drafts</span>
+<span class="material-symbols-outlined text-orange-500">edit_note</span>
+</div>
+<p class="text-2xl font-black text-slate-800 dark:text-white">42</p>
+<p class="text-xs text-slate-400 font-medium mt-1">Requires review before publishing</p>
+</div>
+<div class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex items-center justify-between mb-2">
+<span class="text-sm font-medium text-slate-500">Storage Used</span>
+<span class="material-symbols-outlined text-indigo-500">cloud_done</span>
+</div>
+<p class="text-2xl font-black text-slate-800 dark:text-white">84.2 GB</p>
+<div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-3 overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 65%"></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

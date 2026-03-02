@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DataVault Premium Dashboard</title>
+<!-- Google Fonts: Public Sans -->
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#003399",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#0f1623",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Public Sans', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display transition-colors">
+<div class="flex h-screen overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col shrink-0">
+<div class="p-6 flex items-center gap-3">
+<div class="bg-primary p-1.5 rounded-lg text-white">
+<span class="material-symbols-outlined text-2xl">database</span>
+</div>
+<div>
+<h1 class="text-lg font-bold leading-tight tracking-tight text-slate-900 dark:text-white">DataVault</h1>
+<p class="text-xs font-medium text-primary uppercase tracking-wider">Premium Access</p>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary font-semibold" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">trending_up</span>
+<span class="text-sm">Market Insights</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="text-sm">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">star</span>
+<span class="text-sm">Watchlist</span>
+</a>
+<div class="pt-4 pb-2 px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Administration</div>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm">Settings</span>
+</a>
+</nav>
+<div class="p-4 border-t border-slate-200 dark:border-slate-800">
+<div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+<p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Storage Usage</p>
+<div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5 mb-3">
+<div class="bg-primary h-1.5 rounded-full" style="width: 75%"></div>
+</div>
+<button class="w-full py-2 text-xs font-bold text-white bg-primary rounded-lg hover:bg-primary/90 transition-colors">
+                        Upgrade Storage
+                    </button>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col min-w-0 overflow-y-auto bg-slate-50 dark:bg-slate-900/30">
+<!-- Header -->
+<header class="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-8 shrink-0 sticky top-0 z-10">
+<div class="flex-1 max-w-xl">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">search</span>
+<input class="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary/20 placeholder:text-slate-500" placeholder="Search reports, sectors, or market data..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4 ml-8">
+<button class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
+</button>
+<div class="h-8 w-px bg-slate-200 dark:bg-slate-800 mx-2"></div>
+<div class="flex items-center gap-3">
+<div class="text-right hidden sm:block">
+<p class="text-sm font-bold leading-none text-slate-900 dark:text-white">Alex Rivera</p>
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Senior Analyst</p>
+</div>
+<div class="h-10 w-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center overflow-hidden">
+<img class="h-full w-full object-cover" data-alt="User profile avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC24zMwOGi23X3e-DYevFnpEvOeCn5OTo_cCwMC5kthBBjokn9XEFTK5a_RSUhbvbeOq3k8JKa5HDZ1bWqI0uWbg-ublcdVnugOy4vJy0N8ljpTg8tEmxdYEVl2TvHYihxEtG1VZKKevp0kJi4hkYVAzADTpZe7JY6EnEJ2_bVwrQV7hr2Ij0AMM2CremH8mDmAk9sdd8zVoqo1bYfbZZ66Qq4ZLgA2jpVoEUyL8SofrHmXrIbdL3toh_kNn--YCdC5dtMuwVDkj04"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Dashboard Content -->
+<div class="p-8 space-y-8">
+<!-- Filter Bar -->
+<div class="flex flex-wrap items-center justify-between gap-4">
+<div>
+<h2 class="text-2xl font-bold text-slate-900 dark:text-white">Market Overview</h2>
+<p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Analyze market trends and data health across regions.</p>
+</div>
+<div class="flex items-center gap-3">
+<div class="relative inline-block">
+<button class="flex items-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+<span>Sector: All Tech</span>
+<span class="material-symbols-outlined text-sm">keyboard_arrow_down</span>
+</button>
+</div>
+<div class="relative inline-block">
+<button class="flex items-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+<span>Region: North America</span>
+<span class="material-symbols-outlined text-sm">keyboard_arrow_down</span>
+</button>
+</div>
+<button class="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-primary/90 shadow-sm transition-all">
+<span class="material-symbols-outlined text-sm">filter_alt</span>
+<span>More Filters</span>
+</button>
+</div>
+</div>
+<!-- KPI Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex items-center justify-between mb-4">
+<div class="bg-primary/10 p-2 rounded-lg text-primary">
+<span class="material-symbols-outlined">folder_open</span>
+</div>
+<span class="text-emerald-500 text-xs font-bold flex items-center">
+<span class="material-symbols-outlined text-xs mr-1">trending_up</span>+12%
+                            </span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Reports Accessed</p>
+<h3 class="text-3xl font-bold text-slate-900 dark:text-white mt-1 tracking-tight">124</h3>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex items-center justify-between mb-4">
+<div class="bg-primary/10 p-2 rounded-lg text-primary">
+<span class="material-symbols-outlined">category</span>
+</div>
+<span class="text-slate-400 text-xs font-bold">Stable</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Sectors Followed</p>
+<h3 class="text-3xl font-bold text-slate-900 dark:text-white mt-1 tracking-tight">12</h3>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex items-center justify-between mb-4">
+<div class="bg-primary/10 p-2 rounded-lg text-primary">
+<span class="material-symbols-outlined">database</span>
+</div>
+<span class="text-emerald-500 text-xs font-bold flex items-center">
+<span class="material-symbols-outlined text-xs mr-1">trending_up</span>+5.4%
+                            </span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Data Accuracy</p>
+<h3 class="text-3xl font-bold text-slate-900 dark:text-white mt-1 tracking-tight">85%</h3>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex items-center justify-between mb-4">
+<div class="bg-primary/10 p-2 rounded-lg text-primary">
+<span class="material-symbols-outlined">notification_important</span>
+</div>
+<span class="text-amber-500 text-xs font-bold">Action Needed</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Favorite Updates</p>
+<h3 class="text-3xl font-bold text-slate-900 dark:text-white mt-1 tracking-tight">32</h3>
+</div>
+</div>
+<!-- Charts Section -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Main Comparison Graph -->
+<div class="lg:col-span-2 bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h3 class="font-bold text-slate-900 dark:text-white">Market Sector Comparison</h3>
+<p class="text-xs text-slate-500 mt-1">Performance over the last 12 months</p>
+</div>
+<div class="flex gap-4">
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-primary"></div>
+<span class="text-xs font-medium text-slate-500">Technology</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-primary/40"></div>
+<span class="text-xs font-medium text-slate-500">Healthcare</span>
+</div>
+</div>
+</div>
+<div class="flex-1 min-h-[300px] relative">
+<!-- SVG Chart Simulation -->
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 800 300">
+<defs>
+<lineargradient id="grad1" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" style="stop-color:rgba(0,51,153,0.1);stop-opacity:1"></stop>
+<stop offset="100%" style="stop-color:rgba(0,51,153,0);stop-opacity:0"></stop>
+</lineargradient>
+</defs>
+<path d="M0,250 Q100,200 200,230 T400,100 T600,150 T800,50 L800,300 L0,300 Z" fill="url(#grad1)"></path>
+<path d="M0,250 Q100,200 200,230 T400,100 T600,150 T800,50" fill="none" stroke="#003399" stroke-width="3"></path>
+<path d="M0,280 Q150,260 300,270 T500,200 T700,240 T800,180" fill="none" stroke="#003399" stroke-dasharray="6,4" stroke-opacity="0.4" stroke-width="2"></path>
+</svg>
+<div class="absolute bottom-0 left-0 right-0 flex justify-between px-2 pt-4">
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Jan</span>
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Mar</span>
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">May</span>
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Jul</span>
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Sep</span>
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Nov</span>
+</div>
+</div>
+</div>
+<!-- Region Distribution Bar Chart -->
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
+<div class="flex items-center justify-between mb-8">
+<h3 class="font-bold text-slate-900 dark:text-white">Data by Region</h3>
+<button class="text-slate-400 hover:text-slate-600">
+<span class="material-symbols-outlined text-xl">more_vert</span>
+</button>
+</div>
+<div class="flex-1 space-y-6">
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-bold">
+<span class="text-slate-600 dark:text-slate-400 uppercase tracking-wider">North America</span>
+<span class="text-slate-900 dark:text-white">42%</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 42%"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-bold">
+<span class="text-slate-600 dark:text-slate-400 uppercase tracking-wider">Europe</span>
+<span class="text-slate-900 dark:text-white">28%</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 28%"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-bold">
+<span class="text-slate-600 dark:text-slate-400 uppercase tracking-wider">APAC</span>
+<span class="text-slate-900 dark:text-white">18%</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 18%"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-bold">
+<span class="text-slate-600 dark:text-slate-400 uppercase tracking-wider">LATAM</span>
+<span class="text-slate-900 dark:text-white">12%</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+<div class="bg-primary/30 h-full rounded-full" style="width: 12%"></div>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+<span class="text-xs text-slate-500 font-medium">Total Volume</span>
+<span class="text-sm font-bold text-slate-900 dark:text-white">94.2 TB</span>
+</div>
+</div>
+</div>
+<!-- Bottom Section: Favorites & Recent Updates -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Watchlist/Favorites Table -->
+<div class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+<div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+<h3 class="font-bold text-slate-900 dark:text-white">Pinned Market Reports</h3>
+<button class="text-primary text-sm font-bold hover:underline">View All</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-slate-50 dark:bg-slate-800/50">
+<th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Report Name</th>
+<th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Trend</th>
+<th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Status</th>
+<th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">Last Update</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+<tr>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-lg">insert_chart</span>
+</div>
+<span class="text-sm font-semibold text-slate-900 dark:text-white">Global SaaS Metrics 2024</span>
+</div>
+</td>
+<td class="px-6 py-4 text-center">
+<span class="material-symbols-outlined text-emerald-500">trending_up</span>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold rounded uppercase">Updated</span>
+</td>
+<td class="px-6 py-4 text-right text-sm text-slate-500 dark:text-slate-400">2h ago</td>
+</tr>
+<tr>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-lg">bolt</span>
+</div>
+<span class="text-sm font-semibold text-slate-900 dark:text-white">Energy Sector Forecast</span>
+</div>
+</td>
+<td class="px-6 py-4 text-center">
+<span class="material-symbols-outlined text-slate-400">remove</span>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-bold rounded uppercase">Draft</span>
+</td>
+<td class="px-6 py-4 text-right text-sm text-slate-500 dark:text-slate-400">Yesterday</td>
+</tr>
+<tr>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-lg">medical_services</span>
+</div>
+<span class="text-sm font-semibold text-slate-900 dark:text-white">HealthTech North America</span>
+</div>
+</td>
+<td class="px-6 py-4 text-center">
+<span class="material-symbols-outlined text-red-500">trending_down</span>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold rounded uppercase">Updated</span>
+</td>
+<td class="px-6 py-4 text-right text-sm text-slate-500 dark:text-slate-400">3d ago</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Alerts Feed -->
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<h3 class="font-bold text-slate-900 dark:text-white mb-6">Recent Updates</h3>
+<div class="space-y-6">
+<div class="flex gap-4">
+<div class="shrink-0 w-2 h-2 rounded-full bg-primary mt-1.5 shadow-[0_0_8px_rgba(0,51,153,0.4)]"></div>
+<div>
+<p class="text-sm font-bold text-slate-900 dark:text-white leading-tight">New Market Entry Identified</p>
+<p class="text-xs text-slate-500 mt-1">Tech sector reports a 15% increase in Southeast Asian startups.</p>
+<p class="text-[10px] text-primary font-bold uppercase tracking-tight mt-2">Just Now</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="shrink-0 w-2 h-2 rounded-full bg-slate-200 dark:bg-slate-700 mt-1.5"></div>
+<div>
+<p class="text-sm font-bold text-slate-900 dark:text-white leading-tight">Data Integrity Sync Complete</p>
+<p class="text-xs text-slate-500 mt-1">Regional database synchronization for EU finished successfully.</p>
+<p class="text-[10px] text-slate-400 font-bold uppercase tracking-tight mt-2">45m ago</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="shrink-0 w-2 h-2 rounded-full bg-slate-200 dark:bg-slate-700 mt-1.5"></div>
+<div>
+<p class="text-sm font-bold text-slate-900 dark:text-white leading-tight">Policy Change Alert</p>
+<p class="text-xs text-slate-500 mt-1">Revised GDPR regulations may affect North American data scraping.</p>
+<p class="text-[10px] text-slate-400 font-bold uppercase tracking-tight mt-2">3h ago</p>
+</div>
+</div>
+<button class="w-full py-2 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 text-xs font-bold rounded-lg border border-dashed border-slate-300 dark:border-slate-700 hover:bg-slate-100 transition-colors">
+                                Clear All Notifications
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

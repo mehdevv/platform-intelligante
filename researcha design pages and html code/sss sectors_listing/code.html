@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sectors Listing - DataVault</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#003399",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#0f1623",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Public Sans', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex h-16 items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="text-primary size-8 flex items-center justify-center">
+<span class="material-symbols-outlined text-3xl font-bold">database</span>
+</div>
+<h1 class="text-xl font-black tracking-tight text-slate-900 dark:text-white">DataVault</h1>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Home</a>
+<a class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Reports</a>
+<a class="text-sm font-bold text-primary border-b-2 border-primary py-5" href="/sectors">Sectors</a>
+<a class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Pricing</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="hidden sm:flex px-4 py-2 text-sm font-bold text-primary hover:bg-primary/5 rounded-lg transition-colors">Sign In</button>
+<button class="bg-primary text-white px-5 py-2 rounded-lg text-sm font-bold hover:bg-blue-800 transition-all shadow-sm">Get Started</button>
+<div class="size-9 rounded-full bg-slate-200 dark:bg-slate-700 bg-cover bg-center border border-slate-300 dark:border-slate-600" data-alt="User profile avatar of a smiling business professional" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCqWhA4rX1ZuTcSUy5vldmJ9cU4e2ACW01EcfcLowkIAKpe9xYIMt-P50lPzTqxFguz7FDsguD0rlpVJXy2UEKINEVZ7W2CcL4JDe2t64b4FyWzO_NWrLOtpWS2YAYOrtY7PZrDRXQVepqjRU3c3Uz7Au4caQlOgrGGN6yqOuwC4cu7Uab5kyXcjWGUNq-mdYRiILYLrReF0eLRnKF_lGFTjeI0Fq9m5PW4uZMEIEXVeLd7GA2vFDaSCRKfpbfbkH5OhdUqs3Qt5CI')">
+</div>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<!-- Hero Section -->
+<div class="text-center max-w-3xl mx-auto mb-12">
+<h2 class="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">Explore Sectors</h2>
+<p class="text-lg text-slate-600 dark:text-slate-400">Browse our comprehensive database by industry category to find specialized insights and detailed market analysis.</p>
+</div>
+<!-- Search Section -->
+<div class="max-w-2xl mx-auto mb-16">
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="block w-full pl-12 pr-4 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-base placeholder:text-slate-400" placeholder="Search for a sector (e.g., Technology, Healthcare...)" type="text"/>
+</div>
+<div class="mt-4 flex flex-wrap justify-center gap-2">
+<span class="text-xs font-semibold text-slate-500 uppercase tracking-wider mr-2">Popular:</span>
+<button class="text-xs font-medium px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors">AI &amp; SaaS</button>
+<button class="text-xs font-medium px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors">FinTech</button>
+<button class="text-xs font-medium px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors">BioTech</button>
+<button class="text-xs font-medium px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors">Logistics</button>
+</div>
+</div>
+<!-- Sector Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Technology Card -->
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 transition-all group">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-primary/10 rounded-lg text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">devices</span>
+</div>
+<span class="bg-primary/5 text-primary text-xs font-bold px-2 py-1 rounded">842 Reports</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Technology</h3>
+<p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">In-depth data on hardware manufacturing, enterprise software, and global telecommunications trends.</p>
+<a class="inline-flex items-center text-primary font-bold text-sm group-hover:gap-2 transition-all" href="#">
+                    View Sector <span class="material-symbols-outlined text-sm ml-1">arrow_forward</span>
+</a>
+</div>
+<!-- Healthcare Card -->
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 transition-all group">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-primary/10 rounded-lg text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">medical_services</span>
+</div>
+<span class="bg-primary/5 text-primary text-xs font-bold px-2 py-1 rounded">615 Reports</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Healthcare</h3>
+<p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">Comprehensive analysis of pharmaceuticals, medical device innovations, and clinical services.</p>
+<a class="inline-flex items-center text-primary font-bold text-sm group-hover:gap-2 transition-all" href="#">
+                    View Sector <span class="material-symbols-outlined text-sm ml-1">arrow_forward</span>
+</a>
+</div>
+<!-- Energy Card -->
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 transition-all group">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-primary/10 rounded-lg text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">bolt</span>
+</div>
+<span class="bg-primary/5 text-primary text-xs font-bold px-2 py-1 rounded">320 Reports</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Energy</h3>
+<p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">Market trends in renewables, oil &amp; gas extraction, and sustainable utility infrastructure.</p>
+<a class="inline-flex items-center text-primary font-bold text-sm group-hover:gap-2 transition-all" href="#">
+                    View Sector <span class="material-symbols-outlined text-sm ml-1">arrow_forward</span>
+</a>
+</div>
+<!-- Finance Card -->
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 transition-all group">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-primary/10 rounded-lg text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">account_balance</span>
+</div>
+<span class="bg-primary/5 text-primary text-xs font-bold px-2 py-1 rounded">504 Reports</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Finance</h3>
+<p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">Detailed reports on global banking, insurance markets, and institutional investment strategies.</p>
+<a class="inline-flex items-center text-primary font-bold text-sm group-hover:gap-2 transition-all" href="#">
+                    View Sector <span class="material-symbols-outlined text-sm ml-1">arrow_forward</span>
+</a>
+</div>
+<!-- Retail Card -->
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 transition-all group">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-primary/10 rounded-lg text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">shopping_bag</span>
+</div>
+<span class="bg-primary/5 text-primary text-xs font-bold px-2 py-1 rounded">428 Reports</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Retail</h3>
+<p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">Insights into consumer purchasing habits, e-commerce growth, and global logistics chains.</p>
+<a class="inline-flex items-center text-primary font-bold text-sm group-hover:gap-2 transition-all" href="#">
+                    View Sector <span class="material-symbols-outlined text-sm ml-1">arrow_forward</span>
+</a>
+</div>
+<!-- Manufacturing Card -->
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 transition-all group">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-primary/10 rounded-lg text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">precision_manufacturing</span>
+</div>
+<span class="bg-primary/5 text-primary text-xs font-bold px-2 py-1 rounded">215 Reports</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Manufacturing</h3>
+<p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">Data on industrial production volumes, automation trends, and robotics implementation.</p>
+<a class="inline-flex items-center text-primary font-bold text-sm group-hover:gap-2 transition-all" href="#">
+                    View Sector <span class="material-symbols-outlined text-sm ml-1">arrow_forward</span>
+</a>
+</div>
+<!-- Transportation Card -->
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 transition-all group">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-primary/10 rounded-lg text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">directions_transit</span>
+</div>
+<span class="bg-primary/5 text-primary text-xs font-bold px-2 py-1 rounded">189 Reports</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Transportation</h3>
+<p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">Market analysis for public transit, automotive sales, and freight transportation networks.</p>
+<a class="inline-flex items-center text-primary font-bold text-sm group-hover:gap-2 transition-all" href="#">
+                    View Sector <span class="material-symbols-outlined text-sm ml-1">arrow_forward</span>
+</a>
+</div>
+<!-- Real Estate Card -->
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 transition-all group">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-primary/10 rounded-lg text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">apartment</span>
+</div>
+<span class="bg-primary/5 text-primary text-xs font-bold px-2 py-1 rounded">345 Reports</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Real Estate</h3>
+<p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">Commercial and residential property trends, urbanization statistics, and market valuations.</p>
+<a class="inline-flex items-center text-primary font-bold text-sm group-hover:gap-2 transition-all" href="#">
+                    View Sector <span class="material-symbols-outlined text-sm ml-1">arrow_forward</span>
+</a>
+</div>
+<!-- Education Card -->
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 transition-all group">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-primary/10 rounded-lg text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">school</span>
+</div>
+<span class="bg-primary/5 text-primary text-xs font-bold px-2 py-1 rounded">124 Reports</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Education</h3>
+<p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">Data on EdTech adoption, higher education enrollment, and professional training markets.</p>
+<a class="inline-flex items-center text-primary font-bold text-sm group-hover:gap-2 transition-all" href="#">
+                    View Sector <span class="material-symbols-outlined text-sm ml-1">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Load More Section -->
+<div class="mt-16 text-center">
+<button class="inline-flex items-center px-8 py-3 bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-bold rounded-lg hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors">
+                Load More Sectors
+                <span class="material-symbols-outlined ml-2 text-lg">expand_more</span>
+</button>
+</div>
+</main>
+<!-- Footer -->
+<footer class="mt-20 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark py-12">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+<div class="col-span-2 md:col-span-1">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary font-bold">database</span>
+<span class="text-lg font-black tracking-tight">DataVault</span>
+</div>
+<p class="text-slate-500 text-sm leading-relaxed max-w-xs">The world's most trusted source for sector-specific data and institutional market reports.</p>
+</div>
+<div>
+<h4 class="text-xs font-black uppercase tracking-widest text-slate-400 mb-6">Platform</h4>
+<ul class="space-y-4">
+<li><a class="text-sm text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">Browse Reports</a></li>
+<li><a class="text-sm text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">Sector Analytics</a></li>
+<li><a class="text-sm text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">Custom Data</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-xs font-black uppercase tracking-widest text-slate-400 mb-6">Company</h4>
+<ul class="space-y-4">
+<li><a class="text-sm text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">About Us</a></li>
+<li><a class="text-sm text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">Contact</a></li>
+<li><a class="text-sm text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">Privacy Policy</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-xs font-black uppercase tracking-widest text-slate-400 mb-6">Follow Us</h4>
+<div class="flex gap-4">
+<a class="p-2 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">share</span>
+</a>
+<a class="p-2 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">public</span>
+</a>
+</div>
+</div>
+</div>
+<div class="pt-8 border-t border-slate-100 dark:border-slate-800 text-center text-xs text-slate-400">
+                © 2024 DataVault Inc. All rights reserved. Professional Data Services.
+            </div>
+</div>
+</footer>
+</body></html>

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Industry Reports | DataVault</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800;900&amp;family=Playfair+Display:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#003399",
+                        "accent": "#FF6600",
+                        "premium-gold": "#D4AF37",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#0f1623",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"],
+                        "serif": ["Playfair Display", "serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Public Sans', sans-serif;
+        }
+        .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<!-- Fixed Global Header -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 md:px-8 lg:px-16 py-3 flex items-center justify-between">
+<div class="flex items-center gap-8 flex-1">
+<div class="flex items-center gap-2 text-primary dark:text-blue-400">
+<span class="material-symbols-outlined text-3xl font-bold">database</span>
+<h2 class="text-xl font-extrabold tracking-tight font-display">DataVault</h2>
+</div>
+<div class="hidden md:flex items-center w-full max-w-md">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-lg focus:ring-2 focus:ring-primary text-sm" placeholder="Search across global data..." type="text"/>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<nav class="hidden lg:flex items-center gap-6 text-sm font-medium text-slate-600 dark:text-slate-300">
+<a class="hover:text-primary transition-colors" href="#">Sectors</a>
+<a class="hover:text-primary transition-colors" href="#">Regions</a>
+<a class="hover:text-primary transition-colors" href="#">Pricing</a>
+</nav>
+<div class="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-2 hidden lg:block"></div>
+<button class="bg-accent hover:bg-orange-600 text-white px-5 py-2 rounded-lg text-sm font-bold transition-all shadow-md shadow-orange-500/20">
+                Get full access
+            </button>
+<div class="size-9 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden border border-slate-300 dark:border-slate-600">
+<img alt="User" class="w-full h-full object-cover" data-alt="User profile avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAOwFQHAl7gTWsdGsFJ2Z-pz6huP280UrkTnaopaiRg_ixts96klPiJEkV8BPDCiFxx2eYe8vXemRJCqI646L9xdF5mbsEBKVdcvZqOTOeN7b7p0LiPa-J94CcEDZp5s9bZMbggtptPmbls0c5rrzlcVssHXNQPn3K9lTvPqqWGHNfNv6oOUyKfFKhGpDzVSKWJNAsYth2CeK5d2Dp2BgFel7BwpnTQVS-YNKEnSriwYcs2M4v0MCJMtZforetPz_EwQhb0SMd2EA"/>
+</div>
+</div>
+</header>
+<div class="pt-20 flex min-h-screen max-w-[1600px] mx-auto">
+<!-- Sidebar (Left) -->
+<aside class="w-72 fixed h-[calc(100vh-80px)] overflow-y-auto border-r border-slate-200 dark:border-slate-800 p-6 hidden lg:block bg-background-light dark:bg-background-dark">
+<div class="flex flex-col gap-8">
+<div>
+<h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Filters</h3>
+<div class="flex items-center justify-between p-3 rounded-lg bg-primary/10 border border-primary/20 mb-6">
+<span class="text-sm font-semibold text-primary dark:text-blue-400">Premium Only</span>
+<button class="relative inline-flex h-5 w-9 items-center rounded-full bg-primary">
+<span class="translate-x-4 inline-block h-3 w-3 transform rounded-full bg-white transition"></span>
+</button>
+</div>
+</div>
+<!-- Filter Sections -->
+<div class="space-y-6">
+<div>
+<button class="flex items-center justify-between w-full text-sm font-bold text-slate-700 dark:text-slate-200 mb-3">
+                            Sector <span class="material-symbols-outlined text-lg">keyboard_arrow_down</span>
+</button>
+<div class="space-y-2 pl-1">
+<label class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 cursor-pointer">
+<input class="rounded text-primary focus:ring-primary border-slate-300 dark:border-slate-600 dark:bg-slate-800" type="checkbox"/> Technology
+                            </label>
+<label class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 cursor-pointer">
+<input checked="" class="rounded text-primary focus:ring-primary border-slate-300 dark:border-slate-600 dark:bg-slate-800" type="checkbox"/> Retail
+                            </label>
+<label class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 cursor-pointer">
+<input class="rounded text-primary focus:ring-primary border-slate-300 dark:border-slate-600 dark:bg-slate-800" type="checkbox"/> Healthcare
+                            </label>
+<label class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 cursor-pointer">
+<input class="rounded text-primary focus:ring-primary border-slate-300 dark:border-slate-600 dark:bg-slate-800" type="checkbox"/> Finance
+                            </label>
+</div>
+</div>
+<div>
+<button class="flex items-center justify-between w-full text-sm font-bold text-slate-700 dark:text-slate-200 mb-3">
+                            Region <span class="material-symbols-outlined text-lg">keyboard_arrow_down</span>
+</button>
+<div class="space-y-2 pl-1">
+<label class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 cursor-pointer">
+<input checked="" class="rounded text-primary focus:ring-primary border-slate-300 dark:border-slate-600 dark:bg-slate-800" type="checkbox"/> Global
+                            </label>
+<label class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 cursor-pointer">
+<input class="rounded text-primary focus:ring-primary border-slate-300 dark:border-slate-600 dark:bg-slate-800" type="checkbox"/> North America
+                            </label>
+<label class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 cursor-pointer">
+<input class="rounded text-primary focus:ring-primary border-slate-300 dark:border-slate-600 dark:bg-slate-800" type="checkbox"/> Europe
+                            </label>
+<label class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 cursor-pointer">
+<input class="rounded text-primary focus:ring-primary border-slate-300 dark:border-slate-600 dark:bg-slate-800" type="checkbox"/> APAC
+                            </label>
+</div>
+</div>
+<div>
+<button class="flex items-center justify-between w-full text-sm font-bold text-slate-700 dark:text-slate-200 mb-3">
+                            Period <span class="material-symbols-outlined text-lg">keyboard_arrow_down</span>
+</button>
+<select class="w-full text-sm rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:ring-primary">
+<option>Last 12 Months</option>
+<option>2023 Full Year</option>
+<option>2024 Outlook</option>
+</select>
+</div>
+<div>
+<button class="flex items-center justify-between w-full text-sm font-bold text-slate-700 dark:text-slate-200 mb-3">
+                            Content Type <span class="material-symbols-outlined text-lg">keyboard_arrow_down</span>
+</button>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-slate-200 dark:bg-slate-800 rounded-full text-xs font-medium cursor-pointer hover:bg-primary hover:text-white transition-colors">PDF Report</span>
+<span class="px-3 py-1 bg-primary text-white rounded-full text-xs font-medium cursor-pointer">Interactive</span>
+<span class="px-3 py-1 bg-slate-200 dark:bg-slate-800 rounded-full text-xs font-medium cursor-pointer hover:bg-primary hover:text-white transition-colors">Dataset</span>
+</div>
+</div>
+</div>
+<button class="mt-4 text-xs font-bold text-primary dark:text-blue-400 underline underline-offset-4 decoration-primary/30">Clear All Filters</button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-0 lg:ml-72 p-4 md:p-8 lg:p-10">
+<!-- Top Bar -->
+<div class="mb-10 flex flex-col gap-6">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<nav class="flex gap-2 text-xs font-semibold text-slate-400 mb-2">
+<a class="hover:text-primary transition-colors" href="#">Home</a>
+<span>/</span>
+<span class="text-slate-600 dark:text-slate-300">Reports</span>
+</nav>
+<h1 class="text-4xl font-serif font-bold text-slate-900 dark:text-white tracking-tight">Industry Reports</h1>
+</div>
+<div class="flex items-center gap-3">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">filter_list</span>
+<select class="pl-10 pr-10 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium focus:ring-primary appearance-none min-w-[160px]">
+<option>Sort By: Relevance</option>
+<option>Sort By: Newest First</option>
+<option>Sort By: Popularity</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">expand_more</span>
+</div>
+<div class="relative flex-1 md:flex-none">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+<input class="pl-10 pr-4 py-2 w-full md:w-64 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-primary" placeholder="Filter in results..." type="text"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Report Card Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+<!-- Card 1 -->
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden group hover:shadow-xl transition-all duration-300 flex flex-col">
+<div class="relative aspect-[4/3] overflow-hidden">
+<div class="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-colors z-10"></div>
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Digital commerce growth charts" src="https://lh3.googleusercontent.com/aida-public/AB6AXuArGvMGIMgaGXu7EuI2PDhQmyluuHMi4Xf6cCbku9vMVWtM_deHik_EmoAc56sZxN-wKQS5zEBZa26m6lT3vffi5tSqwdcbm0gcYRtEJS-d3kmDOVeOEYVKArWihqrTZsmqqYR8uEm-LAu3A9deeSDvTuOvY0ImSMjJPWT_pmrHa9SsXDB3rozKk34dqngGwGxhUvz-_IaHaxy4P1bQQRWDY5i32dXZa4QJTVG8iLJYDkZqHbMeyuGMMmKqa10o9dwoAxA2rPRy6aM"/>
+<div class="absolute top-3 left-3 z-20 flex flex-wrap gap-2">
+<span class="bg-white/90 backdrop-blur-sm text-primary text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-widest">Retail</span>
+<span class="bg-white/90 backdrop-blur-sm text-primary text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-widest">Global</span>
+</div>
+<div class="absolute top-3 right-3 z-20">
+<div class="flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-amber-400 to-amber-600 text-white rounded-lg shadow-lg">
+<span class="material-symbols-outlined text-sm font-bold">star</span>
+<span class="text-[10px] font-black uppercase tracking-tighter">Premium</span>
+</div>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-1">
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">January 2024</p>
+<h3 class="text-xl font-serif font-bold text-slate-900 dark:text-white mb-3 group-hover:text-primary transition-colors leading-tight">Digital Commerce Trends 2024</h3>
+<p class="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 mb-6">A comprehensive look into emerging customer behaviors, payment innovations, and the post-pandemic retail landscape globally.</p>
+<div class="mt-auto pt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+<span class="text-xs font-semibold text-slate-400">42 Pages PDF</span>
+<button class="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all">
+                                View Report <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden group hover:shadow-xl transition-all duration-300 flex flex-col">
+<div class="relative aspect-[4/3] overflow-hidden">
+<div class="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-colors z-10"></div>
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Wind turbines in a green field" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRZvUFSxDwl3_XkJCI7WXQv-Y9xvvFe0QoqOjy_nFSF71P_EqMwOQgK-CRBL4uibXWC-L5fLaWc_FrUX64wH9ontvqgcKD5jIUMVqzDWx0g0I0C8v5f8jk7_xlZiJTViXRC0HZbO0Y8oAPLzeK8sdw0jqtru8pTP0SzhE34_dUwnvsyGZI8ANOTlZxbKZJFqD6dYJKcS5GrcwuRMNqhja0WC7QRTbW8IE11VYuP56n6VxdDZkqXY0SQAUhNJQVaNNeFxBsvl7a7gw"/>
+<div class="absolute top-3 left-3 z-20 flex flex-wrap gap-2">
+<span class="bg-white/90 backdrop-blur-sm text-primary text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-widest">Energy</span>
+<span class="bg-white/90 backdrop-blur-sm text-primary text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-widest">Europe</span>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-1">
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">December 2023</p>
+<h3 class="text-xl font-serif font-bold text-slate-900 dark:text-white mb-3 group-hover:text-primary transition-colors leading-tight">Renewable Energy Outlook</h3>
+<p class="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 mb-6">Analyzing the shift towards sustainable power sources in the EU and key legislative impacts on energy prices.</p>
+<div class="mt-auto pt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+<span class="text-xs font-semibold text-slate-400">Interactive Data</span>
+<button class="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all">
+                                View Report <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden group hover:shadow-xl transition-all duration-300 flex flex-col">
+<div class="relative aspect-[4/3] overflow-hidden">
+<div class="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-colors z-10"></div>
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Digital stock market charts" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3jX0zifcP85YbiKzAOu_jx5ndlc7IC0_4jNgpzSDkyh3MGASjy2h89lfCD31s7kOd_MnoQ5Hmc65U5UMgHUB8kOJwCZKk2B5ISeJwVTuem8PzcGjjLI5gH4C3A9Uh-vbSZOrE9JH9fF7nLv7kMVjX_AcrSPVzAiX4tT0Vos8smmQiHgMNGjkjQBpjOwH_XV7u88KlD4FcmNdRvZGB_cjbEfMy3sn5K19gUahQ8GVkOOBDr5horBwZt-8uLnpLscC2bzyhtkxlYdI"/>
+<div class="absolute top-3 left-3 z-20 flex flex-wrap gap-2">
+<span class="bg-white/90 backdrop-blur-sm text-primary text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-widest">Finance</span>
+<span class="bg-white/90 backdrop-blur-sm text-primary text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-widest">APAC</span>
+</div>
+<div class="absolute top-3 right-3 z-20">
+<div class="flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-amber-400 to-amber-600 text-white rounded-lg shadow-lg">
+<span class="material-symbols-outlined text-sm font-bold">star</span>
+<span class="text-[10px] font-black uppercase tracking-tighter">Premium</span>
+</div>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-1">
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">November 2023</p>
+<h3 class="text-xl font-serif font-bold text-slate-900 dark:text-white mb-3 group-hover:text-primary transition-colors leading-tight">Banking Sector Analysis Q3</h3>
+<p class="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 mb-6">Detailed quarterly performance of major financial institutions in the Asia-Pacific region and future forecasts.</p>
+<div class="mt-auto pt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+<span class="text-xs font-semibold text-slate-400">Dataset Included</span>
+<button class="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all">
+                                View Report <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden group hover:shadow-xl transition-all duration-300 flex flex-col">
+<div class="relative aspect-[4/3] overflow-hidden">
+<div class="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-colors z-10"></div>
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Logistics warehouse with packages" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANt-H5aC-kpeXFJ8Z7IH0B-12hzgTCtWb4hpZF2fRj5Z0TNqONC6hXtQRmSqhl39_BwCXpJYRdv3T_Z-v6j2VlN_UcAPc1M79dzk1_Erab5sAckinW3s2v_mv5PllMRMFK8HbcTk883ZYc8WIYQsF-Ns3410AZfKJs6juXtIs5Uq9kx47vChFKuXikx-xFf2Pq1yF9cx2wIh5-vNkAivc8prClPHBHyUnezHMPRo_k3LzXmAOz5cviRJgEAPsWBz8978HpxBVr41s"/>
+<div class="absolute top-3 left-3 z-20 flex flex-wrap gap-2">
+<span class="bg-white/90 backdrop-blur-sm text-primary text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-widest">Logistics</span>
+<span class="bg-white/90 backdrop-blur-sm text-primary text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-widest">Global</span>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-1">
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">October 2023</p>
+<h3 class="text-xl font-serif font-bold text-slate-900 dark:text-white mb-3 group-hover:text-primary transition-colors leading-tight">Global Logistics Report</h3>
+<p class="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 mb-6">Exploring the resilience of supply chains in 2024 and the impact of automation on warehouse efficiency.</p>
+<div class="mt-auto pt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+<span class="text-xs font-semibold text-slate-400">56 Pages PDF</span>
+<button class="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all">
+                                View Report <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 5 -->
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden group hover:shadow-xl transition-all duration-300 flex flex-col">
+<div class="relative aspect-[4/3] overflow-hidden">
+<div class="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-colors z-10"></div>
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Scientist looking into microscope" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSqOHE4SAwZn-P2DDNY-PlRc5nfMO8RhjJZ3EyBuW4u0hg4_bTKOBZhIq9gUycC3MZJFg9pqwv47fafPZfmO_gJjSufVAZ49w8zG-NLPpOKDyuOLjNVVmzxWhY7EIWPLRVC7nxhkVxh1wD5GwLnAOtYVc3xCzqordjJqXMWNtqnGjrOF19U2jZgrR6oQ9qZmpPuhidqFkRt9baBwLmrPTMrFfgaDcFmzrK1KXHtTPpwcXxY2lOa_44VM6DrS6StwGZragkktBdXsQ"/>
+<div class="absolute top-3 left-3 z-20 flex flex-wrap gap-2">
+<span class="bg-white/90 backdrop-blur-sm text-primary text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-widest">Healthcare</span>
+<span class="bg-white/90 backdrop-blur-sm text-primary text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-widest">North America</span>
+</div>
+<div class="absolute top-3 right-3 z-20">
+<div class="flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-amber-400 to-amber-600 text-white rounded-lg shadow-lg">
+<span class="material-symbols-outlined text-sm font-bold">star</span>
+<span class="text-[10px] font-black uppercase tracking-tighter">Premium</span>
+</div>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-1">
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">September 2023</p>
+<h3 class="text-xl font-serif font-bold text-slate-900 dark:text-white mb-3 group-hover:text-primary transition-colors leading-tight">AI in Healthcare 2024</h3>
+<p class="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 mb-6">Investigating the rapid adoption of generative AI in medical diagnostics and clinical research.</p>
+<div class="mt-auto pt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+<span class="text-xs font-semibold text-slate-400">Interactive Visualization</span>
+<button class="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all">
+                                View Report <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 6 -->
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden group hover:shadow-xl transition-all duration-300 flex flex-col">
+<div class="relative aspect-[4/3] overflow-hidden">
+<div class="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-colors z-10"></div>
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Forest and mountains landscape" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1MvSNDHY0Lkf1KMUrvrmDn1zBoKtSTkUXu8ke4Ly883CGgNe1p7os3zXw62hZ-cnKsuU5W_5BmLjSh-2m5tgjNz-uqlXd54i6zcABVgeMWaTJq08MORQHrTCAa_6LeiEf5F_q7FWR-UafLWH30G6-RsbKeQ8fVlS_j_kjtP-flVfKOuBPG8JAI8OBL2ZmxcuRBsTF0AotEtfIAFZjUGj-GsnivCIo0FEYDh4HrU7rERPCUm0QE1efFoaoCw65-Tt9xwDVgdinbTo"/>
+<div class="absolute top-3 left-3 z-20 flex flex-wrap gap-2">
+<span class="bg-white/90 backdrop-blur-sm text-primary text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-widest">Sustainability</span>
+<span class="bg-white/90 backdrop-blur-sm text-primary text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-widest">Global</span>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-1">
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">August 2023</p>
+<h3 class="text-xl font-serif font-bold text-slate-900 dark:text-white mb-3 group-hover:text-primary transition-colors leading-tight">Global Sustainability Index</h3>
+<p class="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 mb-6">Ranking the world's most sustainable corporations based on ESG performance and carbon neutrality milestones.</p>
+<div class="mt-auto pt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+<span class="text-xs font-semibold text-slate-400">Excel Data Export</span>
+<button class="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all">
+                                View Report <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="mt-16 flex items-center justify-center gap-2">
+<button class="size-10 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="size-10 flex items-center justify-center rounded-lg bg-primary text-white font-bold">1</button>
+<button class="size-10 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-400 font-medium">2</button>
+<button class="size-10 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-400 font-medium">3</button>
+<span class="px-2 text-slate-400">...</span>
+<button class="size-10 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-400 font-medium">12</button>
+<button class="size-10 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</main>
+</div>
+<!-- Mobile Navigation Overlay (Placeholder for JS/interactivity) -->
+<div class="lg:hidden fixed bottom-6 right-6 z-50">
+<button class="size-14 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+</body></html>
