@@ -51,17 +51,17 @@ export default function ProfilePage() {
                 </Card>
 
                 {/* Stats */}
-                <Grid container spacing={3} sx={{ mb: 4 }}>
+                <Grid container spacing={2} sx={{ mb: 4 }}>
                     {[
                         { label: 'Reports Viewed', value: '142', sub: 'This month: 23' },
                         { label: 'Data Downloads', value: '56', sub: 'This month: 8' },
                         { label: 'API Calls', value: '1,204', sub: 'Limit: 5,000/mo' },
                         { label: 'Saved Reports', value: '18', sub: '3 new alerts' },
                     ].map((s, i) => (
-                        <Grid key={i} size={{ xs: 12, sm: 6, lg: 3 }}>
-                            <Card sx={{ p: 3 }}>
-                                <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>{s.label}</Typography>
-                                <Typography variant="h4">{s.value}</Typography>
+                        <Grid key={i} size={{ xs: 6, lg: 3 }}>
+                            <Card sx={{ p: { xs: 2, md: 3 } }}>
+                                <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5, fontSize: { xs: '0.7rem', md: '0.875rem' } }}>{s.label}</Typography>
+                                <Typography variant="h5" sx={{ fontSize: { xs: '1.25rem', md: '1.5rem' } }}>{s.value}</Typography>
                                 <Typography variant="caption" color="text.secondary">{s.sub}</Typography>
                             </Card>
                         </Grid>
@@ -70,14 +70,21 @@ export default function ProfilePage() {
 
                 {/* Tabs */}
                 <Card>
-                    <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ borderBottom: '1px solid #e2e8f0', px: 2 }}>
+                    <Tabs
+                        value={tab}
+                        onChange={(_, v) => setTab(v)}
+                        variant="scrollable"
+                        scrollButtons="auto"
+                        allowScrollButtonsMobile
+                        sx={{ borderBottom: '1px solid #e2e8f0', px: { xs: 0, md: 2 } }}
+                    >
                         <Tab label="Subscription" />
-                        <Tab label="Purchased Reports" />
+                        <Tab label="Purchased" />
                         <Tab label="Favorites" />
                         <Tab label="Invoices" />
                         <Tab label="Settings" />
                     </Tabs>
-                    <Box sx={{ p: 4 }}>
+                    <Box sx={{ p: { xs: 2, md: 4 } }}>
                         {tab === 0 && (
                             <Stack spacing={4}>
                                 <Card variant="outlined" sx={{ p: 3 }}>
@@ -119,12 +126,12 @@ export default function ProfilePage() {
                                     { title: 'Renewable Energy Market Analysis', date: 'Nov 8, 2023', type: 'PDF' },
                                 ].map((r, i) => (
                                     <Card key={i} variant="outlined" sx={{ p: 2 }}>
-                                        <Stack direction="row" justifyContent="space-between" alignItems="center">
+                                        <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ sm: 'center' }} gap={1}>
                                             <Box>
-                                                <Typography variant="subtitle2">{r.title}</Typography>
+                                                <Typography variant="subtitle2" sx={{ fontSize: { xs: '0.8rem', md: '0.875rem' } }}>{r.title}</Typography>
                                                 <Typography variant="caption" color="text.secondary">Purchased {r.date} • {r.type}</Typography>
                                             </Box>
-                                            <Button startIcon={<DownloadIcon />} size="small" variant="outlined">Download</Button>
+                                            <Button startIcon={<DownloadIcon />} size="small" variant="outlined" sx={{ alignSelf: { xs: 'flex-start', sm: 'auto' } }}>Download</Button>
                                         </Stack>
                                     </Card>
                                 ))}

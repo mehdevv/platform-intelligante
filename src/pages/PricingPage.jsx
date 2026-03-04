@@ -59,7 +59,8 @@ export default function PricingPage() {
                                 <Grid key={plan.name} size={{ xs: 12, md: 4 }}>
                                     <Card sx={{
                                         p: 4, height: '100%', display: 'flex', flexDirection: 'column', position: 'relative',
-                                        ...(plan.popular && { border: '2px solid', borderColor: 'primary.main', transform: { md: 'scale(1.05)' }, zIndex: 10, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.15)' })
+                                        overflow: 'visible',
+                                        ...(plan.popular && { border: '2px solid', borderColor: 'primary.main', transform: { md: 'scale(1.05)' }, zIndex: 10, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.15)', mt: 2 })
                                     }}>
                                         {plan.popular && (
                                             <Chip label="Most Popular" size="small" color="secondary" sx={{ position: 'absolute', top: -12, left: '50%', transform: 'translateX(-50%)' }} />
