@@ -6,47 +6,80 @@ import Typography from '@mui/material/Typography'
 import Stack from '@mui/material/Stack'
 import IconButton from '@mui/material/IconButton'
 import Divider from '@mui/material/Divider'
-import StorageIcon from '@mui/icons-material/Storage'
 import ShareIcon from '@mui/icons-material/Share'
 import EmailIcon from '@mui/icons-material/Email'
 import PublicIcon from '@mui/icons-material/Public'
+import { useTranslation } from 'react-i18next'
+import BrandLogo from './BrandLogo'
 
 export default function Footer() {
+    const { t } = useTranslation()
+
+    const cols = [
+        {
+            title: t('footer.platform'),
+            links: [
+                { label: t('footer.statisticsSearch'), to: '/' },
+                { label: t('footer.globalReports'), to: '/reports' },
+                { label: t('footer.sectors'), to: '/sectors' },
+                { label: t('footer.pricing'), to: '/pricing' },
+                { label: t('footer.blog'), to: '/blog' },
+                { label: t('footer.methodology'), to: '/#methodology' },
+                { label: t('footer.corporate'), to: '/#corporate' },
+                { label: t('nav.myReports'), to: '/my-reports' },
+            ],
+        },
+        {
+            title: t('footer.company'),
+            links: [
+                { label: t('footer.about'), to: '/#corporate' },
+                { label: t('footer.methodology'), to: '/#methodology' },
+                { label: t('footer.careers'), to: '/#corporate' },
+                { label: t('footer.contact'), to: '/#corporate' },
+            ],
+        },
+        {
+            title: t('footer.legal'),
+            links: [
+                { label: t('footer.terms'), to: '/terms' },
+                { label: t('footer.privacy'), to: '/privacy' },
+                { label: t('footer.license'), to: '/terms' },
+            ],
+        },
+    ]
+
     return (
-        <Box component="footer" sx={{ bgcolor: 'background.paper', borderTop: '1px solid #e2e8f0', py: 6 }}>
+        <Box component="footer" sx={{ bgcolor: 'background.paper', borderTop: '1px solid #dde1e9', py: 6 }}>
             <Box sx={{ maxWidth: 1440, mx: 'auto', px: 3 }}>
                 <Grid container spacing={6} sx={{ mb: 6 }}>
                     <Grid size={{ xs: 12, md: 4 }}>
-                        <Stack direction="row" alignItems="center" gap={1} sx={{ mb: 2 }}>
-                            <StorageIcon color="primary" />
-                            <Typography sx={{ fontFamily: '"Playfair Display", serif', fontSize: '1.25rem', color: 'primary.main', fontWeight: 700 }}>DataVault</Typography>
-                        </Stack>
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 3, lineHeight: 1.7 }}>
-                            The world's most comprehensive platform for verified market intelligence and industrial statistics.
+                        <Box sx={{ mb: 2 }}>
+                            <BrandLogo />
+                        </Box>
+                        <Typography component="p" className="typography-premium-small" color="text.secondary" sx={{ mb: 1.5 }}>
+                            {t('footer.blurb')}
+                        </Typography>
+                        <Typography component="p" variant="caption" color="text.secondary" className="typography-premium-micro" sx={{ mb: 3, display: 'block' }}>
+                            {t('footer.aemLine')}
                         </Typography>
                         <Stack direction="row" gap={1}>
-                            <IconButton size="small" color="default"><ShareIcon fontSize="small" /></IconButton>
-                            <IconButton size="small" color="default"><EmailIcon fontSize="small" /></IconButton>
-                            <IconButton size="small" color="default"><PublicIcon fontSize="small" /></IconButton>
+                            <IconButton size="small" color="default" aria-label="Share"><ShareIcon fontSize="small" /></IconButton>
+                            <IconButton size="small" color="default" aria-label="Email"><EmailIcon fontSize="small" /></IconButton>
+                            <IconButton size="small" color="default" aria-label="Web"><PublicIcon fontSize="small" /></IconButton>
                         </Stack>
                     </Grid>
                     <Grid size={{ xs: 12, md: 8 }}>
                         <Grid container spacing={4}>
-                            {[
-                                { title: 'Platform', links: [{ label: 'Statistics Search', to: '/' }, { label: 'Global Reports', to: '/reports' }, { label: 'Sectors', to: '/sectors' }, { label: 'Pricing', to: '/pricing' }] },
-                                { title: 'Company', links: [{ label: 'About Us' }, { label: 'Methodology' }, { label: 'Careers' }, { label: 'Contact' }] },
-                                { title: 'Legal', links: [{ label: 'Terms of Service' }, { label: 'Privacy Policy' }, { label: 'License Info' }] },
-                            ].map(col => (
+                            {cols.map(col => (
                                 <Grid key={col.title} size={{ xs: 6, sm: 4 }}>
                                     <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 700 }}>{col.title}</Typography>
                                     <Stack spacing={1}>
                                         {col.links.map(link => (
                                             <Box
                                                 key={link.label}
-                                                component={link.to ? Link : 'a'}
+                                                component={Link}
                                                 to={link.to}
-                                                href={link.to ? undefined : '#'}
-                                                sx={{ fontSize: '0.875rem', color: 'text.secondary', textDecoration: 'none', '&:hover': { color: 'primary.main' } }}
+                                                sx={{ fontSize: '0.875rem', color: 'text.secondary', textDecoration: 'none', '&:hover': { color: 'secondary.main' } }}
                                             >
                                                 {link.label}
                                             </Box>
@@ -59,7 +92,7 @@ export default function Footer() {
                 </Grid>
                 <Divider sx={{ mb: 4 }} />
                 <Typography variant="caption" color="text.secondary" textAlign="center" display="block">
-                    © 2024 DataVault Intelligence Inc. All rights reserved.
+                    {t('footer.copyright')}
                 </Typography>
             </Box>
         </Box>

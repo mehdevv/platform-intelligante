@@ -8,23 +8,30 @@ export default {
   theme: {
     extend: {
       colors: {
-        "primary": "#003399",
-        "accent": "#FF6600",
-        "accent-orange": "#ff6b00",
-        "premium-gold": "#d4af37",
-        "background-light": "#f5f6f8",
-        "background-dark": "#0f1623",
+        "aem-bleu": "#4B5B72",
+        "aem-azur": "#197F94",
+        "aem-azur-light": "#e1f4f7",
+        "aem-gris": "#A5ADBA",
+        "aem-blanc": "#EBECF1",
+        "aem-dark": "#1a2332",
+        "brand-mark": "#40828d",
+        "primary": "#4B5B72",
+        "accent": "#197F94",
+        "premium-gold": "#d4a020",
+        "background-light": "#EBECF1",
+        "background-dark": "#1a2332",
       },
       fontFamily: {
-        "display": ["Public Sans", "sans-serif"],
-        "logo": ["Playfair Display", "serif"],
-        "serif": ["Playfair Display", "serif"],
-        "body": ["Source Sans Pro", "sans-serif"]
+        "display": ["League Spartan", "sans-serif"],
+        "logo": ["League Spartan", "sans-serif"],
+        "serif": ["Libre Baskerville", "serif"],
+        "body": ["Ubuntu", "sans-serif"],
+        "editorial": ["Libre Baskerville", "serif"],
       },
       borderRadius: {
         "DEFAULT": "0.25rem",
         "lg": "0.5rem",
-        "xl": "0.75rem",
+        "xl": "0.625rem",
         "full": "9999px"
       },
     },

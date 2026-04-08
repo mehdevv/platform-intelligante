@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "meta": {
+    "name": "AEM Consulting — charte plateforme intelligence de marché",
+    "source": "AEM_Market_Intelligence_Platform_Technical_Sheet.html — section Identité visuelle (Mars 2026)",
+    "notes": "Le CTA principal et les accents actifs utilisent l’azur, pas une couleur orange."
+  },
+  "color": {
+    "bleuGrise": "#4B5B72",
+    "azur": "#197F94",
+    "azurSharp": "#0e7490",
+    "accentMarketing": "#06b6d4",
+    "azurLight": "#e1f4f7",
+    "grisSouris": "#A5ADBA",
+    "blancVercorin": "#EBECF1",
+    "dark": "#1a2332",
+    "text": "#2c3748",
+    "textMuted": "#6b7a8d",
+    "border": "#dde1e9",
+    "white": "#ffffff"
+  },
+  "typography": {
+    "display": {
+      "family": "\"League Spartan\", sans-serif",
+      "usage": "Titres, rubriques, logo mot"
+    },
+    "editorial": {
+      "family": "\"Libre Baskerville\", serif",
+      "style": "italic",
+      "usage": "Sous-titres, légendes, ton éditorial"
+    },
+    "body": {
+      "family": "\"DM Sans\", sans-serif",
+      "usage": "Corps de texte, UI, données"
+    }
+  },
+  "radius": {
+    "card": "10px",
+    "button": "10px",
+    "chip": "4px"
+  },
+  "personality": ["Formel", "Sérieux", "Contemporain", "Excellence", "Proximité", "Innovation"],
+  "muiMapping": {
+    "palette.primary.main": "#4B5B72",
+    "palette.secondary.main": "#197F94",
+    "palette.background.default": "#EBECF1",
+    "palette.text.primary": "#2c3748",
+    "palette.text.secondary": "#6b7a8d"
+  }
+}

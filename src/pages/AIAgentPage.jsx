@@ -23,7 +23,7 @@ import AttachFileIcon from '@mui/icons-material/AttachFile'
 import MicIcon from '@mui/icons-material/Mic'
 import SendIcon from '@mui/icons-material/Send'
 import LightbulbIcon from '@mui/icons-material/Lightbulb'
-import StorageIcon from '@mui/icons-material/Storage'
+import AnalyticsIcon from '@mui/icons-material/Analytics'
 import MenuIcon from '@mui/icons-material/Menu'
 import CloseIcon from '@mui/icons-material/Close'
 import Table from '@mui/material/Table'
@@ -42,8 +42,8 @@ function LeftSidebarContent({ navigate, onClose }) {
                 <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
                     <Button startIcon={<ArrowBackIcon />} onClick={() => navigate(-1)} size="small" sx={{ color: 'text.secondary' }}>Back</Button>
                     <Stack component={Link} to="/" direction="row" alignItems="center" gap={1} sx={{ textDecoration: 'none' }}>
-                        <StorageIcon color="primary" sx={{ fontSize: 22 }} />
-                        <Typography variant="subtitle2" color="primary">DataVault</Typography>
+                        <AnalyticsIcon color="primary" sx={{ fontSize: 22 }} />
+                        <Typography variant="subtitle2" color="primary">Researcha</Typography>
                     </Stack>
                     {onClose && (
                         <IconButton onClick={onClose} size="small"><CloseIcon /></IconButton>
@@ -107,8 +107,8 @@ export default function AIAgentPage() {
                 <Box sx={{ display: { xs: 'flex', lg: 'none' }, alignItems: 'center', gap: 1, px: 2, py: 1.5, borderBottom: '1px solid #e2e8f0', bgcolor: 'background.paper' }}>
                     <IconButton onClick={() => setMobileSidebarOpen(true)} size="small"><MenuIcon /></IconButton>
                     <Stack component={Link} to="/" direction="row" alignItems="center" gap={1} sx={{ textDecoration: 'none' }}>
-                        <StorageIcon color="primary" sx={{ fontSize: 20 }} />
-                        <Typography variant="subtitle2" color="primary" sx={{ fontFamily: '"Playfair Display", serif' }}>DataVault AI</Typography>
+                        <AnalyticsIcon color="primary" sx={{ fontSize: 20 }} />
+                        <Typography variant="subtitle2" color="primary" sx={{ fontFamily: '"League Spartan", sans-serif', fontWeight: 800 }}>Researcha AI</Typography>
                     </Stack>
                 </Box>
 
@@ -182,7 +182,7 @@ export default function AIAgentPage() {
                             <IconButton size="small" sx={{ color: 'text.secondary', display: { xs: 'none', sm: 'inline-flex' } }}><AttachFileIcon /></IconButton>
                             <TextField
                                 fullWidth multiline maxRows={3}
-                                placeholder="Ask DataVault anything about market trends..."
+                                placeholder="Ask Researcha anything about market trends..."
                                 variant="standard"
                                 slotProps={{ input: { disableUnderline: true } }}
                                 sx={{ px: 1 }}
@@ -192,7 +192,7 @@ export default function AIAgentPage() {
                                 <IconButton sx={{ bgcolor: 'primary.main', color: '#fff', '&:hover': { bgcolor: 'primary.dark' }, boxShadow: '0 4px 14px rgba(0,51,153,0.3)' }}><SendIcon /></IconButton>
                             </Stack>
                         </Paper>
-                        <Typography variant="caption" color="text.secondary" textAlign="center" sx={{ mt: 1, fontSize: { xs: '0.6rem', md: '0.75rem' } }}>DataVault AI can make mistakes. Verify critical financial data with original source filings.</Typography>
+                        <Typography variant="caption" color="text.secondary" textAlign="center" sx={{ mt: 1, fontSize: { xs: '0.6rem', md: '0.75rem' } }}>Researcha AI can make mistakes. Verify critical financial data with original source filings.</Typography>
                     </Stack>
                 </Box>
             </Box>

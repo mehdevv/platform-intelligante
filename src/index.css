@@ -2,17 +2,6 @@
 
 @config "../tailwind.config.js";
 
-/* Ticker scroll animation */
-.ticker-scroll {
-  display: flex;
-  width: fit-content;
-  animation: scroll 30s linear infinite;
-}
-@keyframes scroll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
 /* Glass effect */
 .glass-effect {
   background: rgba(255, 255, 255, 0.1);
@@ -50,7 +39,7 @@
 
 /* Chart gradient */
 .chart-gradient-line {
-  background: linear-gradient(180deg, rgba(0, 51, 153, 0.1) 0%, rgba(0, 51, 153, 0) 100%);
+  background: linear-gradient(180deg, rgba(75, 91, 114, 0.12) 0%, rgba(25, 127, 148, 0) 100%);
 }
 
 /* Material symbols fix */
@@ -66,4 +55,168 @@
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* ── Brand mark (logo teal) + premium motion ───────────────────────── */
+:root {
+  --brand-mark: #40828d;
+  --brand-mark-soft: rgba(64, 130, 141, 0.14);
+  --slant: -11deg;
+}
+
+/* Optional subtle stripe — static, no drift (marketing hero may omit class) */
+.hero-diagonal-mark {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    118deg,
+    transparent 0%,
+    transparent 48%,
+    rgba(25, 127, 148, 0.06) 48%,
+    rgba(25, 127, 148, 0.04) 52%,
+    transparent 52%
+  );
+  opacity: 1;
+}
+
+.page-hero-slant {
+  position: relative;
+  overflow: hidden;
+}
+
+.page-hero-slant .diagonal-stripes {
+  position: absolute;
+  inset: -20% -10%;
+  background: repeating-linear-gradient(
+    125deg,
+    transparent,
+    transparent 18px,
+    var(--brand-mark-soft) 18px,
+    var(--brand-mark-soft) 20px
+  );
+  opacity: 0.35;
+}
+
+.section-fade-in {
+  animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-hero-line {
+  animation: fade-up 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-hero-line.delay-1 {
+  animation-delay: 0.12s;
+}
+
+.card-lift {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
+}
+
+.card-lift:hover {
+  transform: translateY(-4px);
+}
+
+.hero-search-glow {
+  transition: box-shadow 0.35s ease;
+}
+
+.hero-search-glow:focus-within {
+  box-shadow: 0 0 0 2px #197f94;
+}
+
+.nav-link-animated {
+  position: relative;
+}
+
+.nav-link-animated::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--brand-mark), #197f94);
+  transition: width 0.25s ease;
+}
+
+.nav-link-animated:hover::after {
+  width: 100%;
+}
+
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.2) 50%,
+    transparent 60%
+  );
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.btn-shimmer:hover::after {
+  transform: translateX(100%);
+}
+
+.shimmer-border {
+  position: relative;
+}
+
+.shimmer-border::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(125deg, var(--brand-mark), transparent 40%, #197f94);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.legal-prose {
+  animation: fade-up 0.55s ease both;
+}
+
+/* Libre Baskerville — small, editorial / premium copy (Ubuntu = UI body in theme) */
+.typography-premium-small {
+  font-family: "Libre Baskerville", "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(0.95rem, 1.4vw, 1.0625rem);
+  line-height: 1.75;
+  letter-spacing: 0.03em;
+}
+
+.typography-premium-micro {
+  font-family: "Libre Baskerville", "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  letter-spacing: 0.04em;
 }

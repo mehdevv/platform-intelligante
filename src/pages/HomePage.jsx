@@ -1,5 +1,6 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useMemo, useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
@@ -7,25 +8,26 @@ import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
 import Grid from '@mui/material/Grid'
 import Stack from '@mui/material/Stack'
 import Chip from '@mui/material/Chip'
 import Divider from '@mui/material/Divider'
 import LinearProgress from '@mui/material/LinearProgress'
+import MenuItem from '@mui/material/MenuItem'
+import Paper from '@mui/material/Paper'
 import SearchIcon from '@mui/icons-material/Search'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium'
-import DownloadIcon from '@mui/icons-material/Download'
 import ScheduleIcon from '@mui/icons-material/Schedule'
-import StorageIcon from '@mui/icons-material/Storage'
+import AnalyticsIcon from '@mui/icons-material/Analytics'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import DotPattern from '../components/DotPattern'
+import { homeImagery } from '../constants/homeImagery'
 
 // ─── Mini bar chart used inside stat cards ───────────────────────────────────
-function MiniBarChart({ bars = [40, 65, 90, 50, 35, 70, 55], color = '#003399' }) {
+function MiniBarChart({ bars = [40, 65, 90, 50, 35, 70, 55], color = '#4B5B72' }) {
     return (
         <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 0.5, height: 72 }}>
             {bars.map((h, i) => (
@@ -42,7 +44,7 @@ function MiniHBarChart({ rows }) {
             {rows.map((r, i) => (
                 <Stack key={i} direction="row" alignItems="center" gap={1}>
                     <Typography variant="caption" sx={{ width: 80, fontSize: '0.65rem', color: 'text.secondary', flexShrink: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.label}</Typography>
-                    <LinearProgress variant="determinate" value={r.pct} sx={{ flex: 1, height: 8, borderRadius: 1, bgcolor: '#f1f5f9', '& .MuiLinearProgress-bar': { bgcolor: r.color || '#003399', borderRadius: 1 } }} />
+                    <LinearProgress variant="determinate" value={r.pct} sx={{ flex: 1, height: 8, borderRadius: 1, bgcolor: '#f1f5f9', '& .MuiLinearProgress-bar': { bgcolor: r.color || '#4B5B72', borderRadius: 1 } }} />
                     <Typography variant="caption" sx={{ fontSize: '0.65rem', fontWeight: 700, width: 32, textAlign: 'right' }}>{r.pct}%</Typography>
                 </Stack>
             ))}
@@ -50,188 +52,304 @@ function MiniHBarChart({ rows }) {
     )
 }
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
-const popularTags = ['GDP Growth', 'Inflation 2024', 'E-commerce', 'AI & Machine Learning', 'Climate Change', 'Electric Vehicles', 'Renewable Energy']
-
-const featuredStats = [
-    {
-        tag: 'Economy', freeLabel: 'Free',
-        title: 'Global GDP growth projections for 2024 by region',
-        value: '+3.2%', unit: 'World Avg.', source: 'IMF', date: 'May 2024',
-        bars: [35, 50, 80, 60, 45, 72, 55],
-    },
-    {
-        tag: 'Technology', freeLabel: 'Premium',
-        title: 'Generative AI market size worldwide 2022–2030',
-        value: '$1.3T', unit: 'By 2032', source: 'Bloomberg Intelligence', date: 'Jun 2024',
-        bars: [10, 20, 35, 55, 75, 88, 97],
-    },
-    {
-        tag: 'Energy', freeLabel: 'Free',
-        title: 'Share of renewables in global electricity generation',
-        value: '30%', unit: '2023 Share', source: 'IRENA', date: 'Apr 2024',
-        bars: [20, 28, 36, 44, 53, 64, 72],
-    },
-]
-
-const topics = [
-    { label: 'Economy', icon: 'payments', count: '124k' },
-    { label: 'Technology', icon: 'memory', count: '98k' },
-    { label: 'Health', icon: 'health_and_safety', count: '76k' },
-    { label: 'Society', icon: 'groups', count: '62k' },
-    { label: 'Environment', icon: 'eco', count: '48k' },
-    { label: 'Commerce', icon: 'shopping_cart', count: '91k' },
-    { label: 'Finance', icon: 'account_balance', count: '83k' },
-    { label: 'Politics', icon: 'how_to_vote', count: '39k' },
-    { label: 'Education', icon: 'school', count: '33k' },
-    { label: 'Media', icon: 'campaign', count: '27k' },
-    { label: 'Transport', icon: 'directions_car', count: '44k' },
-    { label: 'Food', icon: 'restaurant', count: '19k' },
-]
-
-const mostPopular = [
-    { tag: 'Society', title: 'Number of broadband internet users worldwide 2019–2028', value: '5.4B', bars: [55, 62, 68, 74, 79, 85, 92] },
-    { tag: 'Economy', title: 'Average annual wages in OECD countries', value: '$51,607', bars: [40, 42, 45, 47, 50, 52, 54] },
-    { tag: 'Technology', title: 'Global smartphone penetration rate 2013–2028', value: '68%', bars: [30, 40, 52, 60, 65, 67, 70] },
-    { tag: 'Commerce', title: 'Retail e-commerce revenue worldwide 2014–2027', value: '$7.4T', bars: [15, 22, 32, 42, 55, 68, 80] },
-]
-
 const infographicBars = [
-    { label: 'United States', pct: 87, color: '#003399' },
-    { label: 'Germany', pct: 72, color: '#1e3a8a' },
-    { label: 'United Kingdom', pct: 68, color: '#2355c7' },
-    { label: 'France', pct: 61, color: '#4b70d1' },
-    { label: 'Japan', pct: 55, color: '#7b95df' },
+    { label: 'United States', pct: 87, color: '#4B5B72' },
+    { label: 'Germany', pct: 72, color: '#3d5668' },
+    { label: 'United Kingdom', pct: 68, color: '#197F94' },
+    { label: 'France', pct: 61, color: '#3d8a9a' },
+    { label: 'Japan', pct: 55, color: '#6b9faf' },
 ]
 
-const pricingPlans = [
-    {
-        name: 'Basic', price: 'Free', per: '',
-        features: ['Access to 10% of content', '5 downloads per month', 'Basic chart export', 'Email support'],
-        cta: 'Get started', variant: 'outlined',
-    },
-    {
-        name: 'Professional', price: '$49', per: '/month',
-        features: ['Full database access', 'Unlimited downloads', 'Excel & PPT export', 'API access (50k calls)', 'Priority support'],
-        cta: 'Start free trial', variant: 'contained', highlight: true,
-    },
-    {
-        name: 'Enterprise', price: 'Custom', per: '',
-        features: ['Multi-user accounts', 'Unlimited API calls', 'White-label reports', 'SSO integration', 'Dedicated account manager'],
-        cta: 'Contact sales', variant: 'outlined',
-    },
-]
-
-const categoryLinks = [
-    { title: 'Economy & Finance', links: ['GDP & Growth', 'Inflation', 'Trade', 'Employment', 'Banking', 'Crypto'] },
-    { title: 'Technology', links: ['AI & ML', 'Cloud Computing', 'Cybersecurity', 'Semiconductors', 'Mobile', 'E-commerce'] },
-    { title: 'Society', links: ['Demographics', 'Education', 'Health', 'Crime', 'Religion', 'Sports'] },
-    { title: 'Environment', links: ['Climate Change', 'Energy', 'CO₂ Emissions', 'Water', 'Biodiversity', 'Agriculture'] },
-    { title: 'Industries', links: ['Automotive', 'Pharma', 'Retail', 'Real Estate', 'Media', 'Tourism'] },
-    { title: 'Countries', links: ['United States', 'China', 'Germany', 'India', 'Brazil', 'More →'] },
-]
+function suggestSample(population, confidencePct, marginPct) {
+    const z = confidencePct >= 99 ? 2.576 : confidencePct >= 95 ? 1.96 : 1.645
+    const p = 0.5
+    const e = marginPct / 100
+    if (!population || population <= 0) {
+        return Math.ceil((z * z * p * (1 - p)) / (e * e))
+    }
+    const num = population * z * z * p * (1 - p)
+    const den = e * e * (population - 1) + z * z * p * (1 - p)
+    return Math.max(1, Math.ceil(num / den))
+}
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 export default function HomePage() {
+    const { t, i18n } = useTranslation()
+    const navigate = useNavigate()
+    const location = useLocation()
+    const [heroSearch, setHeroSearch] = useState('')
+    const [population, setPopulation] = useState('10000')
+    const [confidence, setConfidence] = useState(95)
+    const [margin, setMargin] = useState('5')
+    const [sampleResult, setSampleResult] = useState(null)
+
+    const confidenceLevels = useMemo(
+        () => [
+            { value: 90, label: '90%' },
+            { value: 95, label: '95%' },
+            { value: 99, label: '99%' },
+        ],
+        [],
+    )
+
+    const runSampleCalc = () => {
+        const n = suggestSample(Number(population) || 0, confidence, Number(margin) || 5)
+        setSampleResult(n)
+    }
+
+    useEffect(() => {
+        const id = (location.hash || '').replace(/^#/, '')
+        if (!id) return
+        const el = document.getElementById(id)
+        if (el) queueMicrotask(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+    }, [location.hash, location.pathname])
+
+    const popularTags = useMemo(() => {
+        const v = t('home.popularTags', { returnObjects: true })
+        return Array.isArray(v) ? v : []
+    }, [t, i18n.language])
+    const featuredStats = useMemo(() => {
+        const v = t('home.featuredStats', { returnObjects: true })
+        return Array.isArray(v) ? v : []
+    }, [t, i18n.language])
+    const topics = useMemo(() => {
+        const v = t('home.topics', { returnObjects: true })
+        return Array.isArray(v) ? v : []
+    }, [t, i18n.language])
+    const pricingPlans = useMemo(() => {
+        const v = t('home.pricingPlans', { returnObjects: true })
+        return Array.isArray(v) ? v : []
+    }, [t, i18n.language])
+    const sideReports = useMemo(() => {
+        const v = t('home.sideReports', { returnObjects: true })
+        return Array.isArray(v) ? v : []
+    }, [t, i18n.language])
+    const platformFeatures = useMemo(() => [t('home.platformF1'), t('home.platformF2'), t('home.platformF3'), t('home.platformF4')], [t, i18n.language])
+
+    const runHeroSearch = () => {
+        const q = heroSearch.trim()
+        if (q) navigate(`/search?q=${encodeURIComponent(q)}`)
+    }
+
     return (
         <Box sx={{ bgcolor: 'background.paper' }}>
             <Header />
             <Box component="main" sx={{ pt: '64px' }}>
 
                 {/* ═══ HERO ════════════════════════════════════════════════════ */}
-                <Box sx={{ bgcolor: '#0a1628', pt: { xs: 8, md: 12 }, pb: { xs: 6, md: 9 }, position: 'relative', overflow: 'hidden' }}>
-                    {/* Glows */}
-                    <Box sx={{ position: 'absolute', top: -120, right: -80, width: 480, height: 480, borderRadius: '50%', bgcolor: '#003399', filter: 'blur(120px)', opacity: 0.35 }} />
-                    <Box sx={{ position: 'absolute', bottom: -80, left: -60, width: 360, height: 360, borderRadius: '50%', bgcolor: '#1e40af', filter: 'blur(100px)', opacity: 0.25 }} />
+                <Box
+                    sx={{
+                        bgcolor: '#1a2332',
+                        borderBottom: '3px solid',
+                        borderColor: 'secondary.main',
+                        position: 'relative',
+                        overflowX: 'hidden',
+                    }}
+                >
+                    <DotPattern
+                        variant="hero"
+                        className="z-0"
+                        baseColor="#4d5d78"
+                        glowColor="#22d3ee"
+                        dotSize={2}
+                        gap={22}
+                        proximity={100}
+                        waveSpeed={0.45}
+                        vignette="navy"
+                    />
+                    <Box
+                        component="img"
+                        src="/heroshape.png"
+                        alt=""
+                        aria-hidden
+                        sx={{
+                            display: { xs: 'none', md: 'block' },
+                            position: 'absolute',
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            width: '100%',
+                            height: 'auto',
+                            pointerEvents: 'none',
+                            zIndex: 1,
+                            userSelect: 'none',
+                        }}
+                    />
+                    <Box
+                        sx={{
+                            position: 'relative',
+                            zIndex: 2,
+                            minHeight: 'calc(100vh - 64px)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            py: { xs: 4, md: 6 },
+                        }}
+                    >
+                    <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, width: '100%' }} className="section-fade-in">
+                        <Grid container spacing={{ xs: 4, md: 6 }} alignItems="center">
+                            <Grid size={{ xs: 12, md: 6 }} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
+                                <Typography
+                                    variant="h1"
+                                    sx={{
+                                        color: '#fff',
+                                        fontSize: { xs: '2.125rem', sm: '2.75rem', md: '3.25rem' },
+                                        fontWeight: 800,
+                                        lineHeight: 1.08,
+                                        mb: 1.5,
+                                        fontFamily: '"League Spartan", sans-serif',
+                                    }}
+                                    className="animate-hero-line"
+                                >
+                                    {t('home.heroLine1')}
+                                </Typography>
+                                <Typography
+                                    variant="h1"
+                                    sx={{
+                                        color: '#22d3ee',
+                                        fontSize: { xs: '2.125rem', sm: '2.75rem', md: '3.25rem' },
+                                        fontWeight: 800,
+                                        lineHeight: 1.08,
+                                        mb: 3,
+                                        fontFamily: '"League Spartan", sans-serif',
+                                    }}
+                                    className="animate-hero-line delay-1"
+                                >
+                                    {t('home.heroLine2')}
+                                </Typography>
+                                <Typography
+                                    component="p"
+                                    className="typography-premium-small"
+                                    sx={{
+                                        color: 'rgba(226,232,240,0.92)',
+                                        mb: 4,
+                                        maxWidth: { md: 520 },
+                                        mx: { xs: 'auto', md: 0 },
+                                        textAlign: { xs: 'center', md: 'left' },
+                                    }}
+                                >
+                                    {t('home.heroSub')}
+                                </Typography>
 
-                    <Container maxWidth="md" sx={{ position: 'relative', zIndex: 10, textAlign: 'center' }}>
-                        {/* Badge */}
-                        <Chip
-                            label="✦  1.2M+ Statistics · 80,000 Verified Sources"
-                            size="small"
-                            sx={{ bgcolor: 'rgba(255,255,255,0.07)', color: 'rgba(191,219,254,0.9)', border: '1px solid rgba(255,255,255,0.12)', mb: 4, fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.03em', height: 28 }}
-                        />
-                        <Typography variant="h1" sx={{ color: '#fff', fontSize: { xs: '2.25rem', sm: '3rem', md: '3.75rem' }, fontWeight: 800, lineHeight: 1.1, mb: 2, fontFamily: '"Public Sans", sans-serif' }}>
-                            Empowering people
-                        </Typography>
-                        <Typography variant="h1" sx={{ color: '#60a5fa', fontSize: { xs: '2.25rem', sm: '3rem', md: '3.75rem' }, fontWeight: 800, lineHeight: 1.1, mb: 4, fontFamily: '"Public Sans", sans-serif' }}>
-                            with data
-                        </Typography>
-                        <Typography sx={{ color: 'rgba(148,163,184,1)', fontSize: { xs: '1rem', md: '1.125rem' }, mb: 6, maxWidth: 560, mx: 'auto', lineHeight: 1.7 }}>
-                            Access millions of verified statistics and market reports. Find the exact data you need — instantly.
-                        </Typography>
+                                <Box
+                                    className="hero-search-glow"
+                                    sx={{
+                                        display: 'flex',
+                                        maxWidth: { xs: '100%', md: '100%' },
+                                        mx: { xs: 'auto', md: 0 },
+                                        bgcolor: '#fff',
+                                        borderRadius: 2,
+                                        border: '1px solid #cbd5e1',
+                                        overflow: 'hidden',
+                                        mb: 3,
+                                    }}
+                                >
+                                    <TextField
+                                        fullWidth
+                                        value={heroSearch}
+                                        onChange={e => setHeroSearch(e.target.value)}
+                                        onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), runHeroSearch())}
+                                        placeholder={t('home.searchPlaceholder')}
+                                        variant="standard"
+                                        slotProps={{
+                                            input: {
+                                                disableUnderline: true,
+                                                startAdornment: (
+                                                    <InputAdornment position="start">
+                                                        <SearchIcon sx={{ color: '#64748b', ml: 1 }} />
+                                                    </InputAdornment>
+                                                ),
+                                            },
+                                        }}
+                                        sx={{ px: 1.5, py: 0.5, '& input': { fontSize: '0.9375rem', py: '12px' } }}
+                                    />
+                                    <Button
+                                        variant="contained"
+                                        color="secondary"
+                                        disableElevation
+                                        onClick={runHeroSearch}
+                                        sx={{ m: 0.75, px: 3, borderRadius: 1.5, fontWeight: 700, whiteSpace: 'nowrap', fontSize: '0.875rem' }}
+                                    >
+                                        {t('common.search')}
+                                    </Button>
+                                </Box>
 
-                        {/* Search Box */}
-                        <Box sx={{ display: 'flex', maxWidth: 640, mx: 'auto', bgcolor: '#fff', borderRadius: 3, boxShadow: '0 20px 60px rgba(0,0,0,0.4)', overflow: 'hidden', mb: 4 }}>
-                            <TextField
-                                fullWidth
-                                placeholder="Search statistics, reports, industries..."
-                                variant="standard"
-                                slotProps={{ input: { disableUnderline: true, startAdornment: <InputAdornment position="start"><SearchIcon sx={{ color: '#64748b', ml: 1 }} /></InputAdornment> } }}
-                                sx={{ px: 1.5, py: 0.5, '& input': { fontSize: '0.9375rem', py: '12px' } }}
-                            />
-                            <Button variant="contained" color="secondary" disableElevation
-                                sx={{ m: 0.75, px: 3.5, borderRadius: 2, fontWeight: 700, whiteSpace: 'nowrap', fontSize: '0.875rem' }}>
-                                Search
-                            </Button>
-                        </Box>
-
-                        {/* Popular tags */}
-                        <Stack direction="row" flexWrap="wrap" justifyContent="center" gap={1}>
-                            <Typography sx={{ color: '#64748b', fontSize: '0.8125rem', pt: 0.5, fontWeight: 500 }}>Popular:</Typography>
-                            {popularTags.map(tag => (
-                                <Chip key={tag} label={tag} size="small" component={Link} to="/reports"
-                                    sx={{ color: 'rgba(147,197,253,0.9)', borderColor: 'rgba(255,255,255,0.12)', bgcolor: 'rgba(255,255,255,0.05)', fontSize: '0.75rem', cursor: 'pointer', '&:hover': { bgcolor: 'rgba(255,255,255,0.1)' } }}
-                                    variant="outlined" />
-                            ))}
-                        </Stack>
+                                <Stack direction="row" flexWrap="wrap" justifyContent={{ xs: 'center', md: 'flex-start' }} gap={1} alignItems="center">
+                                    <Typography sx={{ color: '#94a3b8', fontSize: '0.8125rem', fontWeight: 600 }}>{t('common.popular')}</Typography>
+                                    {popularTags.map(tag => (
+                                        <Chip
+                                            key={tag}
+                                            label={tag}
+                                            size="small"
+                                            component={Link}
+                                            to="/reports"
+                                            sx={{
+                                                color: '#e0f2fe',
+                                                borderColor: 'rgba(34,211,238,0.35)',
+                                                bgcolor: 'rgba(255,255,255,0.04)',
+                                                fontSize: '0.75rem',
+                                                cursor: 'pointer',
+                                                '&:hover': { bgcolor: 'rgba(34,211,238,0.12)', borderColor: '#22d3ee' },
+                                            }}
+                                            variant="outlined"
+                                        />
+                                    ))}
+                                </Stack>
+                            </Grid>
+                            <Grid size={{ xs: 12, md: 6 }}>
+                                <Box
+                                    sx={{
+                                        borderRadius: 2,
+                                        overflow: 'hidden',
+                                        border: '2px solid',
+                                        borderColor: '#22d3ee',
+                                        bgcolor: '#0f172a',
+                                    }}
+                                >
+                                    <Box
+                                        component="img"
+                                        src={homeImagery.hero}
+                                        alt=""
+                                        sx={{
+                                            width: '100%',
+                                            height: { xs: 'min(42vh, 280px)', sm: 'min(45vh, 360px)', md: 'min(52vh, 520px)' },
+                                            objectFit: 'cover',
+                                            display: 'block',
+                                        }}
+                                    />
+                                </Box>
+                            </Grid>
+                        </Grid>
                     </Container>
-                </Box>
-
-                {/* ═══ STATS TICKER ══════════════════════════════════════════ */}
-                <Box sx={{ bgcolor: '#050d1a', borderTop: '1px solid #1e293b', borderBottom: '1px solid #1e293b', py: 1.5, overflow: 'hidden' }}>
-                    <Box className="ticker-scroll">
-                        {[0, 1].map(set => (
-                            <Box key={set} sx={{ display: 'flex', alignItems: 'center', gap: 6, px: 4, flexShrink: 0 }}>
-                                {[
-                                    { label: 'Statistics', value: '1.2M+' },
-                                    { label: 'Verified Sources', value: '80K+' },
-                                    { label: 'Industries', value: '170+' },
-                                    { label: 'Forecasts', value: '450K+' },
-                                    { label: 'Data Points', value: '3.8M+' },
-                                    { label: 'Countries', value: '195' },
-                                    { label: 'Daily Users', value: '2.5M+' },
-                                ].map((stat, i) => (
-                                    <Stack key={i} direction="row" alignItems="center" gap={1.5} sx={{ flexShrink: 0 }}>
-                                        <Typography sx={{ color: '#60a5fa', fontWeight: 900, fontSize: '1.1rem', whiteSpace: 'nowrap' }}>{stat.value}</Typography>
-                                        <Typography sx={{ color: '#475569', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 700, whiteSpace: 'nowrap' }}>{stat.label}</Typography>
-                                    </Stack>
-                                ))}
-                            </Box>
-                        ))}
                     </Box>
                 </Box>
 
                 {/* ═══ FEATURED STATS ══════════════════════════════════════════ */}
-                <Box sx={{ bgcolor: '#f8fafc', py: { xs: 7, md: 10 } }}>
+                <Box sx={{ bgcolor: '#EBECF1', py: { xs: 8, md: 11 } }}>
                     <Container maxWidth="lg">
-                        <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems="flex-start" sx={{ mb: 5 }} gap={2}>
+                        <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems="flex-start" sx={{ mb: 6 }} gap={2}>
                             <Box>
-                                <Typography variant="overline" sx={{ color: 'secondary.main', fontWeight: 800, letterSpacing: '0.12em' }}>Trending Now</Typography>
-                                <Typography variant="h4" sx={{ fontWeight: 800, mt: 0.5 }}>Featured Statistics</Typography>
-                                <Typography color="text.secondary" sx={{ mt: 0.5 }}>Highly cited data points updated this week</Typography>
+                                <Typography variant="overline" sx={{ color: 'secondary.main', fontWeight: 800, letterSpacing: '0.12em' }}>{t('home.trendingNow')}</Typography>
+                                <Typography variant="h4" sx={{ fontWeight: 800, mt: 0.5 }}>{t('home.featuredTitle')}</Typography>
+                                <Typography color="text.secondary" sx={{ mt: 0.5 }}>{t('home.featuredSub')}</Typography>
                             </Box>
-                            <Button component={Link} to="/reports" endIcon={<ArrowRightAltIcon />} sx={{ fontWeight: 700, color: 'primary.main', flexShrink: 0 }}>View all statistics</Button>
+                            <Button component={Link} to="/reports" endIcon={<ArrowRightAltIcon />} sx={{ fontWeight: 700, color: 'primary.main', flexShrink: 0 }}>{t('home.viewAllStats')}</Button>
                         </Stack>
 
-                        <Grid container spacing={3}>
+                        <Grid container spacing={4}>
                             {featuredStats.map((stat, i) => (
                                 <Grid key={i} size={{ xs: 12, md: 4 }}>
-                                    <Card component={Link} to="/reports/1" sx={{ textDecoration: 'none', height: '100%', p: 3, display: 'flex', flexDirection: 'column', transition: 'box-shadow 0.2s', '&:hover': { boxShadow: '0 12px 40px rgba(0,51,153,0.12)' } }}>
+                                    <Card component={Link} to="/reports/1" className="card-lift" sx={{ textDecoration: 'none', height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column', p: 0, transition: 'box-shadow 0.2s', '&:hover': { boxShadow: '0 8px 28px rgba(26,35,50,0.08)' } }}>
+                                        <Box
+                                            component="img"
+                                            src={homeImagery.featured[i % homeImagery.featured.length]}
+                                            alt=""
+                                            sx={{ width: '100%', height: 200, objectFit: 'cover', display: 'block' }}
+                                        />
+                                        <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
                                         <Stack direction="row" justifyContent="space-between" sx={{ mb: 2 }}>
-                                            <Chip label={stat.tag} size="small" sx={{ bgcolor: 'rgba(0,51,153,0.08)', color: 'primary.main', fontWeight: 700 }} />
-                                            <Chip label={stat.freeLabel} size="small"
-                                                sx={{ bgcolor: stat.freeLabel === 'Premium' ? 'rgba(212,175,55,0.1)' : 'rgba(16,185,129,0.1)', color: stat.freeLabel === 'Premium' ? '#b8860b' : '#059669', fontWeight: 700 }} />
+                                            <Chip label={stat.tag} size="small" sx={{ bgcolor: 'rgba(75,91,114,0.08)', color: 'primary.main', fontWeight: 700 }} />
+                                            <Chip label={t(`common.${stat.freeLabelKey}`)} size="small"
+                                                sx={{ bgcolor: stat.freeLabelKey === 'premium' ? 'rgba(212,175,55,0.1)' : 'rgba(16,185,129,0.1)', color: stat.freeLabelKey === 'premium' ? '#b8860b' : '#059669', fontWeight: 700 }} />
                                         </Stack>
                                         <Typography variant="body2" fontWeight={600} sx={{ lineHeight: 1.55, mb: 3, flexGrow: 1, color: 'text.primary' }}>{stat.title}</Typography>
 
@@ -246,38 +364,8 @@ export default function HomePage() {
 
                                         <Stack direction="row" justifyContent="space-between" alignItems="center">
                                             <Stack direction="row" alignItems="center" gap={0.5}><ScheduleIcon sx={{ fontSize: 13, color: 'text.secondary' }} /><Typography variant="caption" color="text.secondary">{stat.date}</Typography></Stack>
-                                            <Stack direction="row" alignItems="center" gap={0.5}><StorageIcon sx={{ fontSize: 13, color: 'text.secondary' }} /><Typography variant="caption" color="text.secondary">{stat.source}</Typography></Stack>
+                                            <Stack direction="row" alignItems="center" gap={0.5}><AnalyticsIcon sx={{ fontSize: 13, color: 'text.secondary' }} /><Typography variant="caption" color="text.secondary">{stat.source}</Typography></Stack>
                                         </Stack>
-                                    </Card>
-                                </Grid>
-                            ))}
-                        </Grid>
-                    </Container>
-                </Box>
-
-                {/* ═══ MOST POPULAR ════════════════════════════════════════════ */}
-                <Box sx={{ bgcolor: '#fff', py: { xs: 7, md: 10 } }}>
-                    <Container maxWidth="lg">
-                        <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems="flex-start" sx={{ mb: 5 }} gap={2}>
-                            <Box>
-                                <Typography variant="overline" sx={{ color: 'secondary.main', fontWeight: 800, letterSpacing: '0.12em' }}>Data Library</Typography>
-                                <Typography variant="h4" sx={{ fontWeight: 800, mt: 0.5 }}>Most Popular Statistics</Typography>
-                            </Box>
-                            <Button component={Link} to="/reports" endIcon={<ArrowRightAltIcon />} sx={{ fontWeight: 700, color: 'primary.main', flexShrink: 0 }}>Browse all data</Button>
-                        </Stack>
-                        <Grid container spacing={3}>
-                            {mostPopular.map((s, i) => (
-                                <Grid key={i} size={{ xs: 12, sm: 6 }}>
-                                    <Card component={Link} to="/reports/1" sx={{ textDecoration: 'none', p: 3, display: 'flex', gap: 2.5, alignItems: 'flex-start', transition: 'box-shadow 0.2s', '&:hover': { boxShadow: '0 8px 30px rgba(0,51,153,0.1)' } }}>
-                                        {/* Number rank */}
-                                        <Typography sx={{ fontWeight: 900, fontSize: '2rem', color: 'rgba(0,51,153,0.1)', lineHeight: 1, flexShrink: 0, width: 32 }}>{i + 1}</Typography>
-                                        <Box sx={{ flex: 1, minWidth: 0 }}>
-                                            <Chip label={s.tag} size="small" sx={{ bgcolor: 'rgba(0,51,153,0.06)', color: 'primary.main', fontWeight: 700, mb: 1, fontSize: '0.7rem' }} />
-                                            <Typography variant="body2" fontWeight={600} sx={{ lineHeight: 1.5, mb: 2, color: 'text.primary' }}>{s.title}</Typography>
-                                            <Box sx={{ bgcolor: '#f8fafc', borderRadius: 1.5, p: 1.5 }}>
-                                                <Typography variant="h6" sx={{ fontWeight: 900, color: 'primary.main', mb: 0.5 }}>{s.value}</Typography>
-                                                <MiniBarChart bars={s.bars} color="#003399" />
-                                            </Box>
                                         </Box>
                                     </Card>
                                 </Grid>
@@ -286,134 +374,236 @@ export default function HomePage() {
                     </Container>
                 </Box>
 
-                {/* ═══ EXPLORE TOPICS ══════════════════════════════════════════ */}
-                <Box sx={{ bgcolor: '#f1f5f9', py: { xs: 7, md: 10 } }}>
+                {/* ═══ EXPLORE TOPICS & INDUSTRIES ═══════════════════════════ */}
+                <Box
+                    component="section"
+                    aria-labelledby="explore-topics-heading"
+                    sx={{ bgcolor: '#fff', py: { xs: 8, md: 12 }, borderTop: '1px solid', borderColor: 'divider' }}
+                >
                     <Container maxWidth="lg">
-                        <Box sx={{ textAlign: 'center', mb: 6 }}>
-                            <Typography variant="overline" sx={{ color: 'secondary.main', fontWeight: 800, letterSpacing: '0.12em' }}>Categories</Typography>
-                            <Typography variant="h4" sx={{ fontWeight: 800, mt: 0.5 }}>Explore Topics &amp; Industries</Typography>
-                            <Typography color="text.secondary" sx={{ mt: 1 }}>Browse data from hundreds of verified industry verticals</Typography>
-                        </Box>
-                        <Grid container spacing={2.5}>
-                            {topics.map(topic => (
-                                <Grid key={topic.label} size={{ xs: 6, sm: 4, md: 3, lg: 2 }}>
-                                    <Card component={Link} to="/sectors"
-                                        sx={{
-                                            textDecoration: 'none', p: 0, textAlign: 'center', cursor: 'pointer',
-                                            overflow: 'hidden', position: 'relative',
-                                            transition: 'all 0.25s cubic-bezier(.4,0,.2,1)',
-                                            borderBottom: '3px solid transparent',
-                                            '&:hover': {
-                                                transform: 'translateY(-4px)',
-                                                boxShadow: '0 12px 32px rgba(0,51,153,0.15)',
-                                                borderBottomColor: 'secondary.main',
-                                                '& .topic-icon-wrap': {
-                                                    background: 'linear-gradient(135deg, #003399 0%, #1e40af 100%)',
-                                                },
-                                                '& .topic-icon-wrap .material-symbols-outlined': { color: '#fff' },
-                                                '& .topic-arrow': { opacity: 1, transform: 'translateX(0)' },
-                                            },
-                                        }}>
-                                        {/* Icon */}
-                                        <Box className="topic-icon-wrap" sx={{
-                                            width: '100%', py: 3,
-                                            background: 'linear-gradient(135deg, rgba(0,51,153,0.06) 0%, rgba(0,51,153,0.02) 100%)',
-                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                            transition: 'background 0.25s ease',
-                                        }}>
-                                            <span className="material-symbols-outlined" style={{ fontSize: 34, color: '#003399', transition: 'color 0.25s ease' }}>{topic.icon}</span>
-                                        </Box>
-                                        {/* Label + count */}
-                                        <Box sx={{ p: 2, pt: 1.5 }}>
-                                            <Typography variant="body2" sx={{ fontWeight: 700, color: 'text.primary', mb: 0.25 }}>{topic.label}</Typography>
-                                            <Stack direction="row" alignItems="center" justifyContent="center" gap={0.5}>
-                                                <Typography variant="caption" sx={{ color: 'primary.main', fontWeight: 800, fontSize: '0.7rem' }}>{topic.count}</Typography>
-                                                <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.65rem' }}>stats</Typography>
-                                                <ArrowForwardIcon className="topic-arrow" sx={{ fontSize: 12, color: 'secondary.main', ml: 0.5, opacity: 0, transform: 'translateX(-4px)', transition: 'all 0.2s ease' }} />
-                                            </Stack>
-                                        </Box>
-                                    </Card>
+                        <Grid container spacing={{ xs: 4, md: 6 }} alignItems="flex-start">
+                            <Grid size={{ xs: 12, md: 4 }} sx={{ md: { position: 'sticky', top: 88, alignSelf: 'flex-start' } }}>
+                                <Box sx={{ borderLeft: '4px solid', borderColor: 'secondary.main', pl: 2.5, mb: 2 }}>
+                                    <Typography variant="overline" sx={{ color: 'secondary.main', fontWeight: 800, letterSpacing: '0.14em' }}>
+                                        {t('home.categories')}
+                                    </Typography>
+                                    <Typography
+                                        id="explore-topics-heading"
+                                        variant="h4"
+                                        sx={{ fontWeight: 800, mt: 1, lineHeight: 1.15, fontFamily: '"League Spartan", sans-serif' }}
+                                    >
+                                        {t('home.exploreTopicsTitle')}
+                                    </Typography>
+                                </Box>
+                                <Typography variant="body1" color="text.secondary" sx={{ mb: 3, lineHeight: 1.75, maxWidth: 360 }}>
+                                    {t('home.exploreTopicsSub')}
+                                </Typography>
+                                <Button
+                                    component={Link}
+                                    to="/sectors"
+                                    variant="contained"
+                                    color="secondary"
+                                    endIcon={<ArrowForwardIcon />}
+                                    disableElevation
+                                    sx={{ fontWeight: 700, px: 3, display: { xs: 'none', md: 'inline-flex' } }}
+                                >
+                                    {t('home.viewAllTopics')}
+                                </Button>
+                            </Grid>
+                            <Grid size={{ xs: 12, md: 8 }} sx={{ minWidth: 0 }}>
+                                <Grid container spacing={2}>
+                                    {topics.map((topic, i) => {
+                                        const src = homeImagery.topicTiles[i % homeImagery.topicTiles.length]
+                                        return (
+                                            <Grid key={topic.label} size={{ xs: 6, sm: 4 }} sx={{ minWidth: 0, display: 'flex' }}>
+                                                <Card
+                                                    component={Link}
+                                                    to="/sectors"
+                                                    sx={{
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        width: '100%',
+                                                        minWidth: 0,
+                                                        alignSelf: 'stretch',
+                                                        textDecoration: 'none',
+                                                        color: 'inherit',
+                                                        p: 0,
+                                                        overflow: 'hidden',
+                                                        borderRadius: 2,
+                                                        border: '1px solid',
+                                                        borderColor: 'divider',
+                                                        boxSizing: 'border-box',
+                                                        transition: 'border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease',
+                                                        '&:hover': {
+                                                            borderColor: 'secondary.main',
+                                                            boxShadow: '0 8px 24px rgba(25, 127, 148, 0.1)',
+                                                            transform: 'translateY(-2px)',
+                                                            '& .topic-tile-img': { transform: 'scale(1.04)' },
+                                                        },
+                                                    }}
+                                                >
+                                                    {/* Image area — explicit height so absolute img cannot collapse the card */}
+                                                    <Box
+                                                        sx={{
+                                                            position: 'relative',
+                                                            width: '100%',
+                                                            height: { xs: 118, sm: 132 },
+                                                            flexShrink: 0,
+                                                            overflow: 'hidden',
+                                                        }}
+                                                    >
+                                                        <Box
+                                                            component="img"
+                                                            className="topic-tile-img"
+                                                            src={src}
+                                                            alt=""
+                                                            sx={{
+                                                                position: 'absolute',
+                                                                inset: 0,
+                                                                width: '100%',
+                                                                height: '100%',
+                                                                objectFit: 'cover',
+                                                                display: 'block',
+                                                                transition: 'transform 0.45s cubic-bezier(0.22, 1, 0.36, 1)',
+                                                            }}
+                                                        />
+                                                        <Box
+                                                            aria-hidden
+                                                            sx={{
+                                                                position: 'absolute',
+                                                                inset: 0,
+                                                                background: 'linear-gradient(180deg, rgba(15,23,42,0) 40%, rgba(15,23,42,0.35) 100%)',
+                                                                pointerEvents: 'none',
+                                                            }}
+                                                        />
+                                                    </Box>
+                                                    {/* Label + stats — document flow footer (no overlap) */}
+                                                    <Box
+                                                        sx={{
+                                                            flexShrink: 0,
+                                                            px: 1.5,
+                                                            py: 1.25,
+                                                            bgcolor: '#1a2332',
+                                                            borderTop: '2px solid',
+                                                            borderColor: 'secondary.main',
+                                                        }}
+                                                    >
+                                                        <Stack direction="row" alignItems="flex-start" gap={1} sx={{ minWidth: 0 }}>
+                                                            <Box
+                                                                sx={{
+                                                                    width: 30,
+                                                                    height: 30,
+                                                                    borderRadius: 1,
+                                                                    bgcolor: 'rgba(255,255,255,0.12)',
+                                                                    display: 'flex',
+                                                                    alignItems: 'center',
+                                                                    justifyContent: 'center',
+                                                                    flexShrink: 0,
+                                                                    mt: 0.125,
+                                                                }}
+                                                            >
+                                                                <span className="material-symbols-outlined" style={{ fontSize: 17, color: '#e2e8f0' }}>
+                                                                    {topic.icon}
+                                                                </span>
+                                                            </Box>
+                                                            <Box sx={{ minWidth: 0, flex: 1 }}>
+                                                                <Typography
+                                                                    variant="body2"
+                                                                    component="div"
+                                                                    sx={{
+                                                                        fontWeight: 700,
+                                                                        color: '#fff',
+                                                                        lineHeight: 1.35,
+                                                                        wordBreak: 'break-word',
+                                                                    }}
+                                                                >
+                                                                    {topic.label}
+                                                                </Typography>
+                                                                <Typography
+                                                                    variant="caption"
+                                                                    component="div"
+                                                                    sx={{
+                                                                        display: 'block',
+                                                                        mt: 0.35,
+                                                                        color: 'rgba(203,213,225,0.9)',
+                                                                        fontWeight: 600,
+                                                                        fontSize: '0.6875rem',
+                                                                        letterSpacing: '0.02em',
+                                                                    }}
+                                                                >
+                                                                    {topic.count} · {t('common.stats')}
+                                                                </Typography>
+                                                            </Box>
+                                                        </Stack>
+                                                    </Box>
+                                                </Card>
+                                            </Grid>
+                                        )
+                                    })}
                                 </Grid>
-                            ))}
+                                <Box sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'center', mt: 4 }}>
+                                    <Button
+                                        component={Link}
+                                        to="/sectors"
+                                        variant="contained"
+                                        color="secondary"
+                                        endIcon={<ArrowForwardIcon />}
+                                        disableElevation
+                                        fullWidth
+                                        sx={{ fontWeight: 700, maxWidth: 360 }}
+                                    >
+                                        {t('home.viewAllTopics')}
+                                    </Button>
+                                </Box>
+                            </Grid>
                         </Grid>
-                        <Box sx={{ textAlign: 'center', mt: 5 }}>
-                            <Button component={Link} to="/sectors" variant="outlined" color="primary" endIcon={<ArrowForwardIcon />} sx={{ px: 4, fontWeight: 700 }}>View all topics</Button>
-                        </Box>
                     </Container>
                 </Box>
 
                 {/* ═══ PRODUCT FEATURE SPLIT ═══════════════════════════════════ */}
-                <Box sx={{ bgcolor: '#fff', py: { xs: 7, md: 10 } }}>
+                <Box sx={{ bgcolor: '#fff', py: { xs: 8, md: 11 } }}>
                     <Container maxWidth="lg">
-                        <Grid container spacing={{ xs: 4, md: 8 }} alignItems="center">
+                        <Grid container spacing={{ xs: 5, md: 10 }} alignItems="center">
                             <Grid size={{ xs: 12, md: 6 }}>
-                                <Typography variant="overline" sx={{ color: 'secondary.main', fontWeight: 800, letterSpacing: '0.12em' }}>Platform</Typography>
+                                <Typography variant="overline" sx={{ color: 'secondary.main', fontWeight: 800, letterSpacing: '0.12em' }}>{t('home.platformOverline')}</Typography>
                                 <Typography variant="h3" sx={{ fontWeight: 800, mt: 0.5, mb: 3, fontSize: { xs: '1.75rem', md: '2.25rem' }, lineHeight: 1.2 }}>
-                                    Access the world's most comprehensive data platform
+                                    {t('home.platformTitle')}
                                 </Typography>
-                                <Typography color="text.secondary" sx={{ lineHeight: 1.8, mb: 4 }}>
-                                    DataVault gives you instant access to over 1.2 million verified statistics. Download charts in multiple formats, filter by region, industry, or date range — all in one place.
+                                <Typography color="text.secondary" sx={{ lineHeight: 1.85, mb: 4, fontSize: '1.02rem' }}>
+                                    {t('home.platformBody')}
                                 </Typography>
                                 <Stack spacing={2} sx={{ mb: 5 }}>
-                                    {[
-                                        'Download as PNG, PDF, CSV, or PowerPoint',
-                                        'Cite statistics with proper academic references',
-                                        'Compare data across 195 countries',
-                                        'Real-time market tracking & alerts',
-                                    ].map((f, i) => (
+                                    {platformFeatures.map((f, i) => (
                                         <Stack key={i} direction="row" alignItems="center" gap={1.5}>
                                             <CheckCircleIcon sx={{ color: 'secondary.main', fontSize: 20, flexShrink: 0 }} />
                                             <Typography variant="body2" fontWeight={500}>{f}</Typography>
                                         </Stack>
                                     ))}
                                 </Stack>
-                                <Button component={Link} to="/pricing" variant="contained" size="large" sx={{ px: 5, fontWeight: 700 }}>Start for free</Button>
+                                <Button component={Link} to="/pricing" variant="contained" color="secondary" size="large" sx={{ px: 5, fontWeight: 700 }} disableElevation>
+                                    {t('home.startFree')}
+                                </Button>
                             </Grid>
                             <Grid size={{ xs: 12, md: 6 }}>
-                                {/* Dashboard mockup */}
-                                <Box sx={{ bgcolor: '#f8fafc', borderRadius: 4, border: '1px solid #e2e8f0', overflow: 'hidden', boxShadow: '0 20px 60px rgba(0,51,153,0.1)' }}>
-                                    {/* Fake browser chrome */}
-                                    <Box sx={{ bgcolor: '#e2e8f0', px: 2, py: 1, display: 'flex', alignItems: 'center', gap: 0.75 }}>
-                                        {['#f87171', '#fbbf24', '#34d399'].map(c => <Box key={c} sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: c }} />)}
-                                        <Box sx={{ flex: 1, bgcolor: '#fff', borderRadius: 1, height: 20, mx: 1 }} />
-                                    </Box>
-                                    {/* Mock header */}
-                                    <Box sx={{ bgcolor: '#0a1628', px: 2, py: 1.5 }}>
-                                        <Stack direction="row" alignItems="center" gap={1}>
-                                            <StorageIcon sx={{ color: '#60a5fa', fontSize: 18 }} />
-                                            <Typography sx={{ color: '#fff', fontSize: '0.75rem', fontWeight: 700, fontFamily: '"Playfair Display", serif' }}>DataVault</Typography>
-                                        </Stack>
-                                    </Box>
-                                    {/* Mock content */}
-                                    <Box sx={{ p: 3 }}>
-                                        <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Global AI Market Size — 2022–2030</Typography>
-                                        <Stack direction="row" alignItems="flex-end" gap={0.75} sx={{ height: 120, mt: 2, mb: 1.5 }}>
-                                            {[18, 27, 38, 52, 66, 79, 88, 95].map((h, i) => (
-                                                <Box key={i} sx={{ flex: 1, bgcolor: i === 7 ? 'secondary.main' : 'primary.main', opacity: 0.6 + i * 0.05, borderRadius: '3px 3px 0 0', height: `${h}%` }} />
-                                            ))}
-                                        </Stack>
-                                        <Stack direction="row" justifyContent="space-between">
-                                            {['2022', '2023', '2024', '2025', '2026', '2027', '2028', '2029'].map(y => (
-                                                <Typography key={y} variant="caption" sx={{ fontSize: '0.55rem', color: 'text.secondary' }}>{y}</Typography>
-                                            ))}
-                                        </Stack>
-                                        <Divider sx={{ my: 2 }} />
-                                        <Stack direction="row" gap={2}>
-                                            {[
-                                                { label: 'Value 2024', val: '$142B', color: 'primary.main' },
-                                                { label: 'Growth Rate', val: '+35%', color: 'success.main' },
-                                                { label: 'Forecast 2030', val: '$1.3T', color: 'secondary.main' },
-                                            ].map((m, i) => (
-                                                <Box key={i} sx={{ flex: 1, p: 1.5, bgcolor: '#f1f5f9', borderRadius: 2, textAlign: 'center' }}>
-                                                    <Typography variant="caption" color="text.secondary" display="block" sx={{ fontSize: '0.6rem' }}>{m.label}</Typography>
-                                                    <Typography sx={{ fontWeight: 900, fontSize: '0.875rem', color: m.color }}>{m.val}</Typography>
-                                                </Box>
-                                            ))}
-                                        </Stack>
-                                        <Stack direction="row" gap={1} sx={{ mt: 2 }}>
-                                            <Button size="small" variant="contained" startIcon={<DownloadIcon fontSize="small" />} sx={{ fontSize: '0.7rem', flex: 1 }}>Download PNG</Button>
-                                            <Button size="small" variant="outlined" sx={{ fontSize: '0.7rem', flex: 1 }}>Cite Source</Button>
-                                        </Stack>
+                                <Box
+                                    sx={{
+                                        borderRadius: 2,
+                                        overflow: 'hidden',
+                                        border: '1px solid',
+                                        borderColor: 'divider',
+                                        bgcolor: 'background.paper',
+                                    }}
+                                >
+                                    <Box
+                                        component="img"
+                                        src={homeImagery.platform}
+                                        alt=""
+                                        sx={{ width: '100%', height: { xs: 280, md: 380 }, objectFit: 'cover', display: 'block' }}
+                                    />
+                                    <Box sx={{ px: 3, py: 2, borderTop: '1px solid', borderColor: 'divider', bgcolor: '#f8fafc' }}>
+                                        <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600, letterSpacing: '0.06em' }}>
+                                            {t('home.mockChartTitle')}
+                                        </Typography>
                                     </Box>
                                 </Box>
                             </Grid>
@@ -422,56 +612,66 @@ export default function HomePage() {
                 </Box>
 
                 {/* ═══ INFOGRAPHIC HIGHLIGHT ═══════════════════════════════════ */}
-                <Box sx={{ bgcolor: '#f8fafc', py: { xs: 7, md: 10 } }}>
+                <Box sx={{ bgcolor: '#EBECF1', py: { xs: 8, md: 11 } }}>
                     <Container maxWidth="lg">
-                        <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems="flex-start" sx={{ mb: 5 }} gap={2}>
+                        <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems="flex-start" sx={{ mb: 6 }} gap={2}>
                             <Box>
-                                <Typography variant="overline" sx={{ color: 'secondary.main', fontWeight: 800, letterSpacing: '0.12em' }}>Insights</Typography>
-                                <Typography variant="h4" sx={{ fontWeight: 800, mt: 0.5 }}>Popular Data Reports</Typography>
+                                <Typography variant="overline" sx={{ color: 'secondary.main', fontWeight: 800, letterSpacing: '0.12em' }}>{t('home.insights')}</Typography>
+                                <Typography variant="h4" sx={{ fontWeight: 800, mt: 0.5 }}>{t('home.popularReports')}</Typography>
                             </Box>
-                            <Button component={Link} to="/reports" endIcon={<ArrowRightAltIcon />} sx={{ fontWeight: 700, color: 'primary.main', flexShrink: 0 }}>View all reports</Button>
+                            <Button component={Link} to="/reports" endIcon={<ArrowRightAltIcon />} sx={{ fontWeight: 700, color: 'primary.main', flexShrink: 0 }}>{t('home.viewAllReports')}</Button>
                         </Stack>
-                        <Grid container spacing={3}>
-                            {/* Big infographic card */}
+                        <Grid container spacing={4}>
                             <Grid size={{ xs: 12, md: 7 }}>
-                                <Card sx={{ height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-                                    <Box sx={{ bgcolor: '#1e293b', p: 4, flexGrow: 1 }}>
-                                        <Chip label="Corporate Data" size="small" sx={{ bgcolor: 'rgba(255,102,0,0.15)', color: '#ff6600', mb: 3, fontWeight: 700 }} />
-                                        <Typography variant="h5" sx={{ color: '#fff', fontWeight: 800, lineHeight: 1.3, mb: 1.5 }}>
-                                            The Digital Divide: Internet Access Rates by Country
+                                <Card sx={{ height: '100%', overflow: 'hidden', display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
+                                    <Box
+                                        sx={{
+                                            width: { xs: '100%', md: '42%' },
+                                            minHeight: { xs: 220, md: 'auto' },
+                                            flexShrink: 0,
+                                        }}
+                                    >
+                                        <Box
+                                            component="img"
+                                            src={homeImagery.infographic}
+                                            alt=""
+                                            sx={{ width: '100%', height: '100%', minHeight: { xs: 220, md: 360 }, objectFit: 'cover', display: 'block' }}
+                                        />
+                                    </Box>
+                                    <Box sx={{ p: { xs: 3, md: 4 }, flex: 1, display: 'flex', flexDirection: 'column' }}>
+                                        <Chip label={t('home.corporateData')} size="small" sx={{ bgcolor: 'secondary.light', color: 'secondary.dark', mb: 2, fontWeight: 700, width: 'fit-content' }} />
+                                        <Typography variant="h5" sx={{ fontWeight: 800, lineHeight: 1.3, mb: 1.5 }}>
+                                            {t('home.infographicTitle')}
                                         </Typography>
-                                        <Typography sx={{ color: '#94a3b8', fontSize: '0.875rem', mb: 4, lineHeight: 1.6 }}>
-                                            The gap between high and low-income nations remains stark: top-tier countries boast 87%+ penetration, while the lowest remain under 20%.
+                                        <Typography color="text.secondary" sx={{ fontSize: '0.9375rem', mb: 3, lineHeight: 1.65 }}>
+                                            {t('home.infographicSub')}
                                         </Typography>
-                                        {/* Horizontal bar chart */}
-                                        <Box sx={{ bgcolor: 'rgba(255,255,255,0.04)', borderRadius: 2, p: 2.5 }}>
+                                        <Box sx={{ bgcolor: '#f8fafc', borderRadius: 2, p: 2.5, border: '1px solid', borderColor: 'divider', flexGrow: 1 }}>
                                             <MiniHBarChart rows={infographicBars} />
                                         </Box>
-                                    </Box>
-                                    <Box sx={{ p: 2.5, borderTop: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                        <Stack direction="row" alignItems="center" gap={1}>
-                                            <Chip label="Free preview" size="small" sx={{ bgcolor: 'rgba(16,185,129,0.1)', color: '#059669' }} />
-                                            <Typography variant="caption" color="text.secondary">Source: ITU, 2024</Typography>
+                                        <Stack direction={{ xs: 'column', sm: 'row' }} alignItems={{ sm: 'center' }} justifyContent="space-between" gap={2} sx={{ mt: 3 }}>
+                                            <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
+                                                <Chip label={t('home.freePreview')} size="small" sx={{ bgcolor: 'rgba(13,148,136,0.1)', color: 'success.dark', fontWeight: 700 }} />
+                                                <Typography variant="caption" color="text.secondary">{t('common.source')}: ITU, 2024</Typography>
+                                            </Stack>
+                                            <Button component={Link} to="/reports/1" variant="contained" color="secondary" size="small" sx={{ fontWeight: 700 }} disableElevation>
+                                                {t('home.viewFullReport')}
+                                            </Button>
                                         </Stack>
-                                        <Button component={Link} to="/reports/1" variant="contained" size="small" sx={{ fontWeight: 700 }}>View full report</Button>
                                     </Box>
                                 </Card>
                             </Grid>
-                            {/* Side stat cards */}
                             <Grid size={{ xs: 12, md: 5 }}>
                                 <Stack spacing={3} sx={{ height: '100%' }}>
-                                    {[
-                                        { tag: 'Commerce', title: 'Global B2B e-commerce volume 2019-2027', value: '$18.7T', date: 'Mar 2024', bars: [30, 42, 55, 62, 72, 81, 91] },
-                                        { tag: 'Health', title: 'Digital health market size worldwide 2021-2030', value: '$680B', date: 'Jan 2024', bars: [22, 34, 47, 58, 68, 76, 85] },
-                                    ].map((s, i) => (
-                                        <Card key={i} component={Link} to="/reports/1" sx={{ textDecoration: 'none', p: 3, flex: 1, transition: 'box-shadow 0.2s', '&:hover': { boxShadow: '0 8px 24px rgba(0,51,153,0.1)' } }}>
-                                            <Chip label={s.tag} size="small" sx={{ bgcolor: 'rgba(0,51,153,0.08)', color: 'primary.main', fontWeight: 700, mb: 1.5, fontSize: '0.7rem' }} />
+                                    {sideReports.map((s, i) => (
+                                        <Card key={i} component={Link} to="/reports/1" sx={{ textDecoration: 'none', p: 3, flex: 1, transition: 'box-shadow 0.2s', '&:hover': { boxShadow: '0 6px 24px rgba(26,35,50,0.07)' } }}>
+                                            <Chip label={s.tag} size="small" sx={{ bgcolor: 'rgba(75,91,114,0.08)', color: 'primary.main', fontWeight: 700, mb: 1.5, fontSize: '0.7rem' }} />
                                             <Typography variant="body2" fontWeight={600} sx={{ mb: 2, lineHeight: 1.5 }}>{s.title}</Typography>
-                                            <Box sx={{ bgcolor: '#f8fafc', borderRadius: 1.5, p: 1.5 }}>
+                                            <Box sx={{ bgcolor: '#f8fafc', borderRadius: 1.5, p: 1.5, border: '1px solid', borderColor: 'divider' }}>
                                                 <Typography variant="h6" sx={{ fontWeight: 900, color: 'primary.main', mb: 0.5 }}>{s.value}</Typography>
                                                 <MiniBarChart bars={s.bars} />
                                             </Box>
-                                            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1.5 }}>Updated {s.date}</Typography>
+                                            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1.5 }}>{t('common.updated')} {s.date}</Typography>
                                         </Card>
                                     ))}
                                 </Stack>
@@ -481,31 +681,31 @@ export default function HomePage() {
                 </Box>
 
                 {/* ═══ PRICING PLANS ═══════════════════════════════════════════ */}
-                <Box sx={{ bgcolor: '#fff', py: { xs: 7, md: 10 } }}>
+                <Box sx={{ bgcolor: '#fff', py: { xs: 8, md: 11 } }}>
                     <Container maxWidth="lg">
-                        <Box sx={{ textAlign: 'center', mb: 7 }}>
-                            <Typography variant="overline" sx={{ color: 'secondary.main', fontWeight: 800, letterSpacing: '0.12em' }}>Pricing</Typography>
-                            <Typography variant="h4" sx={{ fontWeight: 800, mt: 0.5, mb: 1.5 }}>Choose your plan</Typography>
-                            <Typography color="text.secondary">Start free, upgrade when you need more.</Typography>
+                        <Box sx={{ textAlign: 'center', mb: 8 }}>
+                            <Typography variant="overline" sx={{ color: 'secondary.main', fontWeight: 800, letterSpacing: '0.12em' }}>{t('home.pricingOverline')}</Typography>
+                            <Typography variant="h4" sx={{ fontWeight: 800, mt: 0.5, mb: 1.5 }}>{t('home.choosePlan')}</Typography>
+                            <Typography color="text.secondary">{t('home.pricingSub')}</Typography>
                         </Box>
-                        <Grid container spacing={3} alignItems="stretch">
+                        <Grid container spacing={4} alignItems="stretch">
                             {pricingPlans.map((plan, i) => (
                                 <Grid key={i} size={{ xs: 12, md: 4 }}>
                                     <Card sx={{
                                         p: 4, height: '100%', display: 'flex', flexDirection: 'column', position: 'relative',
                                         overflow: 'visible',
-                                        ...(plan.highlight && {
+                                        ...(plan.highlight === true && {
                                             border: '2px solid',
-                                            borderColor: 'primary.main',
-                                            boxShadow: '0 20px 60px rgba(0,51,153,0.15)',
+                                            borderColor: 'secondary.main',
+                                            boxShadow: 'none',
                                             mt: 2,
                                         }),
                                     }}>
-                                        {plan.highlight && (
-                                            <Chip label="Most Popular" size="small" color="primary"
+                                        {plan.highlight === true && (
+                                            <Chip label={t('home.mostPopularChip')} size="small" color="primary"
                                                 sx={{ position: 'absolute', top: -14, left: '50%', transform: 'translateX(-50%)', fontWeight: 700, px: 1 }} />
                                         )}
-                                        <Typography variant="overline" sx={{ fontWeight: 800, letterSpacing: '0.12em', color: plan.highlight ? 'primary.main' : 'text.secondary' }}>{plan.name}</Typography>
+                                        <Typography variant="overline" sx={{ fontWeight: 800, letterSpacing: '0.12em', color: plan.highlight === true ? 'primary.main' : 'text.secondary' }}>{plan.name}</Typography>
                                         <Stack direction="row" alignItems="baseline" gap={0.5} sx={{ mb: 0.5, mt: 1 }}>
                                             <Typography sx={{ fontWeight: 900, fontSize: '2.25rem', color: 'text.primary', lineHeight: 1 }}>{plan.price}</Typography>
                                             <Typography variant="body2" color="text.secondary">{plan.per}</Typography>
@@ -514,12 +714,12 @@ export default function HomePage() {
                                         <Stack spacing={1.5} sx={{ flexGrow: 1, mb: 4 }}>
                                             {plan.features.map((f, j) => (
                                                 <Stack key={j} direction="row" alignItems="center" gap={1.5}>
-                                                    <CheckCircleIcon sx={{ fontSize: 18, color: plan.highlight ? 'primary.main' : 'success.main', flexShrink: 0 }} />
+                                                    <CheckCircleIcon sx={{ fontSize: 18, color: plan.highlight === true ? 'primary.main' : 'success.main', flexShrink: 0 }} />
                                                     <Typography variant="body2" color="text.secondary">{f}</Typography>
                                                 </Stack>
                                             ))}
                                         </Stack>
-                                        <Button component={Link} to="/pricing" variant={plan.variant} color="primary" fullWidth size="large" sx={{ fontWeight: 700, py: 1.5 }}>
+                                        <Button component={Link} to="/pricing" variant={plan.variant} color={plan.highlight ? 'secondary' : 'primary'} fullWidth size="large" sx={{ fontWeight: 700, py: 1.5 }} disableElevation>
                                             {plan.cta}
                                         </Button>
                                     </Card>
@@ -530,62 +730,180 @@ export default function HomePage() {
                 </Box>
 
                 {/* ═══ TRUST + CTA BANNER ══════════════════════════════════════ */}
-                <Box sx={{ bgcolor: '#0a1628', py: { xs: 7, md: 10 } }}>
-                    <Container maxWidth="md" sx={{ textAlign: 'center' }}>
+                <Box sx={{ position: 'relative', py: { xs: 9, md: 12 }, overflow: 'hidden' }}>
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            inset: 0,
+                            backgroundImage: `linear-gradient(105deg, rgba(26,35,50,0.92) 0%, rgba(26,35,50,0.88) 45%, rgba(15,23,42,0.85) 100%), url(${homeImagery.trust})`,
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
+                        }}
+                    />
+                    <Container maxWidth="md" sx={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
                         <Typography variant="h3" sx={{ color: '#fff', fontWeight: 800, mb: 2.5, fontSize: { xs: '1.75rem', md: '2.5rem' } }}>
-                            Trusted by 2.5 million professionals
+                            {t('home.trustTitle')}
                         </Typography>
-                        <Typography sx={{ color: '#94a3b8', fontSize: '1.0625rem', mb: 6, lineHeight: 1.7, maxWidth: 520, mx: 'auto' }}>
-                            Analysts, journalists, consultants, and researchers across 195 countries rely on DataVault every day.
+                        <Typography sx={{ color: '#cbd5e1', fontSize: '1.0625rem', mb: 5, lineHeight: 1.75, maxWidth: 520, mx: 'auto' }}>
+                            {t('home.trustSub')}
                         </Typography>
-                        <Grid container spacing={3} sx={{ mb: 7 }}>
-                            {[
-                                { value: '2.5M+', label: 'Monthly users' },
-                                { value: '195', label: 'Countries covered' },
-                                { value: '80K+', label: 'Verified sources' },
-                                { value: '99.9%', label: 'Uptime SLA' },
-                            ].map((m, i) => (
-                                <Grid key={i} size={{ xs: 6, md: 3 }}>
-                                    <Box sx={{ p: 3, borderRadius: 3, border: '1px solid rgba(255,255,255,0.08)', bgcolor: 'rgba(255,255,255,0.03)' }}>
-                                        <Typography sx={{ color: '#60a5fa', fontWeight: 900, fontSize: '2rem', mb: 0.5 }}>{m.value}</Typography>
-                                        <Typography sx={{ color: '#64748b', fontSize: '0.8125rem', fontWeight: 600 }}>{m.label}</Typography>
-                                    </Box>
-                                </Grid>
-                            ))}
-                        </Grid>
                         <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="center" gap={2}>
-                            <Button component={Link} to="/pricing" variant="contained" color="secondary" size="large" sx={{ px: 6, py: 1.75, fontWeight: 700, fontSize: '1rem' }}>
-                                Start free trial
+                            <Button component={Link} to="/pricing" variant="contained" color="secondary" size="large" sx={{ px: 6, py: 1.75, fontWeight: 700, fontSize: '1rem' }} disableElevation>
+                                {t('home.startTrial')}
                             </Button>
                             <Button component={Link} to="/reports" variant="outlined" size="large"
                                 sx={{ px: 6, py: 1.75, fontWeight: 700, fontSize: '1rem', color: '#fff', borderColor: 'rgba(255,255,255,0.2)', '&:hover': { bgcolor: 'rgba(255,255,255,0.06)', borderColor: 'rgba(255,255,255,0.4)' } }}>
-                                Browse data
+                                {t('home.browseData')}
                             </Button>
                         </Stack>
                     </Container>
                 </Box>
 
-                {/* ═══ CATEGORY LINKS ══════════════════════════════════════════ */}
-                <Box sx={{ bgcolor: '#f8fafc', py: { xs: 5, md: 7 }, borderTop: '1px solid #e2e8f0' }}>
-                    <Container maxWidth="lg">
-                        <Typography variant="body2" sx={{ fontWeight: 700, color: 'text.secondary', mb: 4, textTransform: 'uppercase', letterSpacing: '0.1em', fontSize: '0.7rem' }}>
-                            Explore by Category
-                        </Typography>
-                        <Grid container spacing={3}>
-                            {categoryLinks.map(cat => (
-                                <Grid key={cat.title} size={{ xs: 6, sm: 4, md: 2 }}>
-                                    <Typography variant="body2" fontWeight={700} sx={{ mb: 1.5, color: 'text.primary' }}>{cat.title}</Typography>
-                                    <Stack spacing={0.5}>
-                                        {cat.links.map(l => (
-                                            <Box key={l} component={Link} to="/reports"
-                                                sx={{ fontSize: '0.8125rem', color: 'text.secondary', textDecoration: 'none', '&:hover': { color: 'primary.main' }, transition: 'color 0.15s' }}>
-                                                {l}
-                                            </Box>
-                                        ))}
-                                    </Stack>
+                {/* ═══ METHODOLOGY ═════════════════════════════════════════════ */}
+                <Box
+                    component="section"
+                    sx={{
+                        bgcolor: '#fff',
+                        py: { xs: 4, md: 5 },
+                        borderTop: '1px solid',
+                        borderColor: 'divider',
+                    }}
+                >
+                    <Container maxWidth="md" sx={{ px: { xs: 2, md: 3 } }}>
+                        <Box id="methodology" sx={{ scrollMarginTop: '88px', width: '100%' }}>
+                            <Typography
+                                id="home-methodology-strip-title"
+                                variant="h6"
+                                sx={{ fontFamily: '"League Spartan", sans-serif', fontWeight: 800, color: 'text.primary', mb: 0.75 }}
+                            >
+                                {t('methodology.title')}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary" sx={{ mb: 3, lineHeight: 1.55, maxWidth: 560 }}>
+                                {t('home.methodologyStripHint')}
+                            </Typography>
+                            <Paper
+                                elevation={0}
+                                sx={{
+                                    p: { xs: 2.5, md: 3 },
+                                    borderRadius: 2,
+                                    bgcolor: '#f8fafc',
+                                    border: '1px solid',
+                                    borderColor: 'divider',
+                                }}
+                            >
+                                <Grid container spacing={2}>
+                                    <Grid size={{ xs: 12, sm: 4 }}>
+                                        <TextField
+                                            fullWidth
+                                            size="small"
+                                            label={t('methodology.population')}
+                                            value={population}
+                                            onChange={e => setPopulation(e.target.value)}
+                                            type="number"
+                                            inputProps={{ min: 1 }}
+                                        />
+                                    </Grid>
+                                    <Grid size={{ xs: 12, sm: 4 }}>
+                                        <TextField
+                                            fullWidth
+                                            size="small"
+                                            select
+                                            label={t('methodology.confidence')}
+                                            value={confidence}
+                                            onChange={e => setConfidence(Number(e.target.value))}
+                                        >
+                                            {confidenceLevels.map(opt => (
+                                                <MenuItem key={opt.value} value={opt.value}>
+                                                    {opt.label}
+                                                </MenuItem>
+                                            ))}
+                                        </TextField>
+                                    </Grid>
+                                    <Grid size={{ xs: 12, sm: 4 }}>
+                                        <TextField
+                                            fullWidth
+                                            size="small"
+                                            label={t('methodology.margin')}
+                                            value={margin}
+                                            onChange={e => setMargin(e.target.value)}
+                                            type="number"
+                                            inputProps={{ min: 0.1, step: 0.1 }}
+                                        />
+                                    </Grid>
+                                    <Grid size={{ xs: 12 }}>
+                                        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ sm: 'center' }} flexWrap="wrap">
+                                            <Button variant="contained" color="secondary" onClick={runSampleCalc} disableElevation sx={{ fontWeight: 700, px: 3 }}>
+                                                {t('methodology.calculate')}
+                                            </Button>
+                                            {sampleResult != null && (
+                                                <Box
+                                                    sx={{
+                                                        px: 2,
+                                                        py: 1,
+                                                        borderRadius: 1.5,
+                                                        bgcolor: 'rgba(25, 127, 148, 0.1)',
+                                                        border: '1px solid',
+                                                        borderColor: 'rgba(25, 127, 148, 0.25)',
+                                                    }}
+                                                >
+                                                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontStyle: 'normal', fontSize: '0.75rem' }}>
+                                                        {t('methodology.result')}
+                                                    </Typography>
+                                                    <Typography variant="h5" sx={{ fontWeight: 800, color: 'secondary.main', lineHeight: 1.2, fontFamily: '"League Spartan", sans-serif' }}>
+                                                        {sampleResult}
+                                                    </Typography>
+                                                </Box>
+                                            )}
+                                        </Stack>
+                                    </Grid>
                                 </Grid>
-                            ))}
-                        </Grid>
+                            </Paper>
+                        </Box>
+                    </Container>
+                </Box>
+
+                {/* ═══ CORPORATE ══════════════════════════════════════════════ */}
+                <Box
+                    component="section"
+                    sx={{
+                        bgcolor: '#1a2332',
+                        borderTop: '1px solid rgba(255,255,255,0.08)',
+                        py: { xs: 4, md: 5 },
+                    }}
+                >
+                    <Container maxWidth="sm" sx={{ px: { xs: 2, md: 3 } }}>
+                        <Box id="corporate" sx={{ scrollMarginTop: '88px' }}>
+                            <Typography
+                                id="home-corporate-heading"
+                                variant="h5"
+                                sx={{ fontFamily: '"League Spartan", sans-serif', fontWeight: 800, color: '#fff', mb: 1 }}
+                            >
+                                {t('corporate.title')}
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: 'rgba(226,232,240,0.85)', mb: 3, lineHeight: 1.55 }}>
+                                {t('corporate.subtitle')}
+                            </Typography>
+                            <Paper
+                                elevation={0}
+                                sx={{
+                                    p: { xs: 2.5, md: 3 },
+                                    borderRadius: 2,
+                                    bgcolor: '#fff',
+                                    border: '1px solid',
+                                    borderColor: 'divider',
+                                }}
+                            >
+                                <Stack spacing={2} component="form" onSubmit={e => e.preventDefault()}>
+                                    <TextField label={t('corporate.name')} name="name" autoComplete="name" fullWidth size="small" />
+                                    <TextField label={t('corporate.email')} name="email" type="email" autoComplete="email" fullWidth size="small" />
+                                    <TextField label={t('corporate.subject')} name="subject" fullWidth size="small" />
+                                    <TextField label={t('corporate.body')} name="body" multiline rows={4} fullWidth size="small" />
+                                    <Button type="submit" variant="contained" color="secondary" disableElevation fullWidth sx={{ fontWeight: 700, py: 1 }}>
+                                        {t('corporate.send')}
+                                    </Button>
+                                </Stack>
+                            </Paper>
+                        </Box>
                     </Container>
                 </Box>
 
