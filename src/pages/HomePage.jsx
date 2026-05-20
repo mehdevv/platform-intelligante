@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import Box from '@mui/material/Box'
@@ -8,6 +8,7 @@ import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 import Card from '@mui/material/Card'
+import IconButton from '@mui/material/IconButton'
 import Grid from '@mui/material/Grid'
 import Stack from '@mui/material/Stack'
 import Chip from '@mui/material/Chip'
@@ -16,6 +17,8 @@ import LinearProgress from '@mui/material/LinearProgress'
 import MenuItem from '@mui/material/MenuItem'
 import Paper from '@mui/material/Paper'
 import SearchIcon from '@mui/icons-material/Search'
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
+import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
@@ -116,6 +119,36 @@ export default function HomePage() {
         const v = t('home.topics', { returnObjects: true })
         return Array.isArray(v) ? v : []
     }, [t, i18n.language])
+    const topicsScrollRef = useRef(null)
+    const [topicsCarouselScroll, setTopicsCarouselScroll] = useState({ canLeft: false, canRight: true })
+
+    const syncTopicsCarouselScroll = () => {
+        const el = topicsScrollRef.current
+        if (!el) return
+        const { scrollLeft, scrollWidth, clientWidth } = el
+        setTopicsCarouselScroll({
+            canLeft: scrollLeft > 6,
+            canRight: scrollLeft < scrollWidth - clientWidth - 6,
+        })
+    }
+
+    const scrollTopicsCarousel = dir => {
+        const el = topicsScrollRef.current
+        if (!el) return
+        el.scrollBy({ left: dir * Math.min(320, el.clientWidth * 0.75), behavior: 'smooth' })
+    }
+
+    useEffect(() => {
+        syncTopicsCarouselScroll()
+        const onResize = () => syncTopicsCarouselScroll()
+        window.addEventListener('resize', onResize, { passive: true })
+        const id = requestAnimationFrame(syncTopicsCarouselScroll)
+        return () => {
+            window.removeEventListener('resize', onResize)
+            cancelAnimationFrame(id)
+        }
+    }, [topics])
+
     const pricingPlans = useMemo(() => {
         const v = t('home.pricingPlans', { returnObjects: true })
         return Array.isArray(v) ? v : []
@@ -134,9 +167,9 @@ export default function HomePage() {
     return (
         <Box sx={{ bgcolor: 'background.paper' }}>
             <Header />
-            <Box component="main" sx={{ pt: '64px' }}>
+            <Box component="main" sx={{ pt: 0 }}>
 
-                {/* ═══ HERO ════════════════════════════════════════════════════ */}
+                {/* ═══ HERO (full bleed under fixed header; inner pad clears toolbar) ═══ */}
                 <Box
                     sx={{
                         bgcolor: '#1a2332',
@@ -158,31 +191,15 @@ export default function HomePage() {
                         vignette="navy"
                     />
                     <Box
-                        component="img"
-                        src="/heroshape.png"
-                        alt=""
-                        aria-hidden
-                        sx={{
-                            display: { xs: 'none', md: 'block' },
-                            position: 'absolute',
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            width: '100%',
-                            height: 'auto',
-                            pointerEvents: 'none',
-                            zIndex: 1,
-                            userSelect: 'none',
-                        }}
-                    />
-                    <Box
                         sx={{
                             position: 'relative',
-                            zIndex: 2,
-                            minHeight: 'calc(100vh - 64px)',
+                            zIndex: 1,
+                            minHeight: '100vh',
+                            boxSizing: 'border-box',
                             display: 'flex',
                             alignItems: 'center',
-                            py: { xs: 4, md: 6 },
+                            pt: { xs: 'calc(64px + 32px)', md: 'calc(64px + 48px)' },
+                            pb: { xs: 4, md: 6 },
                         }}
                     >
                     <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, width: '100%' }} className="section-fade-in">
@@ -374,28 +391,64 @@ export default function HomePage() {
                     </Container>
                 </Box>
 
-                {/* ═══ EXPLORE TOPICS & INDUSTRIES ═══════════════════════════ */}
+                {/* ═══ EXPLORE TOPICS & INDUSTRIES (carousel + heading overlay) ═══ */}
                 <Box
                     component="section"
                     aria-labelledby="explore-topics-heading"
-                    sx={{ bgcolor: '#fff', py: { xs: 8, md: 12 }, borderTop: '1px solid', borderColor: 'divider' }}
+                    sx={{
+                        bgcolor: '#fff',
+                        py: { xs: 6, md: 8 },
+                        borderTop: '1px solid',
+                        borderColor: 'divider',
+                        position: 'relative',
+                        overflow: 'hidden',
+                    }}
                 >
-                    <Container maxWidth="lg">
-                        <Grid container spacing={{ xs: 4, md: 6 }} alignItems="flex-start">
-                            <Grid size={{ xs: 12, md: 4 }} sx={{ md: { position: 'sticky', top: 88, alignSelf: 'flex-start' } }}>
-                                <Box sx={{ borderLeft: '4px solid', borderColor: 'secondary.main', pl: 2.5, mb: 2 }}>
-                                    <Typography variant="overline" sx={{ color: 'secondary.main', fontWeight: 800, letterSpacing: '0.14em' }}>
-                                        {t('home.categories')}
-                                    </Typography>
-                                    <Typography
-                                        id="explore-topics-heading"
-                                        variant="h4"
-                                        sx={{ fontWeight: 800, mt: 1, lineHeight: 1.15, fontFamily: '"League Spartan", sans-serif' }}
-                                    >
-                                        {t('home.exploreTopicsTitle')}
-                                    </Typography>
-                                </Box>
-                                <Typography variant="body1" color="text.secondary" sx={{ mb: 3, lineHeight: 1.75, maxWidth: 360 }}>
+                    <Container maxWidth="lg" sx={{ position: 'relative' }}>
+                        {/* Heading sits over the top of the carousel (gradient lets cards show through below) */}
+                        <Box
+                            sx={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                zIndex: 3,
+                                pt: 0,
+                                pb: { xs: 5, md: 6 },
+                                pointerEvents: 'none',
+                                background: 'linear-gradient(180deg, #ffffff 0%, rgba(255,255,255,0.97) 42%, rgba(255,255,255,0.72) 72%, rgba(255,255,255,0) 100%)',
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    maxWidth: 720,
+                                    mx: 'auto',
+                                    px: { xs: 1.5, sm: 2 },
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    textAlign: 'center',
+                                }}
+                            >
+                                <Box
+                                    aria-hidden
+                                    sx={{ width: 40, height: 4, bgcolor: 'secondary.main', borderRadius: 1, mb: 2 }}
+                                />
+                                <Typography variant="overline" sx={{ color: 'secondary.main', fontWeight: 800, letterSpacing: '0.14em' }}>
+                                    {t('home.categories')}
+                                </Typography>
+                                <Typography
+                                    id="explore-topics-heading"
+                                    variant="h4"
+                                    sx={{ fontWeight: 800, mt: 1, lineHeight: 1.15, fontFamily: '"League Spartan", sans-serif', maxWidth: 640 }}
+                                >
+                                    {t('home.exploreTopicsTitle')}
+                                </Typography>
+                                <Typography
+                                    variant="body1"
+                                    color="text.secondary"
+                                    sx={{ mt: 1.5, mb: 2.5, lineHeight: 1.75, maxWidth: 560, mx: 'auto' }}
+                                >
                                     {t('home.exploreTopicsSub')}
                                 </Typography>
                                 <Button
@@ -405,158 +458,217 @@ export default function HomePage() {
                                     color="secondary"
                                     endIcon={<ArrowForwardIcon />}
                                     disableElevation
-                                    sx={{ fontWeight: 700, px: 3, display: { xs: 'none', md: 'inline-flex' } }}
+                                    sx={{ fontWeight: 700, px: 3, pointerEvents: 'auto', display: { xs: 'none', sm: 'inline-flex' } }}
                                 >
                                     {t('home.viewAllTopics')}
                                 </Button>
-                            </Grid>
-                            <Grid size={{ xs: 12, md: 8 }} sx={{ minWidth: 0 }}>
-                                <Grid container spacing={2}>
-                                    {topics.map((topic, i) => {
-                                        const src = homeImagery.topicTiles[i % homeImagery.topicTiles.length]
-                                        return (
-                                            <Grid key={topic.label} size={{ xs: 6, sm: 4 }} sx={{ minWidth: 0, display: 'flex' }}>
-                                                <Card
-                                                    component={Link}
-                                                    to="/sectors"
+                            </Box>
+                        </Box>
+
+                        {/* Space for heading overlay; carousel sits below with wider side margins */}
+                        <Box
+                            aria-hidden
+                            sx={{ minHeight: { xs: '13.5rem', sm: '12.5rem', md: '11.5rem' }, flexShrink: 0 }}
+                        />
+
+                        <Stack
+                            direction="row"
+                            alignItems="center"
+                            sx={{
+                                px: { xs: 3, sm: 4, md: 6, lg: 8 },
+                                gap: { xs: 0, md: 2.5 },
+                            }}
+                        >
+                            <IconButton
+                                type="button"
+                                aria-label="Scroll topics left"
+                                onClick={() => scrollTopicsCarousel(-1)}
+                                disabled={!topicsCarouselScroll.canLeft}
+                                sx={{
+                                    display: { xs: 'none', md: 'inline-flex' },
+                                    flexShrink: 0,
+                                    alignSelf: 'center',
+                                    bgcolor: 'background.paper',
+                                    boxShadow: 2,
+                                    border: '1px solid',
+                                    borderColor: 'divider',
+                                    '&:hover': { bgcolor: 'grey.50' },
+                                }}
+                            >
+                                <ChevronLeftIcon />
+                            </IconButton>
+
+                            <Box
+                                ref={topicsScrollRef}
+                                onScroll={syncTopicsCarouselScroll}
+                                className="no-scrollbar"
+                                sx={{
+                                    flex: 1,
+                                    minWidth: 0,
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'stretch',
+                                    gap: 2,
+                                    overflowX: 'auto',
+                                    overflowY: 'hidden',
+                                    scrollSnapType: 'x mandatory',
+                                    py: 2,
+                                    WebkitOverflowScrolling: 'touch',
+                                }}
+                            >
+                                {topics.map((topic, i) => {
+                                    const src = homeImagery.topicTiles[i % homeImagery.topicTiles.length]
+                                    return (
+                                        <Card
+                                            key={`${topic.label}-${i}`}
+                                            component={Link}
+                                            to="/sectors"
+                                            sx={{
+                                                flex: '0 0 auto',
+                                                scrollSnapAlign: 'start',
+                                                width: { xs: 'min(82vw, 300px)', sm: 272, md: 292 },
+                                                height: { xs: 300, sm: 320, md: 340 },
+                                                position: 'relative',
+                                                textDecoration: 'none',
+                                                color: 'inherit',
+                                                p: 0,
+                                                overflow: 'hidden',
+                                                borderRadius: 2,
+                                                border: '1px solid',
+                                                borderColor: 'divider',
+                                                boxSizing: 'border-box',
+                                                transition: 'border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease',
+                                                '&:hover': {
+                                                    borderColor: 'secondary.main',
+                                                    boxShadow: '0 12px 32px rgba(25, 127, 148, 0.14)',
+                                                    transform: 'translateY(-3px)',
+                                                    '& .topic-carousel-img': { transform: 'scale(1.05)' },
+                                                },
+                                            }}
+                                        >
+                                            <Box
+                                                component="img"
+                                                className="topic-carousel-img"
+                                                src={src}
+                                                alt=""
+                                                sx={{
+                                                    position: 'absolute',
+                                                    inset: 0,
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    objectFit: 'cover',
+                                                    display: 'block',
+                                                    transition: 'transform 0.45s cubic-bezier(0.22, 1, 0.36, 1)',
+                                                }}
+                                            />
+                                            <Box
+                                                aria-hidden
+                                                sx={{
+                                                    position: 'absolute',
+                                                    inset: 0,
+                                                    background: 'linear-gradient(180deg, rgba(15,23,42,0.15) 0%, rgba(15,23,42,0) 38%, rgba(15,23,42,0.55) 85%, rgba(15,23,42,0.88) 100%)',
+                                                    pointerEvents: 'none',
+                                                }}
+                                            />
+                                            <Stack
+                                                direction="row"
+                                                alignItems="flex-end"
+                                                gap={1.25}
+                                                sx={{
+                                                    position: 'absolute',
+                                                    left: 0,
+                                                    right: 0,
+                                                    bottom: 0,
+                                                    p: 2,
+                                                    minWidth: 0,
+                                                }}
+                                            >
+                                                <Box
                                                     sx={{
+                                                        width: 36,
+                                                        height: 36,
+                                                        borderRadius: 1,
+                                                        bgcolor: 'rgba(255,255,255,0.18)',
                                                         display: 'flex',
-                                                        flexDirection: 'column',
-                                                        width: '100%',
-                                                        minWidth: 0,
-                                                        alignSelf: 'stretch',
-                                                        textDecoration: 'none',
-                                                        color: 'inherit',
-                                                        p: 0,
-                                                        overflow: 'hidden',
-                                                        borderRadius: 2,
-                                                        border: '1px solid',
-                                                        borderColor: 'divider',
-                                                        boxSizing: 'border-box',
-                                                        transition: 'border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease',
-                                                        '&:hover': {
-                                                            borderColor: 'secondary.main',
-                                                            boxShadow: '0 8px 24px rgba(25, 127, 148, 0.1)',
-                                                            transform: 'translateY(-2px)',
-                                                            '& .topic-tile-img': { transform: 'scale(1.04)' },
-                                                        },
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        flexShrink: 0,
+                                                        border: '1px solid rgba(255,255,255,0.2)',
                                                     }}
                                                 >
-                                                    {/* Image area — explicit height so absolute img cannot collapse the card */}
-                                                    <Box
+                                                    <span className="material-symbols-outlined" style={{ fontSize: 20, color: '#f1f5f9' }}>
+                                                        {topic.icon}
+                                                    </span>
+                                                </Box>
+                                                <Box sx={{ minWidth: 0, flex: 1, pb: 0.125 }}>
+                                                    <Typography
+                                                        variant="subtitle1"
+                                                        component="div"
                                                         sx={{
-                                                            position: 'relative',
-                                                            width: '100%',
-                                                            height: { xs: 118, sm: 132 },
-                                                            flexShrink: 0,
-                                                            overflow: 'hidden',
+                                                            fontWeight: 800,
+                                                            color: '#fff',
+                                                            lineHeight: 1.25,
+                                                            fontFamily: '"League Spartan", sans-serif',
+                                                            textShadow: '0 1px 12px rgba(0,0,0,0.35)',
                                                         }}
                                                     >
-                                                        <Box
-                                                            component="img"
-                                                            className="topic-tile-img"
-                                                            src={src}
-                                                            alt=""
-                                                            sx={{
-                                                                position: 'absolute',
-                                                                inset: 0,
-                                                                width: '100%',
-                                                                height: '100%',
-                                                                objectFit: 'cover',
-                                                                display: 'block',
-                                                                transition: 'transform 0.45s cubic-bezier(0.22, 1, 0.36, 1)',
-                                                            }}
-                                                        />
-                                                        <Box
-                                                            aria-hidden
-                                                            sx={{
-                                                                position: 'absolute',
-                                                                inset: 0,
-                                                                background: 'linear-gradient(180deg, rgba(15,23,42,0) 40%, rgba(15,23,42,0.35) 100%)',
-                                                                pointerEvents: 'none',
-                                                            }}
-                                                        />
-                                                    </Box>
-                                                    {/* Label + stats — document flow footer (no overlap) */}
-                                                    <Box
+                                                        {topic.label}
+                                                    </Typography>
+                                                    <Typography
+                                                        variant="caption"
+                                                        component="div"
                                                         sx={{
-                                                            flexShrink: 0,
-                                                            px: 1.5,
-                                                            py: 1.25,
-                                                            bgcolor: '#1a2332',
-                                                            borderTop: '2px solid',
-                                                            borderColor: 'secondary.main',
+                                                            display: 'block',
+                                                            mt: 0.35,
+                                                            color: 'rgba(226,232,240,0.95)',
+                                                            fontWeight: 600,
+                                                            fontSize: '0.75rem',
+                                                            letterSpacing: '0.03em',
                                                         }}
                                                     >
-                                                        <Stack direction="row" alignItems="flex-start" gap={1} sx={{ minWidth: 0 }}>
-                                                            <Box
-                                                                sx={{
-                                                                    width: 30,
-                                                                    height: 30,
-                                                                    borderRadius: 1,
-                                                                    bgcolor: 'rgba(255,255,255,0.12)',
-                                                                    display: 'flex',
-                                                                    alignItems: 'center',
-                                                                    justifyContent: 'center',
-                                                                    flexShrink: 0,
-                                                                    mt: 0.125,
-                                                                }}
-                                                            >
-                                                                <span className="material-symbols-outlined" style={{ fontSize: 17, color: '#e2e8f0' }}>
-                                                                    {topic.icon}
-                                                                </span>
-                                                            </Box>
-                                                            <Box sx={{ minWidth: 0, flex: 1 }}>
-                                                                <Typography
-                                                                    variant="body2"
-                                                                    component="div"
-                                                                    sx={{
-                                                                        fontWeight: 700,
-                                                                        color: '#fff',
-                                                                        lineHeight: 1.35,
-                                                                        wordBreak: 'break-word',
-                                                                    }}
-                                                                >
-                                                                    {topic.label}
-                                                                </Typography>
-                                                                <Typography
-                                                                    variant="caption"
-                                                                    component="div"
-                                                                    sx={{
-                                                                        display: 'block',
-                                                                        mt: 0.35,
-                                                                        color: 'rgba(203,213,225,0.9)',
-                                                                        fontWeight: 600,
-                                                                        fontSize: '0.6875rem',
-                                                                        letterSpacing: '0.02em',
-                                                                    }}
-                                                                >
-                                                                    {topic.count} · {t('common.stats')}
-                                                                </Typography>
-                                                            </Box>
-                                                        </Stack>
-                                                    </Box>
-                                                </Card>
-                                            </Grid>
-                                        )
-                                    })}
-                                </Grid>
-                                <Box sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'center', mt: 4 }}>
-                                    <Button
-                                        component={Link}
-                                        to="/sectors"
-                                        variant="contained"
-                                        color="secondary"
-                                        endIcon={<ArrowForwardIcon />}
-                                        disableElevation
-                                        fullWidth
-                                        sx={{ fontWeight: 700, maxWidth: 360 }}
-                                    >
-                                        {t('home.viewAllTopics')}
-                                    </Button>
-                                </Box>
-                            </Grid>
-                        </Grid>
+                                                        {topic.count} · {t('common.stats')}
+                                                    </Typography>
+                                                </Box>
+                                            </Stack>
+                                        </Card>
+                                    )
+                                })}
+                            </Box>
+
+                            <IconButton
+                                type="button"
+                                aria-label="Scroll topics right"
+                                onClick={() => scrollTopicsCarousel(1)}
+                                disabled={!topicsCarouselScroll.canRight}
+                                sx={{
+                                    display: { xs: 'none', md: 'inline-flex' },
+                                    flexShrink: 0,
+                                    alignSelf: 'center',
+                                    bgcolor: 'background.paper',
+                                    boxShadow: 2,
+                                    border: '1px solid',
+                                    borderColor: 'divider',
+                                    '&:hover': { bgcolor: 'grey.50' },
+                                }}
+                            >
+                                <ChevronRightIcon />
+                            </IconButton>
+                        </Stack>
+
+                        <Box sx={{ display: { xs: 'flex', sm: 'none' }, justifyContent: 'center', mt: 3 }}>
+                            <Button
+                                component={Link}
+                                to="/sectors"
+                                variant="contained"
+                                color="secondary"
+                                endIcon={<ArrowForwardIcon />}
+                                disableElevation
+                                fullWidth
+                                sx={{ fontWeight: 700, maxWidth: 360 }}
+                            >
+                                {t('home.viewAllTopics')}
+                            </Button>
+                        </Box>
                     </Container>
                 </Box>
 
