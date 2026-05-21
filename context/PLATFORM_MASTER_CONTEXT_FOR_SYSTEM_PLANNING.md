@@ -76,7 +76,7 @@ Researcha is a **B2B market intelligence platform**: curated **sector reports**,
 | **`/admin/*`** | Staff with **admin / editor** roles (RBAC) | **All platform content** the product exposes: reports catalogue, **sectors** taxonomy, **blog** posts, bulk **import**, **promotions**, **platform settings**. **All users**: subscribers, plans, seats (Corporate), entitlements, suspension/support flags — with **immutable audit** and optional read-only replicas for analytics. |
 | **`/dashboard/*`** | Authenticated **subscriber** (individual or org member) | **Only that account’s data**, derived from **plan entitlements**: quota usage, entitled library, watchlist, activity timeline, **billing**, and **statistics / usage** (metrics and charts gated by tier — e.g. Simple sees a reduced set or upsell; Premium+ sees full usage trends). Never show other customers’ data. |
 
-**Implication:** admin analytics (`/admin/analytics`) aggregates **cross-tenant** product metrics; dashboard statistics (`/dashboard/statistics`) are **single-tenant** and **plan-aware**.
+**Implication:** cross-tenant traffic is embedded on **Admin → Overview** (`AdminGoogleAnalyticsEmbed`, GA4 via Looker Studio); dashboard statistics (`/dashboard/statistics`) are **single-tenant** and **plan-aware**.
 
 ### 2.5 Non-goals (unless spec changes)
 
@@ -126,12 +126,12 @@ Legend: **Done (UI)** = user-visible route exists. **Stub** = page exists but da
 | My reports / library | Purchased entitlements | **Stub** `MyReportsPage`, `DashboardReportsPage` |
 | Checkout | Cart / payment / success | **Stub** `CheckoutPage`; need `/purchase/success` |
 | Subscriber dashboard | Plan, quota, activity, **plan-scoped statistics**, AI link | **Stub** `DashboardLayout` + subpages; `/dashboard/statistics` UI stub |
-| Admin — all content | Reports, **sectors**, **blog**, import, promos, homepage/feature flags | **Stub** — new routes `/admin/sectors`, `/admin/blog`; reports CRUD stub |
+| Admin — all content | Reports, **sectors**, **blog**, homepage/feature flags | **Stub** — routes `/admin/sectors`, `/admin/blog`; reports CRUD stub; **import / promos routes removed** |
 | Admin CRUD reports | List, create, edit, publish | **Stub** `AdminLayout` + reports pages; sample table rows |
-| Admin import | Bulk ingest | **Stub** `AdminImportPage` |
-| Admin promotions | Coupons, featured | **Stub** `AdminPromotionsPage` |
+| Admin import | — | **Removed** from UI; `/admin/import` → redirect `/admin` |
+| Admin promotions | — | **Removed** from UI; `/admin/promotions` → redirect `/admin` |
 | Admin users | **All** subscribers, plans, seats, entitlements, support actions | **Stub** `AdminUsersPage` — target full user lifecycle (read/update, audited) |
-| Admin analytics | Traffic, conversions | **Stub** `AdminAnalyticsPage` |
+| Admin traffic (GA4) | Traffic, conversions | **Looker Studio embed** on `AdminOverviewPage` |
 | Admin audit | Immutable admin actions | **Stub** `AdminAuditPage` |
 | Blog / news | List + post | **Done (UI)** static/demo content |
 | Methodology simulator | Sample size / MOE | **Done (UI)** `MethodologyPage` |
@@ -166,16 +166,15 @@ Legend: **Done (UI)** = user-visible route exists. **Stub** = page exists but da
 | `/dashboard/billing` | `DashboardBillingPage` | |
 | `/dashboard/settings` | `DashboardSettingsPage` | |
 | `/profile` | `ProfilePage` | |
-| `/admin` | `AdminLayout` → `AdminOverviewPage` | **Unprotected** |
+| `/admin` | `AdminLayout` → `AdminOverviewPage` (+ optional `AdminGoogleAnalyticsEmbed`) | Staff; KPI counts + GA embed + storage |
 | `/admin/reports` | `AdminReportsPage` | |
 | `/admin/sectors` | `AdminSectorsPage` | Taxonomy CMS (stub) |
 | `/admin/blog` | `AdminBlogPage` | Editorial CMS (stub) |
 | `/admin/reports/new` | `AdminReportNewPage` | **Must stay before** `:reportId` |
 | `/admin/reports/:reportId` | `AdminReportEditPage` | |
-| `/admin/import` | `AdminImportPage` | |
-| `/admin/promotions` | `AdminPromotionsPage` | |
+| `/admin/import` | `Navigate` → `/admin` | Legacy URL |
+| `/admin/promotions` | `Navigate` → `/admin` | Legacy URL |
 | `/admin/users` | `AdminUsersPage` | |
-| `/admin/analytics` | `AdminAnalyticsPage` | |
 | `/admin/audit` | `AdminAuditPage` | |
 | `/admin/settings` | `AdminSettingsPage` | |
 | `/ai` | `AIAgentPage` | Full-screen chat shell |
@@ -435,16 +434,15 @@ When PDFs are added, place under `context/references/` and update this section.
 | `/dashboard/statistics` | `DashboardStatisticsPage` | Header + **plan chip** → **4 metric cards** (quota-related usage) → **trends card** + `EmptyState` (charts when API exists). Gate depth by plan. |
 | `/dashboard/billing` | `DashboardBillingPage` | Header → **plan card** (`maxWidth` ~480) + CTAs to checkout/pricing. |
 | `/dashboard/settings` | `DashboardSettingsPage` | Header → **form card** (`maxWidth` ~520), notification prefs (save disabled in stub). |
-| `/admin` | `AdminOverviewPage` | Header → **3 KPI cards** (placeholders) → **6 shortcut cards** to admin areas. |
+| `/admin` | `AdminOverviewPage` | Header → **3 KPI cards** (counts) → **GA embed** (optional `VITE_GA_ADMIN_EMBED_URL`) → **storage** card. |
 | `/admin/reports` | `AdminReportsPage` | **Master card**: toolbar (search, status filter, New) → **table** (responsive column hide) → footer (caption + disabled pagination). |
 | `/admin/sectors` | `AdminSectorsPage` | Header → **card** + `EmptyState` (sector CRUD target). |
 | `/admin/blog` | `AdminBlogPage` | Header → **card** + `EmptyState` (posts CMS target). |
-| `/admin/reports/new` | `AdminReportNewPage` | Header → **narrow form card** (~640), Save draft + Cancel. |
+| `/admin/reports/new` | `AdminReportNewPage` | Header → **narrow form card** (~640), Publish + Cancel. |
 | `/admin/reports/:id` | `AdminReportEditPage` | Header (shows id) → **form card**, Save + Back. |
-| `/admin/import` | `AdminImportPage` | Header → **card** + `EmptyState` (upload pipeline). |
-| `/admin/promotions` | `AdminPromotionsPage` | Header → **card** + `EmptyState`. |
+| `/admin/import` | `Navigate` → `/admin` | Removed from nav; legacy bookmark. |
+| `/admin/promotions` | `Navigate` → `/admin` | Removed from nav; legacy bookmark. |
 | `/admin/users` | `AdminUsersPage` | Header → **card** + `EmptyState` (directory). |
-| `/admin/analytics` | `AdminAnalyticsPage` | Header → **card** + `EmptyState` (metrics when wired). |
 | `/admin/audit` | `AdminAuditPage` | Header → **card** + `EmptyState` (immutable log). |
 | `/admin/settings` | `AdminSettingsPage` | Header → **form card** (~560), platform config (stub). |
 

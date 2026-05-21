@@ -131,12 +131,9 @@
     "title": "Insights & news",
     "subtitle": "Economic briefs, sector notes, and platform updates.",
     "readArticle": "Read article",
-    "posts": [
-      { "slug": "north-africa-outlook", "title": "North Africa macro outlook Q2", "excerpt": "Growth, inflation, and key risks across Maghreb economies.", "date": "Mar 15, 2026", "tag": "Macro" },
-      { "slug": "energy-transition", "title": "Energy transition indicators", "excerpt": "Renewables share and grid investment benchmarks.", "date": "Mar 8, 2026", "tag": "Energy" },
-      { "slug": "fintech-adoption", "title": "Fintech adoption in MENA", "excerpt": "Digital payments and regulatory snapshots.", "date": "Feb 28, 2026", "tag": "Finance" }
-    ],
-    "postBody": "This is a preview article. Connect your CMS or Supabase content table to render full posts with SEO-friendly slugs.",
+    "empty": "No published articles yet. Editors can add posts from the admin area.",
+    "sources": "Sources & references",
+    "noBody": "No article body has been added for this post yet.",
     "notFound": "Article not found."
   },
   "methodology": {
@@ -172,11 +169,82 @@
   },
   "checkout": {
     "title": "Checkout",
-    "subtitle": "Review your plan (integration with Stripe / CIB coming soon).",
+    "subtitle": "Manual bank-transfer checkout. Transfer the amount to the RIB below and upload your receipt — the admin will grant your access after review.",
     "plan": "Selected plan",
     "total": "Total due today",
     "pay": "Complete payment",
-    "mockNote": "This is a UI placeholder — no charge will be made."
+    "mockNote": "This is a UI placeholder — no charge will be made.",
+    "rib": {
+      "subtitle": "Manual bank-transfer checkout. Transfer the amount to the RIB below and upload your receipt — the admin will grant your access after review.",
+      "heading": "Where to send the transfer",
+      "copy": "Use the details below for your bank transfer. Tap the copy icon next to any value to copy it.",
+      "bank": "Bank",
+      "holder": "Account holder",
+      "rib": "RIB",
+      "iban": "IBAN",
+      "swift": "SWIFT / BIC",
+      "notes": "Notes",
+      "uploadHeading": "Upload your transfer receipt",
+      "uploadHint": "Accepted formats: JPEG, PNG, WebP, GIF, PDF — up to 10 MB.",
+      "chooseFile": "Choose file",
+      "changeFile": "Change file",
+      "submit": "Submit receipt",
+      "submitting": "Submitting…",
+      "submittedTitle": "Receipt submitted",
+      "submittedBody": "We have received your receipt and the admin will review it. You will get access as soon as the payment is confirmed.",
+      "viewMyRequests": "Track my requests",
+      "backHome": "Back to home",
+      "amountDue": "Amount due",
+      "payingFor": "Paying for",
+      "subscribingTo": "Subscribing to",
+      "monthlyAccess": "monthly subscription",
+      "thirtyDays": "30 days of full sector access",
+      "requireAuth": "You need an account to upload a payment receipt. Sign in or create an account to continue.",
+      "notConfigured": "The platform's bank details are not configured yet. Please contact us — we cannot accept a receipt without a bank RIB on file.",
+      "notFoundReport": "Report not found.",
+      "notFoundSector": "Sector not found.",
+      "noTarget": "Choose a sector subscription or a single report to check out.",
+      "browsePlans": "Browse sector subscriptions",
+      "fileTooLarge": "File is larger than 10 MB."
+    }
+  },
+  "pricing": {
+    "sectorCarousel": {
+      "overline": "Sector subscriptions",
+      "title": "Pay per sector, monthly",
+      "subtitle": "Each subscription gives you 30 days of full access to every report in the sector — past and future. Pick the sectors you actually need.",
+      "subscriptionsAvailable": "active subscriptions available",
+      "cta": "Subscribe via bank transfer",
+      "exploreSector": "Browse sector",
+      "perMonth": "/ month",
+      "sectorSubscription": "Sector subscription",
+      "benefit1": "All reports in the sector — full PDF",
+      "benefit2": "30 days of access from approval",
+      "benefit3": "Cancel any time — no auto-renew",
+      "empty": "No sector subscriptions are available yet. Admins can set a monthly price on each sector in the admin dashboard.",
+      "singleReportTitle": "Need a single report instead?",
+      "singleReportBody": "Browse the catalogue and pay per report with the same bank-transfer flow.",
+      "singleReportCta": "Open the catalogue"
+    }
+  },
+  "dashboard": {
+    "payments": {
+      "title": "Payments & receipts",
+      "subtitle": "Bank-transfer receipts you uploaded. Access is granted once the admin approves your receipt.",
+      "empty": "No payment requests yet. Subscribe to a sector or buy a single report to start.",
+      "colSubmitted": "Submitted",
+      "colFor": "For",
+      "colAmount": "Amount",
+      "colStatus": "Status",
+      "colNote": "Reviewer note",
+      "browseSubscriptions": "Sector subscriptions",
+      "browseReports": "Browse reports",
+      "status": {
+        "pending": "Awaiting review",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      }
+    }
   },
   "forgotPassword": {
     "title": "Reset password",

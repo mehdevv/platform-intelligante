@@ -43,6 +43,23 @@ If you want to run **without** AI/RAG first, comment out in the migration file: 
 
 Alternatively, with [Supabase CLI](https://supabase.com/docs/guides/cli): `supabase db push` from the repo root (after linking the project).
 
+## Report PDF uploads (Storage)
+
+To let admins attach a PDF when creating a report, apply the storage migration and verify the bucket:
+
+- **Migration:** `supabase/migrations/20260521100000_report_pdf_storage.sql`
+- **Checklist:** `docs/supabase-report-pdfs-setup.md`
+- **Admin storage meter:** apply `supabase/migrations/20260523140000_admin_storage_usage_rpc.sql` so the admin overview and sidebar can show **used vs quota** storage. Set optional `VITE_SUPABASE_STORAGE_QUOTA_BYTES` in `.env` to match your plan limit (defaults to 1 GiB).
+- **Report images + sector icons (imgBB):** apply `supabase/migrations/20260524120000_report_images_sector_icons.sql` and set `VITE_IMGBB_API_KEY` — see `docs/imgbb-uploads-setup.md`.
+
+## Subscriptions API returning 500
+
+If `GET /rest/v1/subscriptions?...` returns **500**, PostgreSQL RLS on `organization_members` was likely **recursing** (a policy selected from the same table). Apply:
+
+- **`supabase/migrations/20260522120000_fix_org_members_rls_recursion.sql`**
+
+It adds `user_is_org_member()` (security definer) and rewrites policies for `organizations`, `organization_members`, `subscriptions`, and `invoices`.
+
 ## First admin user
 
 After you sign up once in **Authentication**:

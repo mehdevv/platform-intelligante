@@ -9,6 +9,7 @@ import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 import Stack from '@mui/material/Stack'
 import Chip from '@mui/material/Chip'
+import Avatar from '@mui/material/Avatar'
 import CircularProgress from '@mui/material/CircularProgress'
 import Alert from '@mui/material/Alert'
 import SearchIcon from '@mui/icons-material/Search'
@@ -97,11 +98,15 @@ export default function SectorsListingPage() {
                                 }}
                             >
                                 <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 2 }}>
-                                    <Box sx={{ p: 1.5, bgcolor: 'rgba(25,127,148,0.08)', borderRadius: 2, color: 'secondary.main' }}>
-                                        <span className="material-symbols-outlined" style={{ fontSize: 30 }}>
-                                            category
-                                        </span>
-                                    </Box>
+                                    {s.icon_image_url ? (
+                                        <Avatar src={s.icon_image_url} alt="" variant="rounded" sx={{ width: 56, height: 56 }} />
+                                    ) : (
+                                        <Box sx={{ p: 1.5, bgcolor: 'rgba(25,127,148,0.08)', borderRadius: 2, color: 'secondary.main' }}>
+                                            <span className="material-symbols-outlined" style={{ fontSize: 30 }}>
+                                                category
+                                            </span>
+                                        </Box>
+                                    )}
                                     {s.featured && <Chip label="Featured" size="small" color="secondary" variant="outlined" />}
                                 </Stack>
                                 <Typography variant="h6" sx={{ mb: 1, color: 'text.primary' }}>

@@ -11,4 +11,23 @@ export default defineConfig({
     root: appDir,
     envDir: appDir,
     plugins: [react()],
+    server: {
+        // imgBB API has no CORS for some browsers; proxy only in dev.
+        proxy: {
+            '/__imgbb': {
+                target: 'https://api.imgbb.com',
+                changeOrigin: true,
+                secure: true,
+                rewrite: p => p.replace(/^\/__imgbb/, ''),
+            },
+        },
+    },
+    resolve: {
+        // One pdfjs-dist for react-pdf + app (avoids API/worker split across versions in dev).
+        dedupe: ['pdfjs-dist'],
+    },
+    // Pre-bundle pdf-lib so dev never serves a stale `node_modules/.vite/deps/pdf-lib.js` (504 Outdated Optimize Dep).
+    optimizeDeps: {
+        include: ['pdf-lib', 'pdfjs-dist'],
+    },
 })

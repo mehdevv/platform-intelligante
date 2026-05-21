@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
@@ -14,8 +14,7 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
-import Select from '@mui/material/Select'
-import MenuItem from '@mui/material/MenuItem'
+import Alert from '@mui/material/Alert'
 import Pagination from '@mui/material/Pagination'
 import IconButton from '@mui/material/IconButton'
 import CircularProgress from '@mui/material/CircularProgress'
@@ -30,24 +29,34 @@ import { logAdminAction } from '../../lib/adminAudit'
 
 export default function AdminReportsPage() {
     const { supabase } = useAuth()
+    const location = useLocation()
+    const navigate = useNavigate()
     const [rows, setRows] = useState([])
     const [loading, setLoading] = useState(true)
     const [search, setSearch] = useState('')
-    const [statusFilter, setStatusFilter] = useState('all')
+    const [routeNotice, setRouteNotice] = useState(null)
 
     const load = async () => {
         if (!supabase) return
-        let q = supabase.from('reports').select('id, slug, title, status, view_count, sectors(name), created_at').order('updated_at', { ascending: false })
-        if (statusFilter !== 'all') q = q.eq('status', statusFilter)
-        const { data } = await q
+        const { data } = await supabase
+            .from('reports')
+            .select('id, slug, title, status, view_count, sectors(name), created_at')
+            .eq('status', 'published')
+            .order('updated_at', { ascending: false })
         setRows(data || [])
         setLoading(false)
     }
 
     useEffect(() => {
         queueMicrotask(() => load())
-        // eslint-disable-next-line react-hooks/exhaustive-deps -- reload on filter
-    }, [supabase, statusFilter])
+    }, [supabase])
+
+    useEffect(() => {
+        const n = location.state?.notice
+        if (!n?.text) return
+        setRouteNotice(n)
+        navigate('.', { replace: true, state: {} })
+    }, [location.state, navigate])
 
     const filtered = useMemo(() => {
         const s = search.trim().toLowerCase()
@@ -67,6 +76,11 @@ export default function AdminReportsPage() {
             <Typography variant="h5" fontWeight={800}>
                 Reports
             </Typography>
+            {routeNotice?.text && (
+                <Alert severity={routeNotice.severity === 'warning' ? 'warning' : 'info'} onClose={() => setRouteNotice(null)}>
+                    {routeNotice.text}
+                </Alert>
+            )}
             <Card variant="outlined" sx={{ borderRadius: 2, overflow: 'hidden' }}>
                 <Box sx={{ p: { xs: 2, md: 3 }, borderBottom: '1px solid', borderColor: 'divider' }}>
                     <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" alignItems={{ md: 'center' }} gap={2}>
@@ -75,7 +89,7 @@ export default function AdminReportsPage() {
                                 Catalogue
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                                Live data from Supabase (all statuses for staff).
+                                Published catalogue (live on the site).
                             </Typography>
                         </Box>
                         <Stack direction="row" gap={1} flexWrap="wrap">
@@ -87,13 +101,6 @@ export default function AdminReportsPage() {
                                 slotProps={{ input: { startAdornment: <InputAdornment position="start"><SearchIcon fontSize="small" /></InputAdornment> } }}
                                 sx={{ width: { xs: '100%', sm: 200 } }}
                             />
-                            <Select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} size="small" sx={{ minWidth: 120 }}>
-                                <MenuItem value="all">All status</MenuItem>
-                                <MenuItem value="published">Published</MenuItem>
-                                <MenuItem value="draft">Draft</MenuItem>
-                                <MenuItem value="review">Review</MenuItem>
-                                <MenuItem value="archived">Archived</MenuItem>
-                            </Select>
                             <Button component={Link} to="/admin/reports/new" variant="contained" color="secondary" startIcon={<AddIcon />} size="small" disableElevation>
                                 New
                             </Button>
@@ -112,7 +119,6 @@ export default function AdminReportsPage() {
                                     <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>ID</TableCell>
                                     <TableCell>Title</TableCell>
                                     <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>Sector</TableCell>
-                                    <TableCell>Status</TableCell>
                                     <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Views</TableCell>
                                     <TableCell align="right">Actions</TableCell>
                                 </TableRow>
@@ -133,18 +139,13 @@ export default function AdminReportsPage() {
                                         <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
                                             {r.sectors?.name && <Chip label={r.sectors.name} size="small" variant="outlined" />}
                                         </TableCell>
-                                        <TableCell>
-                                            <Chip label={r.status} size="small" variant="outlined" />
-                                        </TableCell>
                                         <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
                                             <Typography variant="caption">{r.view_count ?? 0}</Typography>
                                         </TableCell>
                                         <TableCell align="right">
-                                            {r.status === 'published' && (
-                                                <IconButton component={Link} to={reportPublicPath(r)} size="small" aria-label="Preview">
-                                                    <VisibilityIcon fontSize="small" />
-                                                </IconButton>
-                                            )}
+                                            <IconButton component={Link} to={reportPublicPath(r)} size="small" aria-label="View on site">
+                                                <VisibilityIcon fontSize="small" />
+                                            </IconButton>
                                             <IconButton component={Link} to={`/admin/reports/${r.id}`} size="small" aria-label="Edit">
                                                 <EditIcon fontSize="small" />
                                             </IconButton>

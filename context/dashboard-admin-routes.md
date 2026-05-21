@@ -65,7 +65,7 @@ This document describes **every** subscriber dashboard and admin page: **URL**, 
 
 ### `/dashboard/statistics` — `DashboardStatisticsPage.jsx`
 
-**Role:** **Plan-scoped** usage and trends for the signed-in subscriber only (contrast with `/admin/analytics`, which is cross-tenant).
+**Role:** **Plan-scoped** usage and trends for the signed-in subscriber only (contrast with **Admin → Overview**, where cross-tenant traffic is shown via an embedded GA4 / Looker Studio dashboard).
 
 | Section | Layout / design | Functionalities (target) | Current state |
 |---------|-----------------|---------------------------|---------------|
@@ -140,8 +140,9 @@ This document describes **every** subscriber dashboard and admin page: **URL**, 
 | Section | Layout / design | Functionalities (target) | Current state |
 |---------|-----------------|---------------------------|---------------|
 | **Header** | **h5** + **body2** (KPI policy) | — | Static |
-| **KPI row** | `Grid` 3× **Card** outlined on `sm` | **Reports live** (count published), **Active subs**, **Revenue MTD** (from payments API) — or hide until connected | Placeholder “—” + “Connect data” |
-| **Shortcuts grid** | `Grid` `xs=12 sm=6 md=4`, cards with title, desc, **Open** button | Deep links: Reports, **Sectors**, **Blog**, Import, Promotions, Users, Analytics, Audit | Eight shortcut cards |
+| **KPI row** | `Grid` 3× **Card** outlined on `sm` | Counts: **Reports (all)**, **Published reports**, **Profiles** from Supabase | Implemented |
+| **Traffic** | `Card` + **iframe** (optional) | Embed **Looker Studio** report (GA4) when `VITE_GA_ADMIN_EMBED_URL` is set | Instructions when unset |
+| **Storage** | `Card` + **AdminStorageUsage** | Used bytes (RPC) vs quota env | Implemented |
 
 ---
 
@@ -207,25 +208,9 @@ This document describes **every** subscriber dashboard and admin page: **URL**, 
 
 ---
 
-### `/admin/import` — `AdminImportPage.jsx`
+### ~~`/admin/import`~~ / ~~`/admin/promotions`~~ — removed
 
-**Role:** Bulk ingest (CSV manifest + ZIP PDFs).
-
-| Section | Layout / design | Functionalities (target) | Current state |
-|---------|-----------------|---------------------------|---------------|
-| **Header** | **h5** + **body2** (validation) | — | |
-| **Job area** | `Card` + **EmptyState** | Drag-drop or file picker; job table: status, progress, errors log; retry | Upload disabled |
-
----
-
-### `/admin/promotions` — `AdminPromotionsPage.jsx`
-
-**Role:** Coupons, featured homepage slots, time windows.
-
-| Section | Layout / design | Functionalities (target) | Current state |
-|---------|-----------------|---------------------------|---------------|
-| **Header** | **h5** + **body2** | — | |
-| **Content** | `Card` + **EmptyState** | Data grid: code, % off, valid dates, redemptions; **New** modal | New disabled |
+These admin routes and sidebar entries were **removed** from the product UI. Old URLs redirect to `/admin`. Any future bulk ingest, coupons, or featured slots can ship under new routes (e.g. payment / product tooling).
 
 ---
 
@@ -240,14 +225,9 @@ This document describes **every** subscriber dashboard and admin page: **URL**, 
 
 ---
 
-### `/admin/analytics` — `AdminAnalyticsPage.jsx`
+### ~~`/admin/analytics`~~ (removed)
 
-**Role:** Product analytics (not fake chart dashboard).
-
-| Section | Layout / design | Functionalities (target) | Current state |
-|---------|-----------------|---------------------------|---------------|
-| **Header** | **h5** + **body2** (event pipeline) | — | |
-| **Content** | `Card` + **EmptyState** (no CTA) | Funnels: signup → checkout → first report open; top searches; exports count | Not connected |
+**Cross-tenant traffic** is shown on **`/admin`** (Overview) via **`AdminGoogleAnalyticsEmbed`**: set **`VITE_GA_ADMIN_EMBED_URL`** to a Looker Studio **Embed report** URL (`https://…`). The legacy path **`/admin/analytics`** redirects to **`/admin`**.
 
 ---
 

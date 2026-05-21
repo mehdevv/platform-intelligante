@@ -125,7 +125,7 @@ export default function DashboardOverviewPage() {
 
             <Grid container spacing={3}>
                 {[
-                    { title: 'Statistics', desc: 'Usage and trends for your plan only.', to: '/dashboard/statistics', label: 'View stats' },
+                    { title: 'Payments', desc: 'Track bank-transfer receipts and their approval status.', to: '/dashboard/payments', label: 'View payments' },
                     { title: 'Search', desc: 'Full-text search across the catalogue.', to: '/search', label: 'Open search' },
                     { title: 'AI assistant', desc: 'Ask questions with paywall-aware answers.', to: '/ai', label: 'Open AI' },
                     { title: 'Watchlist', desc: 'Track sectors and new publications.', to: '/dashboard/watchlist', label: 'Manage' },

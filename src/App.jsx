@@ -17,20 +17,19 @@ import DashboardActivityPage from './pages/dashboard/DashboardActivityPage'
 import DashboardBillingPage from './pages/dashboard/DashboardBillingPage'
 import DashboardSettingsPage from './pages/dashboard/DashboardSettingsPage'
 import DashboardStatisticsPage from './pages/dashboard/DashboardStatisticsPage'
+import DashboardPaymentsPage from './pages/dashboard/DashboardPaymentsPage'
 import ProfilePage from './pages/ProfilePage'
 import AdminLayout from './layouts/AdminLayout'
 import AdminOverviewPage from './pages/admin/AdminOverviewPage'
 import AdminReportsPage from './pages/admin/AdminReportsPage'
 import AdminReportNewPage from './pages/admin/AdminReportNewPage'
 import AdminReportEditPage from './pages/admin/AdminReportEditPage'
-import AdminImportPage from './pages/admin/AdminImportPage'
-import AdminPromotionsPage from './pages/admin/AdminPromotionsPage'
 import AdminUsersPage from './pages/admin/AdminUsersPage'
-import AdminAnalyticsPage from './pages/admin/AdminAnalyticsPage'
 import AdminAuditPage from './pages/admin/AdminAuditPage'
 import AdminSettingsPage from './pages/admin/AdminSettingsPage'
 import AdminSectorsPage from './pages/admin/AdminSectorsPage'
 import AdminBlogPage from './pages/admin/AdminBlogPage'
+import AdminPaymentsPage from './pages/admin/AdminPaymentsPage'
 import AIAgentPage from './pages/AIAgentPage'
 import BlogListingPage from './pages/BlogListingPage'
 import BlogPostPage from './pages/BlogPostPage'
@@ -74,6 +73,7 @@ function App() {
                     <Route path="activity" element={<DashboardActivityPage />} />
                     <Route path="statistics" element={<DashboardStatisticsPage />} />
                     <Route path="billing" element={<DashboardBillingPage />} />
+                    <Route path="payments" element={<DashboardPaymentsPage />} />
                     <Route path="settings" element={<DashboardSettingsPage />} />
                 </Route>
                 <Route
@@ -98,11 +98,12 @@ function App() {
                     <Route path="blog" element={<AdminBlogPage />} />
                     <Route path="reports/new" element={<AdminReportNewPage />} />
                     <Route path="reports/:reportId" element={<AdminReportEditPage />} />
-                    <Route path="import" element={<AdminImportPage />} />
-                    <Route path="promotions" element={<AdminPromotionsPage />} />
+                    <Route path="import" element={<Navigate to="/admin" replace />} />
+                    <Route path="promotions" element={<Navigate to="/admin" replace />} />
                     <Route path="users" element={<AdminUsersPage />} />
-                    <Route path="analytics" element={<AdminAnalyticsPage />} />
+                    <Route path="analytics" element={<Navigate to="/admin" replace />} />
                     <Route path="audit" element={<AdminAuditPage />} />
+                    <Route path="payments" element={<AdminPaymentsPage />} />
                     <Route path="settings" element={<AdminSettingsPage />} />
                 </Route>
                 <Route path="/ai" element={<AIAgentPage />} />

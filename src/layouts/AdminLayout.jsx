@@ -12,6 +12,7 @@ import MenuIcon from '@mui/icons-material/Menu'
 import CloseIcon from '@mui/icons-material/Close'
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
 import BrandLogo from '../components/BrandLogo'
+import AdminStorageUsage from '../components/admin/AdminStorageUsage'
 
 const drawerWidth = 268
 
@@ -20,10 +21,8 @@ const nav = [
     { to: '/admin/reports', label: 'Reports' },
     { to: '/admin/sectors', label: 'Sectors' },
     { to: '/admin/blog', label: 'Blog' },
-    { to: '/admin/import', label: 'Import' },
-    { to: '/admin/promotions', label: 'Promotions' },
+    { to: '/admin/payments', label: 'Payments' },
     { to: '/admin/users', label: 'Users' },
-    { to: '/admin/analytics', label: 'Analytics' },
     { to: '/admin/audit', label: 'Audit log' },
     { to: '/admin/settings', label: 'Settings' },
 ]
@@ -67,9 +66,7 @@ function SidebarBody({ onClose }) {
     return (
         <Stack sx={{ height: '100%', bgcolor: 'background.paper' }}>
             <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ px: 2.5, pt: 3, pb: 1 }}>
-                <Box component={Link} to="/" sx={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'inherit' }}>
-                    <BrandLogo />
-                </Box>
+                <BrandLogo />
                 {onClose && (
                     <IconButton onClick={onClose} size="small" sx={{ display: { md: 'none' } }}>
                         <CloseIcon />
@@ -81,6 +78,9 @@ function SidebarBody({ onClose }) {
             </Typography>
             <NavBlock onNavigate={onClose} />
             <Box sx={{ flex: 1 }} />
+            <Box sx={{ px: 2.5, py: 2, borderTop: '1px solid', borderColor: 'divider' }}>
+                <AdminStorageUsage variant="sidebar" />
+            </Box>
             <Box sx={{ px: 2.5, py: 2, borderTop: '1px solid', borderColor: 'divider' }}>
                 <Typography component={Link} to="/" variant="body2" sx={{ color: 'text.secondary', fontWeight: 600, textDecoration: 'none' }}>
                     ← Back to site

@@ -19,6 +19,7 @@ const nav = [
     { to: '/dashboard', label: 'Overview', end: true },
     { to: '/dashboard/reports', label: 'Reports library' },
     { to: '/dashboard/watchlist', label: 'Watchlist' },
+    { to: '/dashboard/payments', label: 'Payments' },
     { to: '/dashboard/activity', label: 'Activity' },
     { to: '/dashboard/statistics', label: 'Statistics' },
     { to: '/dashboard/billing', label: 'Billing' },
@@ -63,9 +64,7 @@ function SidebarBody({ onClose, planLine, profileName }) {
     return (
         <Stack sx={{ height: '100%', bgcolor: 'background.paper' }}>
             <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ px: 2.5, pt: 3, pb: 1 }}>
-                <Box component={Link} to="/" sx={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'inherit' }}>
-                    <BrandLogo />
-                </Box>
+                <BrandLogo />
                 {onClose && (
                     <IconButton onClick={onClose} size="small" sx={{ display: { md: 'none' } }}>
                         <CloseIcon />

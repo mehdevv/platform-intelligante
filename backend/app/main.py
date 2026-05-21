@@ -1,0 +1,28 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from app.api.ingest import router as ingest_router
+from app.core.config import get_settings
+
+app = FastAPI(title="Researcha AI API", version="0.1.0")
+
+_settings = get_settings()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=_settings.cors_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(ingest_router)
+
+
+@app.get("/health")
+def health():
+    return {"status": "ok", "service": "researcha-ai"}
+
+
+@app.get("/")
+def root():
+    return {"message": "Researcha AI API — use /docs or /health"}

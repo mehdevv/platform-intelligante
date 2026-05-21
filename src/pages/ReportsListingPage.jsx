@@ -8,6 +8,7 @@ import CardContent from '@mui/material/CardContent'
 import Grid from '@mui/material/Grid'
 import Stack from '@mui/material/Stack'
 import Chip from '@mui/material/Chip'
+import Avatar from '@mui/material/Avatar'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
@@ -23,6 +24,7 @@ import FilterListIcon from '@mui/icons-material/FilterList'
 import CloseIcon from '@mui/icons-material/Close'
 import Header from '../components/Header'
 import { useAuth } from '../context/AuthContext'
+import { formatPriceFromCents } from '../lib/moneyFormat'
 import { reportPublicPath } from '../lib/reportPath'
 
 const drawerWidth = 280
@@ -61,7 +63,7 @@ export default function ReportsListingPage() {
             }
             const { data, error: e } = await supabase
                 .from('reports')
-                .select('id, slug, title, summary, status, price_cents, currency, published_at, sectors(name, slug)')
+                .select('id, slug, title, summary, status, price_cents, currency, published_at, thumbnail_image_url, sectors(name, slug, icon_image_url)')
                 .eq('status', 'published')
                 .order('published_at', { ascending: false, nullsFirst: false })
             if (cancelled) return
@@ -168,12 +170,31 @@ export default function ReportsListingPage() {
                                             justifyContent: 'center',
                                         }}
                                     >
-                                        <span className="material-symbols-outlined" style={{ fontSize: 60, color: 'rgba(255,255,255,0.15)' }}>
-                                            analytics
-                                        </span>
+                                        {r.thumbnail_image_url && (
+                                            <Box
+                                                component="img"
+                                                src={r.thumbnail_image_url}
+                                                alt=""
+                                                sx={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                                            />
+                                        )}
+                                        {!r.thumbnail_image_url && (
+                                            <span className="material-symbols-outlined" style={{ fontSize: 60, color: 'rgba(255,255,255,0.15)' }}>
+                                                analytics
+                                            </span>
+                                        )}
                                         <Stack direction="row" gap={1} sx={{ position: 'absolute', top: 12, left: 12, zIndex: 2 }}>
                                             {r.sectors?.name && (
-                                                <Chip label={r.sectors.name} size="small" sx={{ bgcolor: 'rgba(255,255,255,0.9)', fontWeight: 700 }} />
+                                                <Chip
+                                                    avatar={
+                                                        r.sectors.icon_image_url ? (
+                                                            <Avatar alt="" src={r.sectors.icon_image_url} sx={{ width: 22, height: 22 }} />
+                                                        ) : undefined
+                                                    }
+                                                    label={r.sectors.name}
+                                                    size="small"
+                                                    sx={{ bgcolor: 'rgba(255,255,255,0.9)', fontWeight: 700 }}
+                                                />
                                             )}
                                         </Stack>
                                         {r.price_cents > 0 && (
@@ -194,7 +215,7 @@ export default function ReportsListingPage() {
                                         </Typography>
                                         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ borderTop: '1px solid #f1f5f9', pt: 2 }}>
                                             <Typography variant="caption" color="text.secondary" fontWeight={600}>
-                                                {r.currency} {(r.price_cents / 100).toFixed(0)}
+                                                {r.price_cents > 0 ? formatPriceFromCents(r.price_cents, r.currency) : '—'}
                                             </Typography>
                                             <Button size="small" endIcon={<ArrowForwardIcon sx={{ fontSize: 14 }} />} variant="contained" sx={{ fontSize: '0.75rem' }}>
                                                 View

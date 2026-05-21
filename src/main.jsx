@@ -8,6 +8,10 @@ import theme from './theme'
 import './index.css'
 import App from './App.jsx'
 import { AuthProvider } from './context/AuthContext'
+import { initGtag } from './lib/gtag'
+import GoogleAnalyticsRouteListener from './components/GoogleAnalyticsRouteListener.jsx'
+
+initGtag()
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -15,6 +19,7 @@ createRoot(document.getElementById('root')).render(
       <CssBaseline />
       <BrowserRouter>
         <AuthProvider>
+          <GoogleAnalyticsRouteListener />
           <App />
         </AuthProvider>
       </BrowserRouter>

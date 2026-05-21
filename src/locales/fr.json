@@ -131,12 +131,9 @@
     "title": "Veille & actualités",
     "subtitle": "Notes macro, secteurs et actualités produit.",
     "readArticle": "Lire l'article",
-    "posts": [
-      { "slug": "north-africa-outlook", "title": "Perspectives macro Maghreb T2", "excerpt": "Croissance, inflation et risques clés.", "date": "15 mars 2026", "tag": "Macro" },
-      { "slug": "energy-transition", "title": "Indicateurs transition énergétique", "excerpt": "Part des renouvelables et investissements réseau.", "date": "8 mars 2026", "tag": "Énergie" },
-      { "slug": "fintech-adoption", "title": "Adoption fintech MENA", "excerpt": "Paiements digitaux et cadre réglementaire.", "date": "28 févr. 2026", "tag": "Finance" }
-    ],
-    "postBody": "Aperçu d'article. Branchez votre CMS ou Supabase pour le contenu complet et le SEO par slug.",
+    "empty": "Aucun article publié pour l'instant. Les éditeurs peuvent en ajouter depuis l'administration.",
+    "sources": "Sources et références",
+    "noBody": "Le corps de l'article n'a pas encore été renseigné.",
     "notFound": "Article introuvable."
   },
   "methodology": {
@@ -172,11 +169,82 @@
   },
   "checkout": {
     "title": "Paiement",
-    "subtitle": "Récapitulatif de formule (intégration Stripe / CIB à venir).",
+    "subtitle": "Paiement par virement bancaire. Virez le montant vers le RIB ci-dessous puis joignez votre reçu — l'admin vous donnera accès après vérification.",
     "plan": "Formule sélectionnée",
     "total": "Total aujourd'hui",
     "pay": "Valider le paiement",
-    "mockNote": "Interface de démonstration — aucun débit réel."
+    "mockNote": "Interface de démonstration — aucun débit réel.",
+    "rib": {
+      "subtitle": "Paiement par virement bancaire. Virez le montant vers le RIB ci-dessous puis joignez votre reçu — l'admin vous donnera accès après vérification.",
+      "heading": "Où envoyer le virement",
+      "copy": "Utilisez les informations ci-dessous pour votre virement. Cliquez sur l'icône à côté d'une valeur pour la copier.",
+      "bank": "Banque",
+      "holder": "Titulaire du compte",
+      "rib": "RIB",
+      "iban": "IBAN",
+      "swift": "SWIFT / BIC",
+      "notes": "Notes",
+      "uploadHeading": "Joindre votre reçu de virement",
+      "uploadHint": "Formats acceptés : JPEG, PNG, WebP, GIF, PDF — jusqu'à 10 Mo.",
+      "chooseFile": "Choisir un fichier",
+      "changeFile": "Changer de fichier",
+      "submit": "Envoyer le reçu",
+      "submitting": "Envoi…",
+      "submittedTitle": "Reçu envoyé",
+      "submittedBody": "Nous avons reçu votre justificatif. L'admin va le vérifier et votre accès sera ouvert dès validation.",
+      "viewMyRequests": "Suivre mes demandes",
+      "backHome": "Retour à l'accueil",
+      "amountDue": "Montant à payer",
+      "payingFor": "Paiement pour",
+      "subscribingTo": "Abonnement à",
+      "monthlyAccess": "abonnement mensuel",
+      "thirtyDays": "30 jours d'accès complet au secteur",
+      "requireAuth": "Vous devez avoir un compte pour envoyer un reçu de paiement. Connectez-vous ou créez un compte pour continuer.",
+      "notConfigured": "Les coordonnées bancaires de la plateforme ne sont pas encore configurées. Contactez-nous — nous ne pouvons pas accepter de reçu sans RIB enregistré.",
+      "notFoundReport": "Rapport introuvable.",
+      "notFoundSector": "Secteur introuvable.",
+      "noTarget": "Choisissez un abonnement sectoriel ou un rapport pour démarrer le paiement.",
+      "browsePlans": "Voir les abonnements sectoriels",
+      "fileTooLarge": "Le fichier dépasse 10 Mo."
+    }
+  },
+  "pricing": {
+    "sectorCarousel": {
+      "overline": "Abonnements sectoriels",
+      "title": "Paiement par secteur, au mois",
+      "subtitle": "Chaque abonnement vous donne 30 jours d'accès complet à tous les rapports du secteur — passés et futurs. Choisissez uniquement ceux dont vous avez besoin.",
+      "subscriptionsAvailable": "abonnements disponibles",
+      "cta": "S'abonner par virement",
+      "exploreSector": "Parcourir le secteur",
+      "perMonth": "/ mois",
+      "sectorSubscription": "Abonnement sectoriel",
+      "benefit1": "Tous les rapports du secteur — PDF complet",
+      "benefit2": "30 jours d'accès dès validation",
+      "benefit3": "Annulable à tout moment — sans reconduction",
+      "empty": "Aucun abonnement sectoriel n'est encore disponible. Les administrateurs peuvent définir un prix mensuel par secteur depuis la console.",
+      "singleReportTitle": "Besoin d'un rapport à l'unité ?",
+      "singleReportBody": "Parcourez le catalogue et payez à l'unité avec le même flux de virement.",
+      "singleReportCta": "Ouvrir le catalogue"
+    }
+  },
+  "dashboard": {
+    "payments": {
+      "title": "Paiements & reçus",
+      "subtitle": "Reçus de virement que vous avez envoyés. L'accès est ouvert dès que l'admin valide votre reçu.",
+      "empty": "Aucune demande de paiement pour l'instant. Abonnez-vous à un secteur ou achetez un rapport unitaire pour commencer.",
+      "colSubmitted": "Soumis",
+      "colFor": "Pour",
+      "colAmount": "Montant",
+      "colStatus": "Statut",
+      "colNote": "Note de l'admin",
+      "browseSubscriptions": "Abonnements sectoriels",
+      "browseReports": "Voir les rapports",
+      "status": {
+        "pending": "En attente",
+        "approved": "Validé",
+        "rejected": "Refusé"
+      }
+    }
   },
   "forgotPassword": {
     "title": "Réinitialiser le mot de passe",

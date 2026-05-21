@@ -22,17 +22,23 @@ export function AuthProvider({ children }) {
     /** True while fetching profile for the current session user (avoids RequireAdmin seeing user before app_role is loaded). */
     const [profileLoading, setProfileLoading] = useState(false)
     const profileLoadGenRef = useRef(0)
+    /** Avoid toggling profileLoading on TOKEN_REFRESHED / tab return — same user already has profile; RequireAdmin would unmount the whole admin tree and close dialogs. */
+    const profileReadyForUserRef = useRef(null)
 
     const loadProfile = useCallback(
         async userId => {
             if (!supabase || !userId) {
+                profileReadyForUserRef.current = null
                 setProfile(null)
                 setSubscription(null)
                 setProfileLoading(false)
                 return
             }
             const gen = ++profileLoadGenRef.current
-            setProfileLoading(true)
+            const sameUserAlreadyLoaded = profileReadyForUserRef.current === userId
+            if (!sameUserAlreadyLoaded) {
+                setProfileLoading(true)
+            }
             try {
                 const { data: prof } = await supabase.from('profiles').select('*').eq('id', userId).single()
                 if (gen !== profileLoadGenRef.current) return
@@ -45,6 +51,7 @@ export function AuthProvider({ children }) {
                     .maybeSingle()
                 if (gen !== profileLoadGenRef.current) return
                 setSubscription(sub ?? null)
+                profileReadyForUserRef.current = userId
             } finally {
                 if (gen === profileLoadGenRef.current) setProfileLoading(false)
             }
@@ -72,6 +79,7 @@ export function AuthProvider({ children }) {
             setSession(s)
             if (s?.user) await loadProfile(s.user.id)
             else {
+                profileReadyForUserRef.current = null
                 setProfile(null)
                 setSubscription(null)
                 setProfileLoading(false)
@@ -88,6 +96,7 @@ export function AuthProvider({ children }) {
                 })
             } else {
                 profileLoadGenRef.current += 1
+                profileReadyForUserRef.current = null
                 setProfile(null)
                 setSubscription(null)
                 setProfileLoading(false)
@@ -111,6 +120,7 @@ export function AuthProvider({ children }) {
 
     const signOut = useCallback(async () => {
         if (!supabase) return false
+        profileReadyForUserRef.current = null
         setSession(null)
         setProfile(null)
         setSubscription(null)

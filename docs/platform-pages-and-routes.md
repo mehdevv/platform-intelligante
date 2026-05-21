@@ -72,10 +72,7 @@ Parent layout: `AdminLayout` at **`/admin`** (requires admin). Child routes:
 | `/admin/blog` | `AdminBlogPage.jsx` |
 | `/admin/reports/new` | `AdminReportNewPage.jsx` |
 | `/admin/reports/:reportId` | `AdminReportEditPage.jsx` |
-| `/admin/import` | `AdminImportPage.jsx` |
-| `/admin/promotions` | `AdminPromotionsPage.jsx` |
 | `/admin/users` | `AdminUsersPage.jsx` |
-| `/admin/analytics` | `AdminAnalyticsPage.jsx` |
 | `/admin/audit` | `AdminAuditPage.jsx` |
 | `/admin/settings` | `AdminSettingsPage.jsx` |
 
@@ -93,6 +90,8 @@ Defined in `src/App.jsx`:
 | `/rapports` | Redirects to `/reports` |
 | `/secteurs` | Redirects to `/sectors` |
 | `/secteurs/:id` | `RedirectSecteur` → `/sectors/:id` |
+| `/admin/import`, `/admin/promotions` | Redirect to `/admin` (legacy URLs) |
+| `/admin/analytics` | Redirect to `/admin` (charts live on Overview — set `VITE_GA_ADMIN_EMBED_URL`) |
 | `*` (unknown) | Redirects to `/` |
 
 ---
@@ -143,7 +142,7 @@ These are the **pathnames** you will see in `<Link to="…">`, `<NavLink>`, `<Na
 
 **Admin**
 
-- `/admin` and `/admin/reports`, `/admin/reports/new`, `/admin/sectors`, `/admin/blog`, `/admin/import`, `/admin/promotions`, `/admin/users`, `/admin/analytics`, `/admin/audit`, `/admin/settings`
+- `/admin` and `/admin/reports`, `/admin/reports/new`, `/admin/sectors`, `/admin/blog`, `/admin/users`, `/admin/audit`, `/admin/settings`
 
 **Primary navigation config**
 
@@ -166,7 +165,7 @@ These are the **pathnames** you will see in `<Link to="…">`, `<NavLink>`, `<Na
 
 ### `src/pages/admin/`
 
-- `AdminAnalyticsPage.jsx`, `AdminAuditPage.jsx`, `AdminBlogPage.jsx`, `AdminImportPage.jsx`, `AdminOverviewPage.jsx`, `AdminPromotionsPage.jsx`, `AdminReportEditPage.jsx`, `AdminReportNewPage.jsx`, `AdminReportsPage.jsx`, `AdminSectorsPage.jsx`, `AdminSettingsPage.jsx`, `AdminUsersPage.jsx`
+- `AdminAuditPage.jsx`, `AdminBlogPage.jsx`, `AdminOverviewPage.jsx`, `AdminReportEditPage.jsx`, `AdminReportNewPage.jsx`, `AdminReportsPage.jsx`, `AdminSectorsPage.jsx`, `AdminSettingsPage.jsx`, `AdminUsersPage.jsx`
 
 ---
 
