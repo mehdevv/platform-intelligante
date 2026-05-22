@@ -16,6 +16,10 @@ import Divider from '@mui/material/Divider'
 import LinearProgress from '@mui/material/LinearProgress'
 import MenuItem from '@mui/material/MenuItem'
 import Paper from '@mui/material/Paper'
+import Slider from '@mui/material/Slider'
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
+import ToggleButton from '@mui/material/ToggleButton'
+import Tooltip from '@mui/material/Tooltip'
 import SearchIcon from '@mui/icons-material/Search'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
@@ -24,6 +28,7 @@ import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import ScheduleIcon from '@mui/icons-material/Schedule'
 import AnalyticsIcon from '@mui/icons-material/Analytics'
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import DotPattern from '../components/DotPattern'
@@ -81,9 +86,9 @@ export default function HomePage() {
     const navigate = useNavigate()
     const location = useLocation()
     const [heroSearch, setHeroSearch] = useState('')
-    const [population, setPopulation] = useState('10000')
+    const [population, setPopulation] = useState(100000)
     const [confidence, setConfidence] = useState(95)
-    const [margin, setMargin] = useState('5')
+    const [margin, setMargin] = useState(5)
     const [sampleResult, setSampleResult] = useState(null)
 
     const confidenceLevels = useMemo(
@@ -95,10 +100,10 @@ export default function HomePage() {
         [],
     )
 
-    const runSampleCalc = () => {
-        const n = suggestSample(Number(population) || 0, confidence, Number(margin) || 5)
+    useEffect(() => {
+        const n = suggestSample(population || 0, confidence, margin || 5)
         setSampleResult(n)
-    }
+    }, [population, confidence, margin])
 
     useEffect(() => {
         const id = (location.hash || '').replace(/^#/, '')
@@ -391,12 +396,12 @@ export default function HomePage() {
                     </Container>
                 </Box>
 
-                {/* ═══ EXPLORE TOPICS & INDUSTRIES (carousel + heading overlay) ═══ */}
+                {/* ═══ EXPLORE TOPICS & INDUSTRIES (carousel + heading) ═══ */}
                 <Box
                     component="section"
                     aria-labelledby="explore-topics-heading"
                     sx={{
-                        bgcolor: '#fff',
+                        bgcolor: '#f8fafc',
                         py: { xs: 6, md: 8 },
                         borderTop: '1px solid',
                         borderColor: 'divider',
@@ -404,272 +409,247 @@ export default function HomePage() {
                         overflow: 'hidden',
                     }}
                 >
-                    <Container maxWidth="lg" sx={{ position: 'relative' }}>
-                        {/* Heading sits over the top of the carousel (gradient lets cards show through below) */}
+                    <Container maxWidth="lg">
                         <Box
                             sx={{
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                right: 0,
-                                zIndex: 3,
-                                pt: 0,
-                                pb: { xs: 5, md: 6 },
-                                pointerEvents: 'none',
-                                background: 'linear-gradient(180deg, #ffffff 0%, rgba(255,255,255,0.97) 42%, rgba(255,255,255,0.72) 72%, rgba(255,255,255,0) 100%)',
+                                maxWidth: 720,
+                                mx: 'auto',
+                                px: { xs: 1.5, sm: 2 },
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                textAlign: 'center',
+                                mb: { xs: 4, md: 5 },
                             }}
                         >
                             <Box
-                                sx={{
-                                    maxWidth: 720,
-                                    mx: 'auto',
-                                    px: { xs: 1.5, sm: 2 },
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: 'center',
-                                    textAlign: 'center',
-                                }}
+                                aria-hidden
+                                sx={{ width: 40, height: 4, bgcolor: 'secondary.main', borderRadius: 1, mb: 2 }}
+                            />
+                            <Typography variant="overline" sx={{ color: 'secondary.main', fontWeight: 800, letterSpacing: '0.14em' }}>
+                                {t('home.categories')}
+                            </Typography>
+                            <Typography
+                                id="explore-topics-heading"
+                                variant="h4"
+                                sx={{ fontWeight: 800, mt: 1, lineHeight: 1.15, fontFamily: '"League Spartan", sans-serif', maxWidth: 640 }}
                             >
-                                <Box
-                                    aria-hidden
-                                    sx={{ width: 40, height: 4, bgcolor: 'secondary.main', borderRadius: 1, mb: 2 }}
-                                />
-                                <Typography variant="overline" sx={{ color: 'secondary.main', fontWeight: 800, letterSpacing: '0.14em' }}>
-                                    {t('home.categories')}
-                                </Typography>
-                                <Typography
-                                    id="explore-topics-heading"
-                                    variant="h4"
-                                    sx={{ fontWeight: 800, mt: 1, lineHeight: 1.15, fontFamily: '"League Spartan", sans-serif', maxWidth: 640 }}
-                                >
-                                    {t('home.exploreTopicsTitle')}
-                                </Typography>
-                                <Typography
-                                    variant="body1"
-                                    color="text.secondary"
-                                    sx={{ mt: 1.5, mb: 2.5, lineHeight: 1.75, maxWidth: 560, mx: 'auto' }}
-                                >
-                                    {t('home.exploreTopicsSub')}
-                                </Typography>
-                                <Button
-                                    component={Link}
-                                    to="/sectors"
-                                    variant="contained"
-                                    color="secondary"
-                                    endIcon={<ArrowForwardIcon />}
-                                    disableElevation
-                                    sx={{ fontWeight: 700, px: 3, pointerEvents: 'auto', display: { xs: 'none', sm: 'inline-flex' } }}
-                                >
-                                    {t('home.viewAllTopics')}
-                                </Button>
-                            </Box>
+                                {t('home.exploreTopicsTitle')}
+                            </Typography>
+                            <Typography
+                                variant="body1"
+                                color="text.secondary"
+                                sx={{ mt: 1.5, mb: 0, lineHeight: 1.75, maxWidth: 560, mx: 'auto' }}
+                            >
+                                {t('home.exploreTopicsSub')}
+                            </Typography>
                         </Box>
+                    </Container>
 
-                        {/* Space for heading overlay; carousel sits below with wider side margins */}
-                        <Box
-                            aria-hidden
-                            sx={{ minHeight: { xs: '13.5rem', sm: '12.5rem', md: '11.5rem' }, flexShrink: 0 }}
-                        />
-
-                        <Stack
-                            direction="row"
-                            alignItems="center"
+                    <Stack
+                        direction="row"
+                        alignItems="center"
+                        sx={{
+                            px: 0,
+                            gap: { xs: 0, md: 1 },
+                        }}
+                    >
+                        <IconButton
+                            type="button"
+                            aria-label="Scroll topics left"
+                            onClick={() => scrollTopicsCarousel(-1)}
+                            disabled={!topicsCarouselScroll.canLeft}
                             sx={{
-                                px: { xs: 3, sm: 4, md: 6, lg: 8 },
-                                gap: { xs: 0, md: 2.5 },
+                                display: { xs: 'none', md: 'inline-flex' },
+                                flexShrink: 0,
+                                alignSelf: 'center',
+                                bgcolor: 'background.paper',
+                                boxShadow: 2,
+                                border: '1px solid',
+                                borderColor: 'divider',
+                                ml: 2,
+                                zIndex: 2,
+                                '&:hover': { bgcolor: 'grey.50' },
                             }}
                         >
-                            <IconButton
-                                type="button"
-                                aria-label="Scroll topics left"
-                                onClick={() => scrollTopicsCarousel(-1)}
-                                disabled={!topicsCarouselScroll.canLeft}
-                                sx={{
-                                    display: { xs: 'none', md: 'inline-flex' },
-                                    flexShrink: 0,
-                                    alignSelf: 'center',
-                                    bgcolor: 'background.paper',
-                                    boxShadow: 2,
-                                    border: '1px solid',
-                                    borderColor: 'divider',
-                                    '&:hover': { bgcolor: 'grey.50' },
-                                }}
-                            >
-                                <ChevronLeftIcon />
-                            </IconButton>
+                            <ChevronLeftIcon />
+                        </IconButton>
 
-                            <Box
-                                ref={topicsScrollRef}
-                                onScroll={syncTopicsCarouselScroll}
-                                className="no-scrollbar"
-                                sx={{
-                                    flex: 1,
-                                    minWidth: 0,
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    alignItems: 'stretch',
-                                    gap: 2,
-                                    overflowX: 'auto',
-                                    overflowY: 'hidden',
-                                    scrollSnapType: 'x mandatory',
-                                    py: 2,
-                                    WebkitOverflowScrolling: 'touch',
-                                }}
-                            >
-                                {topics.map((topic, i) => {
-                                    const src = homeImagery.topicTiles[i % homeImagery.topicTiles.length]
-                                    return (
-                                        <Card
-                                            key={`${topic.label}-${i}`}
-                                            component={Link}
-                                            to="/sectors"
+                        <Box
+                            ref={topicsScrollRef}
+                            onScroll={syncTopicsCarouselScroll}
+                            className="no-scrollbar"
+                            sx={{
+                                flex: 1,
+                                minWidth: 0,
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'stretch',
+                                gap: 2,
+                                overflowX: 'auto',
+                                overflowY: 'hidden',
+                                scrollSnapType: 'x mandatory',
+                                py: 2,
+                                px: { xs: 2, md: 0 },
+                                WebkitOverflowScrolling: 'touch',
+                            }}
+                        >
+                            {topics.map((topic, i) => {
+                                const src = homeImagery.topicTiles[i % homeImagery.topicTiles.length]
+                                return (
+                                    <Card
+                                        key={`${topic.label}-${i}`}
+                                        component={Link}
+                                        to="/sectors"
+                                        sx={{
+                                            flex: '0 0 auto',
+                                            scrollSnapAlign: 'start',
+                                            width: { xs: 'min(85vw, 300px)', sm: 280, md: 300 },
+                                            height: { xs: 320, sm: 340, md: 360 },
+                                            position: 'relative',
+                                            textDecoration: 'none',
+                                            color: 'inherit',
+                                            p: 0,
+                                            overflow: 'hidden',
+                                            borderRadius: 2,
+                                            border: '1px solid',
+                                            borderColor: 'divider',
+                                            boxSizing: 'border-box',
+                                            transition: 'border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease',
+                                            '&:hover': {
+                                                borderColor: 'secondary.main',
+                                                boxShadow: '0 12px 32px rgba(25, 127, 148, 0.14)',
+                                                transform: 'translateY(-3px)',
+                                                '& .topic-carousel-img': { transform: 'scale(1.05)' },
+                                            },
+                                        }}
+                                    >
+                                        <Box
+                                            component="img"
+                                            className="topic-carousel-img"
+                                            src={src}
+                                            alt=""
                                             sx={{
-                                                flex: '0 0 auto',
-                                                scrollSnapAlign: 'start',
-                                                width: { xs: 'min(82vw, 300px)', sm: 272, md: 292 },
-                                                height: { xs: 300, sm: 320, md: 340 },
-                                                position: 'relative',
-                                                textDecoration: 'none',
-                                                color: 'inherit',
-                                                p: 0,
-                                                overflow: 'hidden',
-                                                borderRadius: 2,
-                                                border: '1px solid',
-                                                borderColor: 'divider',
-                                                boxSizing: 'border-box',
-                                                transition: 'border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease',
-                                                '&:hover': {
-                                                    borderColor: 'secondary.main',
-                                                    boxShadow: '0 12px 32px rgba(25, 127, 148, 0.14)',
-                                                    transform: 'translateY(-3px)',
-                                                    '& .topic-carousel-img': { transform: 'scale(1.05)' },
-                                                },
+                                                position: 'absolute',
+                                                inset: 0,
+                                                width: '100%',
+                                                height: '100%',
+                                                objectFit: 'cover',
+                                                display: 'block',
+                                                transition: 'transform 0.45s cubic-bezier(0.22, 1, 0.36, 1)',
+                                            }}
+                                        />
+                                        <Box
+                                            aria-hidden
+                                            sx={{
+                                                position: 'absolute',
+                                                inset: 0,
+                                                background: 'linear-gradient(180deg, rgba(15,23,42,0.15) 0%, rgba(15,23,42,0) 38%, rgba(15,23,42,0.55) 85%, rgba(15,23,42,0.88) 100%)',
+                                                pointerEvents: 'none',
+                                            }}
+                                        />
+                                        <Stack
+                                            direction="row"
+                                            alignItems="flex-end"
+                                            gap={1.25}
+                                            sx={{
+                                                position: 'absolute',
+                                                left: 0,
+                                                right: 0,
+                                                bottom: 0,
+                                                p: 2.5,
+                                                minWidth: 0,
                                             }}
                                         >
                                             <Box
-                                                component="img"
-                                                className="topic-carousel-img"
-                                                src={src}
-                                                alt=""
                                                 sx={{
-                                                    position: 'absolute',
-                                                    inset: 0,
-                                                    width: '100%',
-                                                    height: '100%',
-                                                    objectFit: 'cover',
-                                                    display: 'block',
-                                                    transition: 'transform 0.45s cubic-bezier(0.22, 1, 0.36, 1)',
-                                                }}
-                                            />
-                                            <Box
-                                                aria-hidden
-                                                sx={{
-                                                    position: 'absolute',
-                                                    inset: 0,
-                                                    background: 'linear-gradient(180deg, rgba(15,23,42,0.15) 0%, rgba(15,23,42,0) 38%, rgba(15,23,42,0.55) 85%, rgba(15,23,42,0.88) 100%)',
-                                                    pointerEvents: 'none',
-                                                }}
-                                            />
-                                            <Stack
-                                                direction="row"
-                                                alignItems="flex-end"
-                                                gap={1.25}
-                                                sx={{
-                                                    position: 'absolute',
-                                                    left: 0,
-                                                    right: 0,
-                                                    bottom: 0,
-                                                    p: 2,
-                                                    minWidth: 0,
+                                                    width: 40,
+                                                    height: 40,
+                                                    borderRadius: 1,
+                                                    bgcolor: 'rgba(255,255,255,0.18)',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    flexShrink: 0,
+                                                    border: '1px solid rgba(255,255,255,0.2)',
+                                                    backdropFilter: 'blur(4px)',
                                                 }}
                                             >
-                                                <Box
+                                                <span className="material-symbols-outlined" style={{ fontSize: 22, color: '#f1f5f9' }}>
+                                                    {topic.icon}
+                                                </span>
+                                            </Box>
+                                            <Box sx={{ minWidth: 0, flex: 1, pb: 0.125 }}>
+                                                <Typography
+                                                    variant="subtitle1"
+                                                    component="div"
                                                     sx={{
-                                                        width: 36,
-                                                        height: 36,
-                                                        borderRadius: 1,
-                                                        bgcolor: 'rgba(255,255,255,0.18)',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center',
-                                                        flexShrink: 0,
-                                                        border: '1px solid rgba(255,255,255,0.2)',
+                                                        fontWeight: 800,
+                                                        color: '#fff',
+                                                        lineHeight: 1.25,
+                                                        fontSize: '1.1rem',
+                                                        fontFamily: '"League Spartan", sans-serif',
+                                                        textShadow: '0 1px 12px rgba(0,0,0,0.35)',
                                                     }}
                                                 >
-                                                    <span className="material-symbols-outlined" style={{ fontSize: 20, color: '#f1f5f9' }}>
-                                                        {topic.icon}
-                                                    </span>
-                                                </Box>
-                                                <Box sx={{ minWidth: 0, flex: 1, pb: 0.125 }}>
-                                                    <Typography
-                                                        variant="subtitle1"
-                                                        component="div"
-                                                        sx={{
-                                                            fontWeight: 800,
-                                                            color: '#fff',
-                                                            lineHeight: 1.25,
-                                                            fontFamily: '"League Spartan", sans-serif',
-                                                            textShadow: '0 1px 12px rgba(0,0,0,0.35)',
-                                                        }}
-                                                    >
-                                                        {topic.label}
-                                                    </Typography>
-                                                    <Typography
-                                                        variant="caption"
-                                                        component="div"
-                                                        sx={{
-                                                            display: 'block',
-                                                            mt: 0.35,
-                                                            color: 'rgba(226,232,240,0.95)',
-                                                            fontWeight: 600,
-                                                            fontSize: '0.75rem',
-                                                            letterSpacing: '0.03em',
-                                                        }}
-                                                    >
-                                                        {topic.count} · {t('common.stats')}
-                                                    </Typography>
-                                                </Box>
-                                            </Stack>
-                                        </Card>
-                                    )
-                                })}
-                            </Box>
-
-                            <IconButton
-                                type="button"
-                                aria-label="Scroll topics right"
-                                onClick={() => scrollTopicsCarousel(1)}
-                                disabled={!topicsCarouselScroll.canRight}
-                                sx={{
-                                    display: { xs: 'none', md: 'inline-flex' },
-                                    flexShrink: 0,
-                                    alignSelf: 'center',
-                                    bgcolor: 'background.paper',
-                                    boxShadow: 2,
-                                    border: '1px solid',
-                                    borderColor: 'divider',
-                                    '&:hover': { bgcolor: 'grey.50' },
-                                }}
-                            >
-                                <ChevronRightIcon />
-                            </IconButton>
-                        </Stack>
-
-                        <Box sx={{ display: { xs: 'flex', sm: 'none' }, justifyContent: 'center', mt: 3 }}>
-                            <Button
-                                component={Link}
-                                to="/sectors"
-                                variant="contained"
-                                color="secondary"
-                                endIcon={<ArrowForwardIcon />}
-                                disableElevation
-                                fullWidth
-                                sx={{ fontWeight: 700, maxWidth: 360 }}
-                            >
-                                {t('home.viewAllTopics')}
-                            </Button>
+                                                    {topic.label}
+                                                </Typography>
+                                                <Typography
+                                                    variant="caption"
+                                                    component="div"
+                                                    sx={{
+                                                        display: 'block',
+                                                        mt: 0.35,
+                                                        color: 'rgba(226,232,240,0.95)',
+                                                        fontWeight: 600,
+                                                        fontSize: '0.8rem',
+                                                        letterSpacing: '0.03em',
+                                                    }}
+                                                >
+                                                    {topic.count} · {t('common.stats')}
+                                                </Typography>
+                                            </Box>
+                                        </Stack>
+                                    </Card>
+                                )
+                            })}
                         </Box>
-                    </Container>
+
+                        <IconButton
+                            type="button"
+                            aria-label="Scroll topics right"
+                            onClick={() => scrollTopicsCarousel(1)}
+                            disabled={!topicsCarouselScroll.canRight}
+                            sx={{
+                                display: { xs: 'none', md: 'inline-flex' },
+                                flexShrink: 0,
+                                alignSelf: 'center',
+                                bgcolor: 'background.paper',
+                                boxShadow: 2,
+                                border: '1px solid',
+                                borderColor: 'divider',
+                                mr: 2,
+                                zIndex: 2,
+                                '&:hover': { bgcolor: 'grey.50' },
+                            }}
+                        >
+                            <ChevronRightIcon />
+                        </IconButton>
+                    </Stack>
+
+                    <Box sx={{ display: 'flex', justifyContent: 'center', mt: { xs: 4, md: 6 } }}>
+                        <Button
+                            component={Link}
+                            to="/sectors"
+                            variant="contained"
+                            color="secondary"
+                            endIcon={<ArrowForwardIcon />}
+                            disableElevation
+                            sx={{ fontWeight: 700, px: 4, py: 1.25, borderRadius: 2 }}
+                        >
+                            {t('home.viewAllTopics')}
+                        </Button>
+                    </Box>
                 </Box>
 
                 {/* ═══ PRODUCT FEATURE SPLIT ═══════════════════════════════════ */}
@@ -875,102 +855,148 @@ export default function HomePage() {
                 <Box
                     component="section"
                     sx={{
-                        bgcolor: '#fff',
-                        py: { xs: 4, md: 5 },
+                        bgcolor: '#f8fafc',
+                        py: { xs: 6, md: 8 },
                         borderTop: '1px solid',
                         borderColor: 'divider',
+                        position: 'relative',
+                        overflow: 'hidden',
                     }}
                 >
-                    <Container maxWidth="md" sx={{ px: { xs: 2, md: 3 } }}>
-                        <Box id="methodology" sx={{ scrollMarginTop: '88px', width: '100%' }}>
-                            <Typography
-                                id="home-methodology-strip-title"
-                                variant="h6"
-                                sx={{ fontFamily: '"League Spartan", sans-serif', fontWeight: 800, color: 'text.primary', mb: 0.75 }}
-                            >
-                                {t('methodology.title')}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary" sx={{ mb: 3, lineHeight: 1.55, maxWidth: 560 }}>
-                                {t('home.methodologyStripHint')}
-                            </Typography>
-                            <Paper
-                                elevation={0}
-                                sx={{
-                                    p: { xs: 2.5, md: 3 },
-                                    borderRadius: 2,
-                                    bgcolor: '#f8fafc',
-                                    border: '1px solid',
-                                    borderColor: 'divider',
-                                }}
-                            >
-                                <Grid container spacing={2}>
-                                    <Grid size={{ xs: 12, sm: 4 }}>
-                                        <TextField
-                                            fullWidth
-                                            size="small"
-                                            label={t('methodology.population')}
-                                            value={population}
-                                            onChange={e => setPopulation(e.target.value)}
-                                            type="number"
-                                            inputProps={{ min: 1 }}
-                                        />
-                                    </Grid>
-                                    <Grid size={{ xs: 12, sm: 4 }}>
-                                        <TextField
-                                            fullWidth
-                                            size="small"
-                                            select
-                                            label={t('methodology.confidence')}
-                                            value={confidence}
-                                            onChange={e => setConfidence(Number(e.target.value))}
+                    <Container maxWidth="lg">
+                        <Grid container spacing={{ xs: 4, md: 6 }} alignItems="center">
+                            <Grid size={{ xs: 12, md: 5 }}>
+                                <Box id="methodology" sx={{ scrollMarginTop: '88px', width: '100%' }}>
+                                    <Box sx={{ mb: 3 }}>
+                                        <Typography variant="overline" sx={{ color: 'secondary.main', fontWeight: 800, letterSpacing: '0.12em' }}>
+                                            {t('home.categories')}
+                                        </Typography>
+                                        <Typography
+                                            id="home-methodology-strip-title"
+                                            variant="h4"
+                                            sx={{ fontFamily: '"League Spartan", sans-serif', fontWeight: 800, color: 'text.primary', mt: 0.5, mb: 1.5, lineHeight: 1.15 }}
                                         >
-                                            {confidenceLevels.map(opt => (
-                                                <MenuItem key={opt.value} value={opt.value}>
-                                                    {opt.label}
-                                                </MenuItem>
-                                            ))}
-                                        </TextField>
-                                    </Grid>
-                                    <Grid size={{ xs: 12, sm: 4 }}>
-                                        <TextField
-                                            fullWidth
-                                            size="small"
-                                            label={t('methodology.margin')}
-                                            value={margin}
-                                            onChange={e => setMargin(e.target.value)}
-                                            type="number"
-                                            inputProps={{ min: 0.1, step: 0.1 }}
-                                        />
-                                    </Grid>
-                                    <Grid size={{ xs: 12 }}>
-                                        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ sm: 'center' }} flexWrap="wrap">
-                                            <Button variant="contained" color="secondary" onClick={runSampleCalc} disableElevation sx={{ fontWeight: 700, px: 3 }}>
-                                                {t('methodology.calculate')}
-                                            </Button>
-                                            {sampleResult != null && (
-                                                <Box
+                                            {t('methodology.title')}
+                                        </Typography>
+                                        <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.65 }}>
+                                            {t('home.methodologyStripHint')}
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                            </Grid>
+                            <Grid size={{ xs: 12, md: 7 }}>
+                                <Paper
+                                    elevation={0}
+                                    sx={{
+                                        p: { xs: 3, md: 4 },
+                                        borderRadius: 3,
+                                        bgcolor: '#fff',
+                                        border: '1px solid',
+                                        borderColor: 'divider',
+                                        boxShadow: '0 4px 24px rgba(0,0,0,0.02)',
+                                    }}
+                                >
+                                    <Grid container spacing={4}>
+                                        <Grid size={{ xs: 12, sm: 7 }}>
+                                            <Stack spacing={3.5}>
+                                                <Box>
+                                                    <Stack direction="row" justifyContent="space-between" mb={1}>
+                                                        <Typography variant="subtitle2" fontWeight={700}>{t('methodology.population')}</Typography>
+                                                        <Typography variant="body2" color="text.secondary" fontWeight={600}>{population.toLocaleString()}</Typography>
+                                                    </Stack>
+                                                    <Slider
+                                                        value={population}
+                                                        onChange={(e, val) => setPopulation(val)}
+                                                        min={100}
+                                                        max={1000000}
+                                                        step={100}
+                                                        color="secondary"
+                                                        valueLabelDisplay="off"
+                                                    />
+                                                </Box>
+
+                                                <Box>
+                                                    <Stack direction="row" justifyContent="space-between" mb={1}>
+                                                        <Typography variant="subtitle2" fontWeight={700}>{t('methodology.margin')} (%)</Typography>
+                                                        <Typography variant="body2" color="text.secondary" fontWeight={600}>{margin}%</Typography>
+                                                    </Stack>
+                                                    <Slider
+                                                        value={margin}
+                                                        onChange={(e, val) => setMargin(val)}
+                                                        min={1}
+                                                        max={10}
+                                                        step={0.5}
+                                                        color="secondary"
+                                                        valueLabelDisplay="off"
+                                                    />
+                                                </Box>
+
+                                                <Box>
+                                                    <Typography variant="subtitle2" fontWeight={700} mb={1.5}>{t('methodology.confidence')}</Typography>
+                                                    <ToggleButtonGroup
+                                                        value={confidence}
+                                                        exclusive
+                                                        onChange={(e, val) => { if(val !== null) setConfidence(val) }}
+                                                        fullWidth
+                                                        size="small"
+                                                        color="secondary"
+                                                    >
+                                                        {confidenceLevels.map(opt => (
+                                                            <ToggleButton key={opt.value} value={opt.value} sx={{ fontWeight: 600 }}>
+                                                                {opt.label}
+                                                            </ToggleButton>
+                                                        ))}
+                                                    </ToggleButtonGroup>
+                                                </Box>
+                                            </Stack>
+                                        </Grid>
+                                        <Grid size={{ xs: 12, sm: 5 }}>
+                                            <Box
+                                                sx={{
+                                                    height: '100%',
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                    p: 3,
+                                                    borderRadius: 2,
+                                                    bgcolor: '#f8fafc',
+                                                    border: '1px solid',
+                                                    borderColor: 'rgba(25, 127, 148, 0.15)',
+                                                    boxShadow: '0 8px 32px rgba(25, 127, 148, 0.05)',
+                                                    textAlign: 'center',
+                                                }}
+                                            >
+                                                <Typography variant="overline" color="secondary.main" sx={{ fontWeight: 800, letterSpacing: '0.1em', mb: 1 }}>
+                                                    {t('methodology.result')}
+                                                </Typography>
+                                                <Typography
+                                                    variant="h2"
                                                     sx={{
-                                                        px: 2,
-                                                        py: 1,
-                                                        borderRadius: 1.5,
-                                                        bgcolor: 'rgba(25, 127, 148, 0.1)',
-                                                        border: '1px solid',
-                                                        borderColor: 'rgba(25, 127, 148, 0.25)',
+                                                        fontWeight: 900,
+                                                        color: '#1a2332',
+                                                        lineHeight: 1,
+                                                        fontFamily: '"League Spartan", sans-serif',
+                                                        mb: 1.5,
                                                     }}
                                                 >
-                                                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontStyle: 'normal', fontSize: '0.75rem' }}>
-                                                        {t('methodology.result')}
-                                                    </Typography>
-                                                    <Typography variant="h5" sx={{ fontWeight: 800, color: 'secondary.main', lineHeight: 1.2, fontFamily: '"League Spartan", sans-serif' }}>
-                                                        {sampleResult}
-                                                    </Typography>
-                                                </Box>
-                                            )}
-                                        </Stack>
+                                                    {sampleResult?.toLocaleString() || 0}
+                                                </Typography>
+                                                
+                                                <Chip 
+                                                    icon={<InfoOutlinedIcon sx={{ fontSize: '16px !important' }}/>} 
+                                                    label={margin <= 3 ? "High Precision" : margin <= 5 ? "Standard Precision" : "Estimate"} 
+                                                    size="small"
+                                                    color={margin <= 3 ? "success" : margin <= 5 ? "primary" : "default"}
+                                                    variant="outlined"
+                                                    sx={{ fontWeight: 600 }}
+                                                />
+                                            </Box>
+                                        </Grid>
                                     </Grid>
-                                </Grid>
-                            </Paper>
-                        </Box>
+                                </Paper>
+                            </Grid>
+                        </Grid>
                     </Container>
                 </Box>
 
@@ -983,38 +1009,61 @@ export default function HomePage() {
                         py: { xs: 4, md: 5 },
                     }}
                 >
-                    <Container maxWidth="sm" sx={{ px: { xs: 2, md: 3 } }}>
+                    <Container maxWidth="lg" sx={{ px: { xs: 2, md: 3 } }}>
                         <Box id="corporate" sx={{ scrollMarginTop: '88px' }}>
-                            <Typography
-                                id="home-corporate-heading"
-                                variant="h5"
-                                sx={{ fontFamily: '"League Spartan", sans-serif', fontWeight: 800, color: '#fff', mb: 1 }}
-                            >
-                                {t('corporate.title')}
-                            </Typography>
-                            <Typography variant="body2" sx={{ color: 'rgba(226,232,240,0.85)', mb: 3, lineHeight: 1.55 }}>
-                                {t('corporate.subtitle')}
-                            </Typography>
-                            <Paper
-                                elevation={0}
-                                sx={{
-                                    p: { xs: 2.5, md: 3 },
-                                    borderRadius: 2,
-                                    bgcolor: '#fff',
-                                    border: '1px solid',
-                                    borderColor: 'divider',
-                                }}
-                            >
-                                <Stack spacing={2} component="form" onSubmit={e => e.preventDefault()}>
-                                    <TextField label={t('corporate.name')} name="name" autoComplete="name" fullWidth size="small" />
-                                    <TextField label={t('corporate.email')} name="email" type="email" autoComplete="email" fullWidth size="small" />
-                                    <TextField label={t('corporate.subject')} name="subject" fullWidth size="small" />
-                                    <TextField label={t('corporate.body')} name="body" multiline rows={4} fullWidth size="small" />
-                                    <Button type="submit" variant="contained" color="secondary" disableElevation fullWidth sx={{ fontWeight: 700, py: 1 }}>
-                                        {t('corporate.send')}
-                                    </Button>
-                                </Stack>
-                            </Paper>
+                            <Grid container spacing={{ xs: 4, md: 8 }} alignItems="stretch">
+                                <Grid size={{ xs: 12, md: 6 }}>
+                                    <Box
+                                        component="img"
+                                        src="/contact.png"
+                                        alt="Contact Us"
+                                        sx={{
+                                            width: '100%',
+                                            height: '100%',
+                                            minHeight: { xs: 300, md: 400 },
+                                            objectFit: 'cover',
+                                            borderRadius: 3,
+                                            display: 'block',
+                                            boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid size={{ xs: 12, md: 6 }}>
+                                    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%' }}>
+                                        <Typography
+                                            id="home-corporate-heading"
+                                            variant="h4"
+                                            sx={{ fontFamily: '"League Spartan", sans-serif', fontWeight: 800, color: '#fff', mb: 1, fontSize: { xs: '1.75rem', md: '2.25rem' } }}
+                                        >
+                                            {t('corporate.title')}
+                                        </Typography>
+                                        <Typography variant="body1" sx={{ color: 'rgba(226,232,240,0.85)', mb: 4, lineHeight: 1.65 }}>
+                                            {t('corporate.subtitle')}
+                                        </Typography>
+                                        <Paper
+                                            elevation={0}
+                                            sx={{
+                                                p: { xs: 3, md: 4 },
+                                                borderRadius: 3,
+                                                bgcolor: '#fff',
+                                                border: '1px solid',
+                                                borderColor: 'divider',
+                                                boxShadow: '0 4px 24px rgba(0,0,0,0.1)'
+                                            }}
+                                        >
+                                            <Stack spacing={2.5} component="form" onSubmit={e => e.preventDefault()}>
+                                                <TextField label={t('corporate.name')} name="name" autoComplete="name" fullWidth />
+                                                <TextField label={t('corporate.email')} name="email" type="email" autoComplete="email" fullWidth />
+                                                <TextField label={t('corporate.subject')} name="subject" fullWidth />
+                                                <TextField label={t('corporate.body')} name="body" multiline rows={4} fullWidth />
+                                                <Button type="submit" variant="contained" color="secondary" disableElevation fullWidth size="large" sx={{ fontWeight: 700, py: 1.5, mt: 1 }}>
+                                                    {t('corporate.send')}
+                                                </Button>
+                                            </Stack>
+                                        </Paper>
+                                    </Box>
+                                </Grid>
+                            </Grid>
                         </Box>
                     </Container>
                 </Box>
