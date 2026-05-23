@@ -18,10 +18,12 @@ import UploadFileIcon from '@mui/icons-material/UploadFile'
 import { useTranslation } from 'react-i18next'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import { MotionInView } from '../components/motion/Motion'
 import { useAuth } from '../context/AuthContext'
 import { formatPriceFromCents } from '../lib/moneyFormat'
 import { getBankRib, isBankRibConfigured } from '../lib/platformSettings'
 import { RECEIPT_ACCEPT, RECEIPT_MAX_BYTES, uploadPaymentReceipt } from '../lib/paymentReceiptUpload'
+import { notifyPaymentEvent } from '../lib/paymentNotify'
 
 function CopyButton({ value }) {
     const [copied, setCopied] = useState(false)
@@ -68,6 +70,12 @@ export default function CheckoutPage() {
     const [params] = useSearchParams()
     const reportId = params.get('reportId')
     const sectorId = params.get('sectorId')
+    const sectorIdsParam = params.get('sectorIds')
+    const sectorIdList = useMemo(() => {
+        if (sectorIdsParam) return sectorIdsParam.split(',').map(s => s.trim()).filter(Boolean)
+        if (sectorId) return [sectorId]
+        return []
+    }, [sectorIdsParam, sectorId])
 
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
@@ -98,15 +106,20 @@ export default function CheckoutPage() {
                     if (e) throw new Error(e.message)
                     if (!data) throw new Error(t('checkout.rib.notFoundReport'))
                     if (!cancelled) setTarget({ kind: 'report', report: data })
-                } else if (sectorId) {
+                } else if (sectorIdList.length > 0) {
                     const { data, error: e } = await supabase
                         .from('sectors')
                         .select('id, slug, name, description, subscription_price_cents, currency, icon_image_url')
-                        .eq('id', sectorId)
-                        .maybeSingle()
+                        .in('id', sectorIdList)
+                        .eq('is_published', true)
                     if (e) throw new Error(e.message)
-                    if (!data) throw new Error(t('checkout.rib.notFoundSector'))
-                    if (!cancelled) setTarget({ kind: 'sector_subscription', sector: data })
+                    const rows = data || []
+                    if (!rows.length) throw new Error(t('checkout.rib.notFoundSector'))
+                    if (rows.length !== sectorIdList.length) throw new Error(t('checkout.rib.notFoundSector'))
+                    if (!cancelled) {
+                        if (rows.length === 1) setTarget({ kind: 'sector_subscription', sector: rows[0] })
+                        else setTarget({ kind: 'sector_bundle', sectors: rows })
+                    }
                 } else {
                     if (!cancelled) setTarget(null)
                 }
@@ -121,12 +134,15 @@ export default function CheckoutPage() {
         return () => {
             cancelled = true
         }
-    }, [supabase, reportId, sectorId, t])
+    }, [supabase, reportId, sectorIdList, t])
 
     const amountCents = useMemo(() => {
         if (!target) return 0
         if (target.kind === 'report') return target.report?.price_cents ?? 0
         if (target.kind === 'sector_subscription') return target.sector?.subscription_price_cents ?? 0
+        if (target.kind === 'sector_bundle') {
+            return (target.sectors || []).reduce((sum, s) => sum + (s.subscription_price_cents ?? 0), 0)
+        }
         return 0
     }, [target])
 
@@ -134,6 +150,7 @@ export default function CheckoutPage() {
         if (!target) return 'DZD'
         if (target.kind === 'report') return target.report?.currency || 'DZD'
         if (target.kind === 'sector_subscription') return target.sector?.currency || 'DZD'
+        if (target.kind === 'sector_bundle') return target.sectors?.[0]?.currency || 'DZD'
         return 'DZD'
     }, [target])
 
@@ -161,33 +178,60 @@ export default function CheckoutPage() {
         setError('')
         try {
             const path = await uploadPaymentReceipt(supabase, user.id, file)
-            const payload =
-                target.kind === 'report'
-                    ? {
-                          user_id: user.id,
-                          kind: 'report',
-                          report_id: target.report.id,
-                          sector_id: null,
-                          amount_cents: target.report.price_cents,
-                          currency: target.report.currency || 'DZD',
-                          receipt_storage_path: path,
-                      }
-                    : {
-                          user_id: user.id,
-                          kind: 'sector_subscription',
-                          sector_id: target.sector.id,
-                          report_id: null,
-                          amount_cents: target.sector.subscription_price_cents,
-                          currency: target.sector.currency || 'DZD',
-                          receipt_storage_path: path,
-                      }
-            const { data, error: insErr } = await supabase
-                .from('payment_requests')
-                .insert(payload)
-                .select('id')
-                .single()
-            if (insErr) throw new Error(insErr.message)
-            setSubmitted({ id: data.id })
+            if (target.kind === 'report') {
+                const { data, error: insErr } = await supabase
+                    .from('payment_requests')
+                    .insert({
+                        user_id: user.id,
+                        kind: 'report',
+                        report_id: target.report.id,
+                        sector_id: null,
+                        amount_cents: target.report.price_cents,
+                        currency: target.report.currency || 'DZD',
+                        receipt_storage_path: path,
+                    })
+                    .select('id')
+                    .single()
+                if (insErr) throw new Error(insErr.message)
+                setSubmitted({ id: data.id })
+                void notifyPaymentEvent(supabase, { event: 'created', paymentRequestId: data.id })
+            } else if (target.kind === 'sector_subscription') {
+                const { data, error: insErr } = await supabase
+                    .from('payment_requests')
+                    .insert({
+                        user_id: user.id,
+                        kind: 'sector_subscription',
+                        sector_id: target.sector.id,
+                        report_id: null,
+                        amount_cents: target.sector.subscription_price_cents,
+                        currency: target.sector.currency || 'DZD',
+                        receipt_storage_path: path,
+                    })
+                    .select('id')
+                    .single()
+                if (insErr) throw new Error(insErr.message)
+                setSubmitted({ id: data.id })
+                void notifyPaymentEvent(supabase, { event: 'created', paymentRequestId: data.id })
+            } else if (target.kind === 'sector_bundle') {
+                const sectorIds = target.sectors.map(s => s.id)
+                const { data, error: insErr } = await supabase
+                    .from('payment_requests')
+                    .insert({
+                        user_id: user.id,
+                        kind: 'sector_bundle',
+                        report_id: null,
+                        sector_id: null,
+                        bundle_sector_ids: sectorIds,
+                        amount_cents: amountCents,
+                        currency,
+                        receipt_storage_path: path,
+                    })
+                    .select('id')
+                    .single()
+                if (insErr) throw new Error(insErr.message)
+                setSubmitted({ id: data.id, bundle: true, count: sectorIds.length })
+                void notifyPaymentEvent(supabase, { event: 'created', paymentRequestId: data.id })
+            }
         } catch (ex) {
             setError(ex?.message || 'Submission failed')
         } finally {
@@ -196,7 +240,13 @@ export default function CheckoutPage() {
     }
 
     if (!authLoading && !user) {
-        const next = `/checkout?${reportId ? `reportId=${reportId}` : sectorId ? `sectorId=${sectorId}` : ''}`
+        const next = reportId
+            ? `/checkout?reportId=${reportId}`
+            : sectorIdsParam
+              ? `/checkout?sectorIds=${sectorIdsParam}`
+              : sectorId
+                ? `/checkout?sectorId=${sectorId}`
+                : '/checkout'
         return (
             <Box sx={{ bgcolor: 'background.default', minHeight: '100vh' }}>
                 <Header />
@@ -225,13 +275,16 @@ export default function CheckoutPage() {
             ? target.report?.title
             : target?.kind === 'sector_subscription'
               ? `${target.sector?.name} — ${t('checkout.rib.monthlyAccess')}`
-              : ''
+              : target?.kind === 'sector_bundle'
+                ? t('checkout.rib.bundleTitle')
+                : ''
 
     return (
         <Box sx={{ bgcolor: 'background.default', minHeight: '100vh' }}>
             <Header />
             <Box component="main" sx={{ pt: '72px', pb: 8 }}>
-                <Container maxWidth="md" className="section-fade-in" sx={{ py: 4 }}>
+                <MotionInView>
+                <Container maxWidth="md" sx={{ py: 4 }}>
                     <Typography variant="h4" sx={{ fontFamily: '"League Spartan", sans-serif', fontWeight: 800, mb: 1 }}>
                         {t('checkout.title')}
                     </Typography>
@@ -284,6 +337,23 @@ export default function CheckoutPage() {
                                         {target.kind === 'report' && target.report?.sectors?.name && (
                                             <Chip size="small" label={target.report.sectors.name} sx={{ mt: 1 }} />
                                         )}
+                                        {target.kind === 'sector_bundle' && (
+                                            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                                                {t('checkout.rib.bundleCount', { count: target.sectors.length })}
+                                            </Typography>
+                                        )}
+                                        {target.kind === 'sector_bundle' && (
+                                            <Stack spacing={1} sx={{ mt: 2 }}>
+                                                {target.sectors.map(s => (
+                                                    <Stack key={s.id} direction="row" justifyContent="space-between" gap={2}>
+                                                        <Typography variant="body2" fontWeight={600}>{s.name}</Typography>
+                                                        <Typography variant="body2" color="text.secondary">
+                                                            {formatPriceFromCents(s.subscription_price_cents, s.currency || 'DZD')}
+                                                        </Typography>
+                                                    </Stack>
+                                                ))}
+                                            </Stack>
+                                        )}
                                     </Box>
                                     <Box sx={{ textAlign: { sm: 'right' } }}>
                                         <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
@@ -292,7 +362,7 @@ export default function CheckoutPage() {
                                         <Typography variant="h4" color="secondary.main" sx={{ mt: 0.5, fontFamily: '"League Spartan", sans-serif', fontWeight: 800 }}>
                                             {amountCents > 0 ? formatPriceFromCents(amountCents, currency) : '—'}
                                         </Typography>
-                                        {target.kind === 'sector_subscription' && (
+                                        {(target.kind === 'sector_subscription' || target.kind === 'sector_bundle') && (
                                             <Typography variant="caption" color="text.secondary">{t('checkout.rib.thirtyDays')}</Typography>
                                         )}
                                     </Box>
@@ -347,7 +417,14 @@ export default function CheckoutPage() {
                                 </Stack>
                                 <Divider sx={{ my: 3 }} />
                                 <Stack direction="row" spacing={1} justifyContent="flex-end">
-                                    <Button component={Link} to={target.kind === 'sector_subscription' ? '/pricing' : `/reports/${target.report.slug || target.report.id}`}>
+                                    <Button
+                                        component={Link}
+                                        to={
+                                            target.kind === 'report'
+                                                ? `/reports/${target.report.slug || target.report.id}`
+                                                : '/pricing'
+                                        }
+                                    >
                                         {t('common.cancel')}
                                     </Button>
                                     <Button
@@ -364,6 +441,7 @@ export default function CheckoutPage() {
                         </Stack>
                     )}
                 </Container>
+                </MotionInView>
             </Box>
             <Footer />
         </Box>

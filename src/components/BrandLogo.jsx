@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 
 export default function BrandLogo({ size = 'default', variant = 'default' }) {
     const { t } = useTranslation()
-    const h = size === 'compact' ? 28 : 36
+    const h = size === 'small' ? 22 : size === 'compact' ? 28 : 36
     const onDark = variant === 'onDark'
     return (
         <Box

@@ -1,0 +1,8 @@
+# Supabase project config (CLI deploy). See: https://supabase.com/docs/guides/functions
+
+[functions.report-pdf-stream]
+# OPTIONS preflight must reach the function; JWT is verified inside via getUser().
+verify_jwt = false
+
+[functions.payment-notify]
+verify_jwt = false

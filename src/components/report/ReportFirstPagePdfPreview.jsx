@@ -8,16 +8,79 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Alert from '@mui/material/Alert'
 import 'react-pdf/dist/Page/TextLayer.css'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
+import { fitPageToBox, viewportSizeFromPdfPage } from '../../lib/pdfPageFit'
 
-// Vite’s optimizer can serve a stale bundled worker (e.g. 4.x) while react-pdf uses pdfjs 5.4.x.
-// Pin worker to the same version as the API via jsdelivr (matches `pdfjs.version` at runtime).
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
 
-/** Only these pages are rendered; page 1 sharp, 2–3 blurred, 4+ never shown. */
 const MAX_VISIBLE_PAGE = 3
-
-/** Stable reference — react-pdf warns if `options` identity changes each render. */
 const DOCUMENT_OPTIONS = Object.freeze({ withCredentials: false })
+
+function PreviewPage({ pageNumber, containerWidth, isBlurred }) {
+    const [pageSize, setPageSize] = useState(null)
+
+    const onPageLoadSuccess = useCallback(pdfPage => {
+        setPageSize(viewportSizeFromPdfPage(pdfPage))
+    }, [])
+
+    const renderWidth = useMemo(() => {
+        if (!pageSize || !containerWidth) return containerWidth
+        return fitPageToBox(pageSize, containerWidth).width
+    }, [pageSize, containerWidth])
+
+    return (
+        <Box
+            sx={{
+                position: 'relative',
+                width: renderWidth,
+                maxWidth: '100%',
+                mx: 'auto',
+                mb: 0.5,
+                overflow: 'hidden',
+                bgcolor: '#fff',
+                lineHeight: 0,
+                boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+                ...(pageSize && {
+                    aspectRatio: `${pageSize.width} / ${pageSize.height}`,
+                }),
+                ...(isBlurred && {
+                    filter: 'blur(12px)',
+                    opacity: 0.92,
+                    userSelect: 'none',
+                    pointerEvents: 'none',
+                    transform: 'translateZ(0)',
+                }),
+            }}
+            aria-hidden={isBlurred}
+        >
+            {isBlurred && (
+                <Typography
+                    variant="caption"
+                    sx={{
+                        position: 'absolute',
+                        top: 8,
+                        left: 8,
+                        zIndex: 2,
+                        bgcolor: 'rgba(255,255,255,0.85)',
+                        px: 1,
+                        py: 0.25,
+                        borderRadius: 1,
+                        fontWeight: 700,
+                        color: 'text.secondary',
+                    }}
+                >
+                    Page {pageNumber}
+                </Typography>
+            )}
+            <Page
+                pageNumber={pageNumber}
+                width={renderWidth}
+                onLoadSuccess={onPageLoadSuccess}
+                renderTextLayer={!isBlurred}
+                renderAnnotationLayer={!isBlurred}
+            />
+        </Box>
+    )
+}
 
 export default function ReportFirstPagePdfPreview({ signedUrl, title = 'Report preview' }) {
     const containerRef = useRef(null)
@@ -74,9 +137,11 @@ export default function ReportFirstPagePdfPreview({ signedUrl, title = 'Report p
                 <Box
                     ref={containerRef}
                     sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
                         width: '100%',
-                        maxHeight: { xs: '70vh', sm: '75vh' },
-                        overflow: 'auto',
+                        py: 1,
                         borderRadius: 1,
                         bgcolor: 'grey.100',
                         border: '1px solid',
@@ -94,54 +159,14 @@ export default function ReportFirstPagePdfPreview({ signedUrl, title = 'Report p
                         }
                         options={DOCUMENT_OPTIONS}
                     >
-                        {visiblePageNumbers.map(pageNum => {
-                            const isBlurred = pageNum >= 2
-                            return (
-                                <Box
-                                    key={pageNum}
-                                    sx={{
-                                        position: 'relative',
-                                        mb: pageNum < visiblePageNumbers.length ? 0.5 : 0,
-                                        // Blur following pages; clip so blur does not paint outside card
-                                        overflow: 'hidden',
-                                        ...(isBlurred && {
-                                            filter: 'blur(12px)',
-                                            opacity: 0.92,
-                                            userSelect: 'none',
-                                            pointerEvents: 'none',
-                                            transform: 'translateZ(0)',
-                                        }),
-                                    }}
-                                    aria-hidden={isBlurred}
-                                >
-                                    {isBlurred && (
-                                        <Typography
-                                            variant="caption"
-                                            sx={{
-                                                position: 'absolute',
-                                                top: 8,
-                                                left: 8,
-                                                zIndex: 2,
-                                                bgcolor: 'rgba(255,255,255,0.85)',
-                                                px: 1,
-                                                py: 0.25,
-                                                borderRadius: 1,
-                                                fontWeight: 700,
-                                                color: 'text.secondary',
-                                            }}
-                                        >
-                                            Page {pageNum}
-                                        </Typography>
-                                    )}
-                                    <Page
-                                        pageNumber={pageNum}
-                                        width={containerWidth}
-                                        renderTextLayer={!isBlurred}
-                                        renderAnnotationLayer={!isBlurred}
-                                    />
-                                </Box>
-                            )
-                        })}
+                        {visiblePageNumbers.map(pageNum => (
+                            <PreviewPage
+                                key={pageNum}
+                                pageNumber={pageNum}
+                                containerWidth={containerWidth}
+                                isBlurred={pageNum >= 2}
+                            />
+                        ))}
                     </Document>
                 </Box>
                 {numPages > MAX_VISIBLE_PAGE && (

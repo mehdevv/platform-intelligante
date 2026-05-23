@@ -13,8 +13,15 @@ import Avatar from '@mui/material/Avatar'
 import Breadcrumbs from '@mui/material/Breadcrumbs'
 import CircularProgress from '@mui/material/CircularProgress'
 import Alert from '@mui/material/Alert'
+import TextField from '@mui/material/TextField'
+import InputAdornment from '@mui/material/InputAdornment'
+import SearchIcon from '@mui/icons-material/Search'
+import ReportCatalogFilters from '../components/reports/ReportCatalogFilters'
+import { reportPassesCatalogFilters } from '../lib/reportCatalogFilter'
+import { usePriceRangeUnits } from '../hooks/usePriceRangeUnits'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import StarIcon from '@mui/icons-material/Star'
+import { useTranslation } from 'react-i18next'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { useAuth } from '../context/AuthContext'
@@ -23,13 +30,16 @@ import { reportPublicPath } from '../lib/reportPath'
 import LockOpenIcon from '@mui/icons-material/LockOpen'
 
 export default function SectorDetailPage() {
+    const { t } = useTranslation()
     const { id: slug } = useParams()
     const { supabase, user } = useAuth()
     const [sector, setSector] = useState(null)
     const [reports, setReports] = useState([])
+    const [reportSearch, setReportSearch] = useState('')
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
     const [sectorSubscribed, setSectorSubscribed] = useState(false)
+    const { priceRangeUnits, setPriceRangeUnits, maxPriceUnit } = usePriceRangeUnits(reports)
 
     useEffect(() => {
         let cancelled = false
@@ -83,6 +93,14 @@ export default function SectorDetailPage() {
         const latest = latestTs ? new Date(latestTs) : null
         return { total, paid, free, latest }
     }, [reports])
+
+    const filteredReports = useMemo(
+        () =>
+            reports.filter(r =>
+                reportPassesCatalogFilters(r, { priceRangeUnits, catalogMaxPriceUnit: maxPriceUnit, search: reportSearch }),
+            ),
+        [reports, reportSearch, priceRangeUnits, maxPriceUnit],
+    )
 
     return (
         <Box sx={{ bgcolor: 'background.default', minHeight: '100vh' }}>
@@ -199,26 +217,67 @@ export default function SectorDetailPage() {
                             </Stack>
                         </Card>
 
-                        <Stack spacing={1} sx={{ mb: 3 }}>
+                        <Stack
+                            direction={{ xs: 'column', lg: 'row' }}
+                            alignItems={{ xs: 'stretch', lg: 'center' }}
+                            justifyContent="space-between"
+                            spacing={2}
+                            useFlexGap
+                            flexWrap="wrap"
+                            sx={{ mb: 3 }}
+                        >
                             <Typography
                                 variant="h5"
                                 sx={{
                                     fontFamily: '"League Spartan", sans-serif',
                                     fontWeight: 800,
                                     fontSize: { xs: '1.35rem', sm: '1.5rem' },
+                                    flexShrink: 0,
                                 }}
                             >
                                 Reports in this sector
                             </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                {reports.length
-                                    ? `${reports.length} report${reports.length === 1 ? '' : 's'} — open a card for the full overview and purchase options.`
-                                    : 'Published catalogue items will appear here.'}
-                            </Typography>
+                            {reports.length > 0 && (
+                                <Stack
+                                    direction={{ xs: 'column', sm: 'row' }}
+                                    spacing={1.5}
+                                    alignItems={{ xs: 'stretch', sm: 'center' }}
+                                    sx={{ flex: { lg: 1 }, minWidth: 0, maxWidth: { lg: 640 }, ml: { lg: 'auto' } }}
+                                >
+                                    <TextField
+                                        size="small"
+                                        placeholder={t('sectorDetail.searchReports')}
+                                        value={reportSearch}
+                                        onChange={e => setReportSearch(e.target.value)}
+                                        sx={{ width: { xs: '100%', sm: 220 } }}
+                                        slotProps={{
+                                            input: {
+                                                startAdornment: (
+                                                    <InputAdornment position="start">
+                                                        <SearchIcon fontSize="small" />
+                                                    </InputAdornment>
+                                                ),
+                                            },
+                                        }}
+                                    />
+                                    <ReportCatalogFilters
+                                        inline
+                                        showSectorCheckboxes={false}
+                                        priceRangeUnits={priceRangeUnits}
+                                        onPriceRangeChange={setPriceRangeUnits}
+                                        maxPriceUnit={maxPriceUnit}
+                                    />
+                                </Stack>
+                            )}
                         </Stack>
                         {!reports.length && <Alert severity="info">No published reports in this sector yet.</Alert>}
+                        {reports.length > 0 && !filteredReports.length && (
+                            <Alert severity="info" sx={{ mb: 2 }}>
+                                {t('sectorsListing.noReportsMatch')}
+                            </Alert>
+                        )}
                         <Grid container spacing={3}>
-                            {reports.map(r => {
+                            {filteredReports.map(r => {
                                 const summaryIsDistinct = r.summary && r.summary.trim() !== r.title.trim()
                                 return (
                                     <Grid key={r.id} size={{ xs: 12, sm: 6, lg: 4 }}>
@@ -267,10 +326,10 @@ export default function SectorDetailPage() {
                                                         analytics
                                                     </span>
                                                 )}
-                                                {r.price_cents > 0 && (
+                                                {(r.price_cents ?? 0) > 0 ? (
                                                     <Chip
                                                         icon={<StarIcon sx={{ fontSize: 14 }} />}
-                                                        label="Paid"
+                                                        label={t('sectorsListing.pricingPaid')}
                                                         size="small"
                                                         sx={{
                                                             position: 'absolute',
@@ -280,6 +339,20 @@ export default function SectorDetailPage() {
                                                             background: 'linear-gradient(135deg, #f59e0b, #d97706)',
                                                             color: '#fff',
                                                             fontWeight: 700,
+                                                        }}
+                                                    />
+                                                ) : (
+                                                    <Chip
+                                                        label={t('common.free')}
+                                                        size="small"
+                                                        color="success"
+                                                        sx={{
+                                                            position: 'absolute',
+                                                            top: 12,
+                                                            right: 12,
+                                                            zIndex: 1,
+                                                            fontWeight: 800,
+                                                            boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
                                                         }}
                                                     />
                                                 )}
@@ -326,7 +399,9 @@ export default function SectorDetailPage() {
                                                 {!summaryIsDistinct && <Box sx={{ flexGrow: 1, minHeight: 8 }} />}
                                                 <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ borderTop: '1px solid', borderColor: 'divider', pt: 2, mt: 'auto' }}>
                                                     <Typography variant="caption" color="text.secondary" fontWeight={600}>
-                                                        {r.price_cents > 0 ? formatPriceFromCents(r.price_cents, r.currency) : 'Free'}
+                                                        {(r.price_cents ?? 0) > 0
+                                                            ? formatPriceFromCents(r.price_cents, r.currency)
+                                                            : t('common.free')}
                                                     </Typography>
                                                     <Button
                                                         component="span"

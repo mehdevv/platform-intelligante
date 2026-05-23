@@ -9,14 +9,12 @@ import SectorsListingPage from './pages/SectorsListingPage'
 import SectorDetailPage from './pages/SectorDetailPage'
 import ReportsListingPage from './pages/ReportsListingPage'
 import ReportDetailPage from './pages/ReportDetailPage'
+import ReportReadPage from './pages/ReportReadPage'
 import DashboardLayout from './layouts/DashboardLayout'
 import DashboardOverviewPage from './pages/dashboard/DashboardOverviewPage'
-import DashboardReportsPage from './pages/dashboard/DashboardReportsPage'
-import DashboardWatchlistPage from './pages/dashboard/DashboardWatchlistPage'
-import DashboardActivityPage from './pages/dashboard/DashboardActivityPage'
+import DashboardLibraryPage from './pages/dashboard/DashboardLibraryPage'
 import DashboardBillingPage from './pages/dashboard/DashboardBillingPage'
 import DashboardSettingsPage from './pages/dashboard/DashboardSettingsPage'
-import DashboardStatisticsPage from './pages/dashboard/DashboardStatisticsPage'
 import DashboardPaymentsPage from './pages/dashboard/DashboardPaymentsPage'
 import ProfilePage from './pages/ProfilePage'
 import AdminLayout from './layouts/AdminLayout'
@@ -27,9 +25,11 @@ import AdminReportEditPage from './pages/admin/AdminReportEditPage'
 import AdminUsersPage from './pages/admin/AdminUsersPage'
 import AdminAuditPage from './pages/admin/AdminAuditPage'
 import AdminSettingsPage from './pages/admin/AdminSettingsPage'
+import AdminStoragePage from './pages/admin/AdminStoragePage'
 import AdminSectorsPage from './pages/admin/AdminSectorsPage'
 import AdminBlogPage from './pages/admin/AdminBlogPage'
 import AdminPaymentsPage from './pages/admin/AdminPaymentsPage'
+import AdminCorporateInboxPage from './pages/admin/AdminCorporateInboxPage'
 import AIAgentPage from './pages/AIAgentPage'
 import BlogListingPage from './pages/BlogListingPage'
 import BlogPostPage from './pages/BlogPostPage'
@@ -38,7 +38,6 @@ import CheckoutPage from './pages/CheckoutPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import TermsPage from './pages/TermsPage'
 import PrivacyPage from './pages/PrivacyPage'
-import SearchPage from './pages/SearchPage'
 import I18nHtmlLang from './components/I18nHtmlLang'
 import RedirectSecteur from './components/RedirectSecteur'
 import RequireAuth from './components/auth/RequireAuth'
@@ -58,6 +57,14 @@ function App() {
                 <Route path="/sectors" element={<SectorsListingPage />} />
                 <Route path="/sectors/:id" element={<SectorDetailPage />} />
                 <Route path="/reports" element={<ReportsListingPage />} />
+                <Route
+                    path="/reports/:id/read"
+                    element={
+                        <RequireAuth>
+                            <ReportReadPage />
+                        </RequireAuth>
+                    }
+                />
                 <Route path="/reports/:id" element={<ReportDetailPage />} />
                 <Route
                     path="/dashboard"
@@ -68,10 +75,11 @@ function App() {
                     }
                 >
                     <Route index element={<DashboardOverviewPage />} />
-                    <Route path="reports" element={<DashboardReportsPage />} />
-                    <Route path="watchlist" element={<DashboardWatchlistPage />} />
-                    <Route path="activity" element={<DashboardActivityPage />} />
-                    <Route path="statistics" element={<DashboardStatisticsPage />} />
+                    <Route path="library" element={<DashboardLibraryPage />} />
+                    <Route path="reports" element={<Navigate to="/dashboard/library" replace />} />
+                    <Route path="watchlist" element={<Navigate to="/dashboard" replace />} />
+                    <Route path="activity" element={<Navigate to="/dashboard" replace />} />
+                    <Route path="statistics" element={<Navigate to="/dashboard" replace />} />
                     <Route path="billing" element={<DashboardBillingPage />} />
                     <Route path="payments" element={<DashboardPaymentsPage />} />
                     <Route path="settings" element={<DashboardSettingsPage />} />
@@ -104,6 +112,8 @@ function App() {
                     <Route path="analytics" element={<Navigate to="/admin" replace />} />
                     <Route path="audit" element={<AdminAuditPage />} />
                     <Route path="payments" element={<AdminPaymentsPage />} />
+                    <Route path="corporate" element={<AdminCorporateInboxPage />} />
+                    <Route path="storage" element={<AdminStoragePage />} />
                     <Route path="settings" element={<AdminSettingsPage />} />
                 </Route>
                 <Route path="/ai" element={<AIAgentPage />} />
@@ -122,7 +132,7 @@ function App() {
                 <Route path="/checkout" element={<CheckoutPage />} />
                 <Route path="/terms" element={<TermsPage />} />
                 <Route path="/privacy" element={<PrivacyPage />} />
-                <Route path="/search" element={<SearchPage />} />
+                <Route path="/search" element={<Navigate to="/reports" replace />} />
                 {/* French URL aliases */}
                 <Route path="/tarifs" element={<Navigate to="/pricing" replace />} />
                 <Route path="/rapports" element={<Navigate to="/reports" replace />} />

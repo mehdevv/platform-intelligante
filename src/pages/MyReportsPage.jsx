@@ -12,6 +12,7 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Paper from '@mui/material/Paper'
 import Chip from '@mui/material/Chip'
+import Stack from '@mui/material/Stack'
 import CircularProgress from '@mui/material/CircularProgress'
 import Alert from '@mui/material/Alert'
 import { useTranslation } from 'react-i18next'
@@ -88,9 +89,20 @@ export default function MyReportsPage() {
                                             <TableCell>{row.expires_at ? new Date(row.expires_at).toLocaleDateString() : '—'}</TableCell>
                                             <TableCell align="right">
                                                 {row.reports && (
-                                                    <Button component={Link} to={reportPublicPath(row.reports)} size="small">
-                                                        Open
-                                                    </Button>
+                                                    <Stack direction="row" spacing={0.5} justifyContent="flex-end">
+                                                        <Button
+                                                            component={Link}
+                                                            to={`${reportPublicPath(row.reports)}/read`}
+                                                            size="small"
+                                                            variant="contained"
+                                                            color="secondary"
+                                                        >
+                                                            Read
+                                                        </Button>
+                                                        <Button component={Link} to={reportPublicPath(row.reports)} size="small" variant="outlined">
+                                                            Details
+                                                        </Button>
+                                                    </Stack>
                                                 )}
                                             </TableCell>
                                         </TableRow>

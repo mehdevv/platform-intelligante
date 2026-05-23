@@ -15,6 +15,7 @@ import TableRow from '@mui/material/TableRow'
 import TableCell from '@mui/material/TableCell'
 import { useAuth } from '../../context/AuthContext'
 import { formatPriceFromCents } from '../../lib/moneyFormat'
+import { enrichPaymentRowsWithBundleSectors, paymentRequestKindLabel } from '../../lib/paymentRequestDisplay'
 
 const STATUS_LABEL = {
     pending: { label: 'Awaiting review', color: 'warning' },
@@ -23,15 +24,17 @@ const STATUS_LABEL = {
 }
 
 function describe(row) {
+    const primary = paymentRequestKindLabel(row)
     if (row.kind === 'sector_subscription') {
-        const name = row.sectors?.name || row.sector_id?.slice(0, 8)
-        return { primary: `Sector subscription — ${name}`, link: row.sectors?.slug ? `/sectors/${row.sectors.slug}` : null }
+        return { primary, link: row.sectors?.slug ? `/sectors/${row.sectors.slug}` : null }
     }
     if (row.kind === 'report') {
-        const name = row.reports?.title || row.report_id?.slice(0, 8)
-        return { primary: `Report — ${name}`, link: row.reports?.slug ? `/reports/${row.reports.slug}` : null }
+        return { primary, link: row.reports?.slug ? `/reports/${row.reports.slug}` : null }
     }
-    return { primary: row.kind, link: null }
+    if (row.kind === 'sector_bundle') {
+        return { primary, link: '/pricing' }
+    }
+    return { primary, link: null }
 }
 
 export default function DashboardPaymentsPage() {
@@ -49,13 +52,13 @@ export default function DashboardPaymentsPage() {
             }
             const { data, error } = await supabase
                 .from('payment_requests')
-                .select('id, kind, report_id, sector_id, amount_cents, currency, status, admin_note, created_at, reviewed_at, reports:report_id ( id, title, slug ), sectors:sector_id ( id, name, slug )')
+                .select('id, kind, report_id, sector_id, bundle_sector_ids, amount_cents, currency, status, admin_note, created_at, reviewed_at, reports:report_id ( id, title, slug ), sectors:sector_id ( id, name, slug )')
                 .eq('user_id', user.id)
                 .order('created_at', { ascending: false })
                 .limit(100)
             if (cancelled) return
             if (error) setErr(error.message)
-            else setRows(data || [])
+            else setRows(await enrichPaymentRowsWithBundleSectors(supabase, data || []))
             setLoading(false)
         })()
         return () => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import Box from '@mui/material/Box'
@@ -13,16 +13,12 @@ import Grid from '@mui/material/Grid'
 import Stack from '@mui/material/Stack'
 import Chip from '@mui/material/Chip'
 import Divider from '@mui/material/Divider'
-import LinearProgress from '@mui/material/LinearProgress'
+import CircularProgress from '@mui/material/CircularProgress'
+import Alert from '@mui/material/Alert'
 import MenuItem from '@mui/material/MenuItem'
 import Paper from '@mui/material/Paper'
 import Slider from '@mui/material/Slider'
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
-import ToggleButton from '@mui/material/ToggleButton'
 import Tooltip from '@mui/material/Tooltip'
-import SearchIcon from '@mui/icons-material/Search'
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
@@ -31,74 +27,36 @@ import AnalyticsIcon from '@mui/icons-material/Analytics'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
-import DotPattern from '../components/DotPattern'
+import { FeaturedReportCard } from '../components/home/HomeMarketCards'
+import HomeHero from '../components/home/HomeHero'
+import HomeInsightsHighlight from '../components/home/HomeInsightsHighlight'
+import SectorsCarousel from '../components/home/SectorsCarousel'
+import {
+    MotionFadeInUp,
+    MotionInView,
+    MotionRevealLeft,
+    MotionRevealRight,
+    MotionStagger,
+    MotionStaggerItem,
+} from '../components/motion/Motion'
+import { motion } from 'framer-motion'
+import { useAuth } from '../context/AuthContext'
 import { homeImagery } from '../constants/homeImagery'
-
-// ─── Mini bar chart used inside stat cards ───────────────────────────────────
-function MiniBarChart({ bars = [40, 65, 90, 50, 35, 70, 55], color = '#4B5B72' }) {
-    return (
-        <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 0.5, height: 72 }}>
-            {bars.map((h, i) => (
-                <Box key={i} sx={{ flex: 1, bgcolor: color, opacity: 0.15 + (h / 100) * 0.85, borderRadius: '3px 3px 0 0', height: `${h}%`, transition: 'height 0.3s' }} />
-            ))}
-        </Box>
-    )
-}
-
-// ─── Mini horizontal bar chart ────────────────────────────────────────────────
-function MiniHBarChart({ rows }) {
-    return (
-        <Stack spacing={0.8}>
-            {rows.map((r, i) => (
-                <Stack key={i} direction="row" alignItems="center" gap={1}>
-                    <Typography variant="caption" sx={{ width: 80, fontSize: '0.65rem', color: 'text.secondary', flexShrink: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.label}</Typography>
-                    <LinearProgress variant="determinate" value={r.pct} sx={{ flex: 1, height: 8, borderRadius: 1, bgcolor: '#f1f5f9', '& .MuiLinearProgress-bar': { bgcolor: r.color || '#4B5B72', borderRadius: 1 } }} />
-                    <Typography variant="caption" sx={{ fontSize: '0.65rem', fontWeight: 700, width: 32, textAlign: 'right' }}>{r.pct}%</Typography>
-                </Stack>
-            ))}
-        </Stack>
-    )
-}
-
-const infographicBars = [
-    { label: 'United States', pct: 87, color: '#4B5B72' },
-    { label: 'Germany', pct: 72, color: '#3d5668' },
-    { label: 'United Kingdom', pct: 68, color: '#197F94' },
-    { label: 'France', pct: 61, color: '#3d8a9a' },
-    { label: 'Japan', pct: 55, color: '#6b9faf' },
-]
-
-function suggestSample(population, confidencePct, marginPct) {
-    const z = confidencePct >= 99 ? 2.576 : confidencePct >= 95 ? 1.96 : 1.645
-    const p = 0.5
-    const e = marginPct / 100
-    if (!population || population <= 0) {
-        return Math.ceil((z * z * p * (1 - p)) / (e * e))
-    }
-    const num = population * z * z * p * (1 - p)
-    const den = e * e * (population - 1) + z * z * p * (1 - p)
-    return Math.max(1, Math.ceil(num / den))
-}
+import { clampConfidencePct, suggestSample } from '../lib/sampleSize'
+import { fetchPopularReportsBySales } from '../lib/popularReports'
+import { reportPublicPath } from '../lib/reportPath'
+import { submitCorporateMessage } from '../lib/corporateMessage'
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 export default function HomePage() {
     const { t, i18n } = useTranslation()
+    const { supabase } = useAuth()
     const navigate = useNavigate()
     const location = useLocation()
-    const [heroSearch, setHeroSearch] = useState('')
     const [population, setPopulation] = useState(100000)
     const [confidence, setConfidence] = useState(95)
     const [margin, setMargin] = useState(5)
     const [sampleResult, setSampleResult] = useState(null)
-
-    const confidenceLevels = useMemo(
-        () => [
-            { value: 90, label: '90%' },
-            { value: 95, label: '95%' },
-            { value: 99, label: '99%' },
-        ],
-        [],
-    )
 
     useEffect(() => {
         const n = suggestSample(population || 0, confidence, margin || 5)
@@ -112,47 +70,77 @@ export default function HomePage() {
         if (el) queueMicrotask(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }))
     }, [location.hash, location.pathname])
 
-    const popularTags = useMemo(() => {
+    const localePopularFallback = useMemo(() => {
         const v = t('home.popularTags', { returnObjects: true })
         return Array.isArray(v) ? v : []
     }, [t, i18n.language])
-    const featuredStats = useMemo(() => {
-        const v = t('home.featuredStats', { returnObjects: true })
-        return Array.isArray(v) ? v : []
-    }, [t, i18n.language])
-    const topics = useMemo(() => {
-        const v = t('home.topics', { returnObjects: true })
-        return Array.isArray(v) ? v : []
-    }, [t, i18n.language])
-    const topicsScrollRef = useRef(null)
-    const [topicsCarouselScroll, setTopicsCarouselScroll] = useState({ canLeft: false, canRight: true })
-
-    const syncTopicsCarouselScroll = () => {
-        const el = topicsScrollRef.current
-        if (!el) return
-        const { scrollLeft, scrollWidth, clientWidth } = el
-        setTopicsCarouselScroll({
-            canLeft: scrollLeft > 6,
-            canRight: scrollLeft < scrollWidth - clientWidth - 6,
-        })
-    }
-
-    const scrollTopicsCarousel = dir => {
-        const el = topicsScrollRef.current
-        if (!el) return
-        el.scrollBy({ left: dir * Math.min(320, el.clientWidth * 0.75), behavior: 'smooth' })
-    }
+    const [popularReports, setPopularReports] = useState([])
+    const [publishedSectors, setPublishedSectors] = useState([])
+    const [sectorReportCounts, setSectorReportCounts] = useState({})
+    const [featuredReports, setFeaturedReports] = useState([])
+    const [catalogLoading, setCatalogLoading] = useState(true)
+    const [corporateForm, setCorporateForm] = useState({ name: '', email: '', subject: '', body: '' })
+    const [corporateSubmitting, setCorporateSubmitting] = useState(false)
+    const [corporateNotice, setCorporateNotice] = useState(null)
 
     useEffect(() => {
-        syncTopicsCarouselScroll()
-        const onResize = () => syncTopicsCarouselScroll()
-        window.addEventListener('resize', onResize, { passive: true })
-        const id = requestAnimationFrame(syncTopicsCarouselScroll)
+        let cancelled = false
+        ;(async () => {
+            if (!supabase) return
+            try {
+                const list = await fetchPopularReportsBySales(supabase, localePopularFallback)
+                if (!cancelled) setPopularReports(list)
+            } catch {
+                if (!cancelled) {
+                    setPopularReports(
+                        localePopularFallback.map((label, i) => ({
+                            id: `fallback-${i}`,
+                            slug: '',
+                            title: label,
+                            salesCount: 0,
+                            href: '/reports',
+                        })),
+                    )
+                }
+            }
+        })()
         return () => {
-            window.removeEventListener('resize', onResize)
-            cancelAnimationFrame(id)
+            cancelled = true
         }
-    }, [topics])
+    }, [supabase, localePopularFallback])
+
+    useEffect(() => {
+        let cancelled = false
+        ;(async () => {
+            if (!supabase) {
+                setCatalogLoading(false)
+                return
+            }
+            setCatalogLoading(true)
+            const [sectorsRes, reportsRes, countsRes] = await Promise.all([
+                supabase.from('sectors').select('id, slug, name, icon_image_url').eq('is_published', true).order('sort_order').order('name'),
+                supabase
+                    .from('reports')
+                    .select('id, slug, title, summary, price_cents, currency, thumbnail_image_url, published_at, sectors:sector_id(name)')
+                    .eq('status', 'published')
+                    .order('created_at', { ascending: false })
+                    .limit(3),
+                supabase.from('reports').select('sector_id').eq('status', 'published'),
+            ])
+            if (cancelled) return
+            setPublishedSectors(sectorsRes.data || [])
+            setFeaturedReports(reportsRes.data || [])
+            const counts = {}
+            for (const row of countsRes.data || []) {
+                if (row.sector_id) counts[row.sector_id] = (counts[row.sector_id] || 0) + 1
+            }
+            setSectorReportCounts(counts)
+            setCatalogLoading(false)
+        })()
+        return () => {
+            cancelled = true
+        }
+    }, [supabase])
 
     const pricingPlans = useMemo(() => {
         const v = t('home.pricingPlans', { returnObjects: true })
@@ -162,241 +150,57 @@ export default function HomePage() {
         const v = t('home.sideReports', { returnObjects: true })
         return Array.isArray(v) ? v : []
     }, [t, i18n.language])
-    const platformFeatures = useMemo(() => [t('home.platformF1'), t('home.platformF2'), t('home.platformF3'), t('home.platformF4')], [t, i18n.language])
-
-    const runHeroSearch = () => {
-        const q = heroSearch.trim()
-        if (q) navigate(`/search?q=${encodeURIComponent(q)}`)
-    }
-
     return (
         <Box sx={{ bgcolor: 'background.paper' }}>
             <Header />
             <Box component="main" sx={{ pt: 0 }}>
 
-                {/* ═══ HERO (full bleed under fixed header; inner pad clears toolbar) ═══ */}
+                <HomeHero t={t} searchPlaceholder={t('home.searchPlaceholder')} popularReports={popularReports} />
+
+                {/* ═══ FEATURED REPORTS (latest published) ═══════════════════ */}
                 <Box
                     sx={{
-                        bgcolor: '#1a2332',
-                        borderBottom: '3px solid',
-                        borderColor: 'secondary.main',
-                        position: 'relative',
-                        overflowX: 'hidden',
+                        py: { xs: 8, md: 11 },
+                        background: 'linear-gradient(180deg, #f0f1f5 0%, #e8eaef 100%)',
                     }}
                 >
-                    <DotPattern
-                        variant="hero"
-                        className="z-0"
-                        baseColor="#4d5d78"
-                        glowColor="#22d3ee"
-                        dotSize={2}
-                        gap={22}
-                        proximity={100}
-                        waveSpeed={0.45}
-                        vignette="navy"
-                    />
-                    <Box
-                        sx={{
-                            position: 'relative',
-                            zIndex: 1,
-                            minHeight: '100vh',
-                            boxSizing: 'border-box',
-                            display: 'flex',
-                            alignItems: 'center',
-                            pt: { xs: 'calc(64px + 32px)', md: 'calc(64px + 48px)' },
-                            pb: { xs: 4, md: 6 },
-                        }}
-                    >
-                    <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, width: '100%' }} className="section-fade-in">
-                        <Grid container spacing={{ xs: 4, md: 6 }} alignItems="center">
-                            <Grid size={{ xs: 12, md: 6 }} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
-                                <Typography
-                                    variant="h1"
-                                    sx={{
-                                        color: '#fff',
-                                        fontSize: { xs: '2.125rem', sm: '2.75rem', md: '3.25rem' },
-                                        fontWeight: 800,
-                                        lineHeight: 1.08,
-                                        mb: 1.5,
-                                        fontFamily: '"League Spartan", sans-serif',
-                                    }}
-                                    className="animate-hero-line"
-                                >
-                                    {t('home.heroLine1')}
-                                </Typography>
-                                <Typography
-                                    variant="h1"
-                                    sx={{
-                                        color: '#22d3ee',
-                                        fontSize: { xs: '2.125rem', sm: '2.75rem', md: '3.25rem' },
-                                        fontWeight: 800,
-                                        lineHeight: 1.08,
-                                        mb: 3,
-                                        fontFamily: '"League Spartan", sans-serif',
-                                    }}
-                                    className="animate-hero-line delay-1"
-                                >
-                                    {t('home.heroLine2')}
-                                </Typography>
-                                <Typography
-                                    component="p"
-                                    className="typography-premium-small"
-                                    sx={{
-                                        color: 'rgba(226,232,240,0.92)',
-                                        mb: 4,
-                                        maxWidth: { md: 520 },
-                                        mx: { xs: 'auto', md: 0 },
-                                        textAlign: { xs: 'center', md: 'left' },
-                                    }}
-                                >
-                                    {t('home.heroSub')}
-                                </Typography>
-
-                                <Box
-                                    className="hero-search-glow"
-                                    sx={{
-                                        display: 'flex',
-                                        maxWidth: { xs: '100%', md: '100%' },
-                                        mx: { xs: 'auto', md: 0 },
-                                        bgcolor: '#fff',
-                                        borderRadius: 2,
-                                        border: '1px solid #cbd5e1',
-                                        overflow: 'hidden',
-                                        mb: 3,
-                                    }}
-                                >
-                                    <TextField
-                                        fullWidth
-                                        value={heroSearch}
-                                        onChange={e => setHeroSearch(e.target.value)}
-                                        onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), runHeroSearch())}
-                                        placeholder={t('home.searchPlaceholder')}
-                                        variant="standard"
-                                        slotProps={{
-                                            input: {
-                                                disableUnderline: true,
-                                                startAdornment: (
-                                                    <InputAdornment position="start">
-                                                        <SearchIcon sx={{ color: '#64748b', ml: 1 }} />
-                                                    </InputAdornment>
-                                                ),
-                                            },
-                                        }}
-                                        sx={{ px: 1.5, py: 0.5, '& input': { fontSize: '0.9375rem', py: '12px' } }}
-                                    />
-                                    <Button
-                                        variant="contained"
-                                        color="secondary"
-                                        disableElevation
-                                        onClick={runHeroSearch}
-                                        sx={{ m: 0.75, px: 3, borderRadius: 1.5, fontWeight: 700, whiteSpace: 'nowrap', fontSize: '0.875rem' }}
-                                    >
-                                        {t('common.search')}
-                                    </Button>
-                                </Box>
-
-                                <Stack direction="row" flexWrap="wrap" justifyContent={{ xs: 'center', md: 'flex-start' }} gap={1} alignItems="center">
-                                    <Typography sx={{ color: '#94a3b8', fontSize: '0.8125rem', fontWeight: 600 }}>{t('common.popular')}</Typography>
-                                    {popularTags.map(tag => (
-                                        <Chip
-                                            key={tag}
-                                            label={tag}
-                                            size="small"
-                                            component={Link}
-                                            to="/reports"
-                                            sx={{
-                                                color: '#e0f2fe',
-                                                borderColor: 'rgba(34,211,238,0.35)',
-                                                bgcolor: 'rgba(255,255,255,0.04)',
-                                                fontSize: '0.75rem',
-                                                cursor: 'pointer',
-                                                '&:hover': { bgcolor: 'rgba(34,211,238,0.12)', borderColor: '#22d3ee' },
-                                            }}
-                                            variant="outlined"
-                                        />
-                                    ))}
-                                </Stack>
-                            </Grid>
-                            <Grid size={{ xs: 12, md: 6 }}>
-                                <Box
-                                    sx={{
-                                        borderRadius: 2,
-                                        overflow: 'hidden',
-                                        border: '2px solid',
-                                        borderColor: '#22d3ee',
-                                        bgcolor: '#0f172a',
-                                    }}
-                                >
-                                    <Box
-                                        component="img"
-                                        src={homeImagery.hero}
-                                        alt=""
-                                        sx={{
-                                            width: '100%',
-                                            height: { xs: 'min(42vh, 280px)', sm: 'min(45vh, 360px)', md: 'min(52vh, 520px)' },
-                                            objectFit: 'cover',
-                                            display: 'block',
-                                        }}
-                                    />
-                                </Box>
-                            </Grid>
-                        </Grid>
-                    </Container>
-                    </Box>
-                </Box>
-
-                {/* ═══ FEATURED STATS ══════════════════════════════════════════ */}
-                <Box sx={{ bgcolor: '#EBECF1', py: { xs: 8, md: 11 } }}>
                     <Container maxWidth="lg">
+                        <MotionInView>
                         <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems="flex-start" sx={{ mb: 6 }} gap={2}>
                             <Box>
                                 <Typography variant="overline" sx={{ color: 'secondary.main', fontWeight: 800, letterSpacing: '0.12em' }}>{t('home.trendingNow')}</Typography>
-                                <Typography variant="h4" sx={{ fontWeight: 800, mt: 0.5 }}>{t('home.featuredTitle')}</Typography>
-                                <Typography color="text.secondary" sx={{ mt: 0.5 }}>{t('home.featuredSub')}</Typography>
+                                <Typography variant="h4" sx={{ fontWeight: 800, mt: 0.5, fontFamily: '"League Spartan", sans-serif' }}>{t('home.featuredReportsTitle')}</Typography>
+                                <Typography color="text.secondary" sx={{ mt: 0.5 }}>{t('home.featuredReportsSub')}</Typography>
                             </Box>
-                            <Button component={Link} to="/reports" endIcon={<ArrowRightAltIcon />} sx={{ fontWeight: 700, color: 'primary.main', flexShrink: 0 }}>{t('home.viewAllStats')}</Button>
+                            <Button component={Link} to="/reports" endIcon={<ArrowRightAltIcon />} sx={{ fontWeight: 700, color: 'primary.main', flexShrink: 0 }}>{t('home.viewAllReports')}</Button>
                         </Stack>
+                        </MotionInView>
 
+                        {catalogLoading && (
+                            <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
+                                <CircularProgress color="secondary" />
+                            </Box>
+                        )}
+                        {!catalogLoading && !featuredReports.length && (
+                            <Alert severity="info">{t('home.featuredReportsEmpty')}</Alert>
+                        )}
+                        {!catalogLoading && featuredReports.length > 0 && (
+                        <MotionStagger style={{ width: '100%' }}>
                         <Grid container spacing={4}>
-                            {featuredStats.map((stat, i) => (
-                                <Grid key={i} size={{ xs: 12, md: 4 }}>
-                                    <Card component={Link} to="/reports/1" className="card-lift" sx={{ textDecoration: 'none', height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column', p: 0, transition: 'box-shadow 0.2s', '&:hover': { boxShadow: '0 8px 28px rgba(26,35,50,0.08)' } }}>
-                                        <Box
-                                            component="img"
-                                            src={homeImagery.featured[i % homeImagery.featured.length]}
-                                            alt=""
-                                            sx={{ width: '100%', height: 200, objectFit: 'cover', display: 'block' }}
-                                        />
-                                        <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-                                        <Stack direction="row" justifyContent="space-between" sx={{ mb: 2 }}>
-                                            <Chip label={stat.tag} size="small" sx={{ bgcolor: 'rgba(75,91,114,0.08)', color: 'primary.main', fontWeight: 700 }} />
-                                            <Chip label={t(`common.${stat.freeLabelKey}`)} size="small"
-                                                sx={{ bgcolor: stat.freeLabelKey === 'premium' ? 'rgba(212,175,55,0.1)' : 'rgba(16,185,129,0.1)', color: stat.freeLabelKey === 'premium' ? '#b8860b' : '#059669', fontWeight: 700 }} />
-                                        </Stack>
-                                        <Typography variant="body2" fontWeight={600} sx={{ lineHeight: 1.55, mb: 3, flexGrow: 1, color: 'text.primary' }}>{stat.title}</Typography>
-
-                                        {/* Chart area */}
-                                        <Box sx={{ bgcolor: '#f8fafc', borderRadius: 2, p: 2, mb: 2 }}>
-                                            <Stack direction="row" alignItems="flex-start" justifyContent="space-between" sx={{ mb: 1.5 }}>
-                                                <Typography variant="h5" sx={{ fontWeight: 900, color: 'primary.main' }}>{stat.value}</Typography>
-                                                <Typography variant="caption" sx={{ color: 'text.secondary', bgcolor: '#e2e8f0', px: 1, py: 0.25, borderRadius: 1, fontSize: '0.65rem' }}>{stat.unit}</Typography>
-                                            </Stack>
-                                            <MiniBarChart bars={stat.bars} />
-                                        </Box>
-
-                                        <Stack direction="row" justifyContent="space-between" alignItems="center">
-                                            <Stack direction="row" alignItems="center" gap={0.5}><ScheduleIcon sx={{ fontSize: 13, color: 'text.secondary' }} /><Typography variant="caption" color="text.secondary">{stat.date}</Typography></Stack>
-                                            <Stack direction="row" alignItems="center" gap={0.5}><AnalyticsIcon sx={{ fontSize: 13, color: 'text.secondary' }} /><Typography variant="caption" color="text.secondary">{stat.source}</Typography></Stack>
-                                        </Stack>
-                                        </Box>
-                                    </Card>
+                            {featuredReports.map(report => (
+                                <Grid key={report.id} size={{ xs: 12, md: 4 }}>
+                                    <MotionStaggerItem style={{ height: '100%' }}>
+                                        <FeaturedReportCard report={report} />
+                                    </MotionStaggerItem>
                                 </Grid>
                             ))}
                         </Grid>
+                        </MotionStagger>
+                        )}
                     </Container>
                 </Box>
 
-                {/* ═══ EXPLORE TOPICS & INDUSTRIES (carousel + heading) ═══ */}
+                {/* ═══ PUBLISHED SECTORS (carousel) ═══ */}
                 <Box
                     component="section"
                     aria-labelledby="explore-topics-heading"
@@ -410,6 +214,7 @@ export default function HomePage() {
                     }}
                 >
                     <Container maxWidth="lg">
+                        <MotionInView>
                         <Box
                             sx={{
                                 maxWidth: 720,
@@ -444,199 +249,16 @@ export default function HomePage() {
                                 {t('home.exploreTopicsSub')}
                             </Typography>
                         </Box>
+                        </MotionInView>
                     </Container>
 
-                    <Stack
-                        direction="row"
-                        alignItems="center"
-                        sx={{
-                            px: 0,
-                            gap: { xs: 0, md: 1 },
-                        }}
-                    >
-                        <IconButton
-                            type="button"
-                            aria-label="Scroll topics left"
-                            onClick={() => scrollTopicsCarousel(-1)}
-                            disabled={!topicsCarouselScroll.canLeft}
-                            sx={{
-                                display: { xs: 'none', md: 'inline-flex' },
-                                flexShrink: 0,
-                                alignSelf: 'center',
-                                bgcolor: 'background.paper',
-                                boxShadow: 2,
-                                border: '1px solid',
-                                borderColor: 'divider',
-                                ml: 2,
-                                zIndex: 2,
-                                '&:hover': { bgcolor: 'grey.50' },
-                            }}
-                        >
-                            <ChevronLeftIcon />
-                        </IconButton>
+                    <SectorsCarousel
+                        sectors={publishedSectors}
+                        reportCounts={sectorReportCounts}
+                        loading={catalogLoading}
+                    />
 
-                        <Box
-                            ref={topicsScrollRef}
-                            onScroll={syncTopicsCarouselScroll}
-                            className="no-scrollbar"
-                            sx={{
-                                flex: 1,
-                                minWidth: 0,
-                                display: 'flex',
-                                flexDirection: 'row',
-                                alignItems: 'stretch',
-                                gap: 2,
-                                overflowX: 'auto',
-                                overflowY: 'hidden',
-                                scrollSnapType: 'x mandatory',
-                                py: 2,
-                                px: { xs: 2, md: 0 },
-                                WebkitOverflowScrolling: 'touch',
-                            }}
-                        >
-                            {topics.map((topic, i) => {
-                                const src = homeImagery.topicTiles[i % homeImagery.topicTiles.length]
-                                return (
-                                    <Card
-                                        key={`${topic.label}-${i}`}
-                                        component={Link}
-                                        to="/sectors"
-                                        sx={{
-                                            flex: '0 0 auto',
-                                            scrollSnapAlign: 'start',
-                                            width: { xs: 'min(85vw, 300px)', sm: 280, md: 300 },
-                                            height: { xs: 320, sm: 340, md: 360 },
-                                            position: 'relative',
-                                            textDecoration: 'none',
-                                            color: 'inherit',
-                                            p: 0,
-                                            overflow: 'hidden',
-                                            borderRadius: 2,
-                                            border: '1px solid',
-                                            borderColor: 'divider',
-                                            boxSizing: 'border-box',
-                                            transition: 'border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease',
-                                            '&:hover': {
-                                                borderColor: 'secondary.main',
-                                                boxShadow: '0 12px 32px rgba(25, 127, 148, 0.14)',
-                                                transform: 'translateY(-3px)',
-                                                '& .topic-carousel-img': { transform: 'scale(1.05)' },
-                                            },
-                                        }}
-                                    >
-                                        <Box
-                                            component="img"
-                                            className="topic-carousel-img"
-                                            src={src}
-                                            alt=""
-                                            sx={{
-                                                position: 'absolute',
-                                                inset: 0,
-                                                width: '100%',
-                                                height: '100%',
-                                                objectFit: 'cover',
-                                                display: 'block',
-                                                transition: 'transform 0.45s cubic-bezier(0.22, 1, 0.36, 1)',
-                                            }}
-                                        />
-                                        <Box
-                                            aria-hidden
-                                            sx={{
-                                                position: 'absolute',
-                                                inset: 0,
-                                                background: 'linear-gradient(180deg, rgba(15,23,42,0.15) 0%, rgba(15,23,42,0) 38%, rgba(15,23,42,0.55) 85%, rgba(15,23,42,0.88) 100%)',
-                                                pointerEvents: 'none',
-                                            }}
-                                        />
-                                        <Stack
-                                            direction="row"
-                                            alignItems="flex-end"
-                                            gap={1.25}
-                                            sx={{
-                                                position: 'absolute',
-                                                left: 0,
-                                                right: 0,
-                                                bottom: 0,
-                                                p: 2.5,
-                                                minWidth: 0,
-                                            }}
-                                        >
-                                            <Box
-                                                sx={{
-                                                    width: 40,
-                                                    height: 40,
-                                                    borderRadius: 1,
-                                                    bgcolor: 'rgba(255,255,255,0.18)',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    flexShrink: 0,
-                                                    border: '1px solid rgba(255,255,255,0.2)',
-                                                    backdropFilter: 'blur(4px)',
-                                                }}
-                                            >
-                                                <span className="material-symbols-outlined" style={{ fontSize: 22, color: '#f1f5f9' }}>
-                                                    {topic.icon}
-                                                </span>
-                                            </Box>
-                                            <Box sx={{ minWidth: 0, flex: 1, pb: 0.125 }}>
-                                                <Typography
-                                                    variant="subtitle1"
-                                                    component="div"
-                                                    sx={{
-                                                        fontWeight: 800,
-                                                        color: '#fff',
-                                                        lineHeight: 1.25,
-                                                        fontSize: '1.1rem',
-                                                        fontFamily: '"League Spartan", sans-serif',
-                                                        textShadow: '0 1px 12px rgba(0,0,0,0.35)',
-                                                    }}
-                                                >
-                                                    {topic.label}
-                                                </Typography>
-                                                <Typography
-                                                    variant="caption"
-                                                    component="div"
-                                                    sx={{
-                                                        display: 'block',
-                                                        mt: 0.35,
-                                                        color: 'rgba(226,232,240,0.95)',
-                                                        fontWeight: 600,
-                                                        fontSize: '0.8rem',
-                                                        letterSpacing: '0.03em',
-                                                    }}
-                                                >
-                                                    {topic.count} · {t('common.stats')}
-                                                </Typography>
-                                            </Box>
-                                        </Stack>
-                                    </Card>
-                                )
-                            })}
-                        </Box>
-
-                        <IconButton
-                            type="button"
-                            aria-label="Scroll topics right"
-                            onClick={() => scrollTopicsCarousel(1)}
-                            disabled={!topicsCarouselScroll.canRight}
-                            sx={{
-                                display: { xs: 'none', md: 'inline-flex' },
-                                flexShrink: 0,
-                                alignSelf: 'center',
-                                bgcolor: 'background.paper',
-                                boxShadow: 2,
-                                border: '1px solid',
-                                borderColor: 'divider',
-                                mr: 2,
-                                zIndex: 2,
-                                '&:hover': { bgcolor: 'grey.50' },
-                            }}
-                        >
-                            <ChevronRightIcon />
-                        </IconButton>
-                    </Stack>
-
+                    <MotionFadeInUp>
                     <Box sx={{ display: 'flex', justifyContent: 'center', mt: { xs: 4, md: 6 } }}>
                         <Button
                             component={Link}
@@ -647,152 +269,49 @@ export default function HomePage() {
                             disableElevation
                             sx={{ fontWeight: 700, px: 4, py: 1.25, borderRadius: 2 }}
                         >
-                            {t('home.viewAllTopics')}
+                            {t('home.viewAllSectors')}
                         </Button>
                     </Box>
+                    </MotionFadeInUp>
                 </Box>
 
-                {/* ═══ PRODUCT FEATURE SPLIT ═══════════════════════════════════ */}
-                <Box sx={{ bgcolor: '#fff', py: { xs: 8, md: 11 } }}>
-                    <Container maxWidth="lg">
-                        <Grid container spacing={{ xs: 5, md: 10 }} alignItems="center">
-                            <Grid size={{ xs: 12, md: 6 }}>
-                                <Typography variant="overline" sx={{ color: 'secondary.main', fontWeight: 800, letterSpacing: '0.12em' }}>{t('home.platformOverline')}</Typography>
-                                <Typography variant="h3" sx={{ fontWeight: 800, mt: 0.5, mb: 3, fontSize: { xs: '1.75rem', md: '2.25rem' }, lineHeight: 1.2 }}>
-                                    {t('home.platformTitle')}
-                                </Typography>
-                                <Typography color="text.secondary" sx={{ lineHeight: 1.85, mb: 4, fontSize: '1.02rem' }}>
-                                    {t('home.platformBody')}
-                                </Typography>
-                                <Stack spacing={2} sx={{ mb: 5 }}>
-                                    {platformFeatures.map((f, i) => (
-                                        <Stack key={i} direction="row" alignItems="center" gap={1.5}>
-                                            <CheckCircleIcon sx={{ color: 'secondary.main', fontSize: 20, flexShrink: 0 }} />
-                                            <Typography variant="body2" fontWeight={500}>{f}</Typography>
-                                        </Stack>
-                                    ))}
-                                </Stack>
-                                <Button component={Link} to="/pricing" variant="contained" color="secondary" size="large" sx={{ px: 5, fontWeight: 700 }} disableElevation>
-                                    {t('home.startFree')}
-                                </Button>
-                            </Grid>
-                            <Grid size={{ xs: 12, md: 6 }}>
-                                <Box
-                                    sx={{
-                                        borderRadius: 2,
-                                        overflow: 'hidden',
-                                        border: '1px solid',
-                                        borderColor: 'divider',
-                                        bgcolor: 'background.paper',
-                                    }}
-                                >
-                                    <Box
-                                        component="img"
-                                        src={homeImagery.platform}
-                                        alt=""
-                                        sx={{ width: '100%', height: { xs: 280, md: 380 }, objectFit: 'cover', display: 'block' }}
-                                    />
-                                    <Box sx={{ px: 3, py: 2, borderTop: '1px solid', borderColor: 'divider', bgcolor: '#f8fafc' }}>
-                                        <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600, letterSpacing: '0.06em' }}>
-                                            {t('home.mockChartTitle')}
-                                        </Typography>
-                                    </Box>
-                                </Box>
-                            </Grid>
-                        </Grid>
-                    </Container>
-                </Box>
-
-                {/* ═══ INFOGRAPHIC HIGHLIGHT ═══════════════════════════════════ */}
-                <Box sx={{ bgcolor: '#EBECF1', py: { xs: 8, md: 11 } }}>
-                    <Container maxWidth="lg">
-                        <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems="flex-start" sx={{ mb: 6 }} gap={2}>
-                            <Box>
-                                <Typography variant="overline" sx={{ color: 'secondary.main', fontWeight: 800, letterSpacing: '0.12em' }}>{t('home.insights')}</Typography>
-                                <Typography variant="h4" sx={{ fontWeight: 800, mt: 0.5 }}>{t('home.popularReports')}</Typography>
-                            </Box>
-                            <Button component={Link} to="/reports" endIcon={<ArrowRightAltIcon />} sx={{ fontWeight: 700, color: 'primary.main', flexShrink: 0 }}>{t('home.viewAllReports')}</Button>
-                        </Stack>
-                        <Grid container spacing={4}>
-                            <Grid size={{ xs: 12, md: 7 }}>
-                                <Card sx={{ height: '100%', overflow: 'hidden', display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
-                                    <Box
-                                        sx={{
-                                            width: { xs: '100%', md: '42%' },
-                                            minHeight: { xs: 220, md: 'auto' },
-                                            flexShrink: 0,
-                                        }}
-                                    >
-                                        <Box
-                                            component="img"
-                                            src={homeImagery.infographic}
-                                            alt=""
-                                            sx={{ width: '100%', height: '100%', minHeight: { xs: 220, md: 360 }, objectFit: 'cover', display: 'block' }}
-                                        />
-                                    </Box>
-                                    <Box sx={{ p: { xs: 3, md: 4 }, flex: 1, display: 'flex', flexDirection: 'column' }}>
-                                        <Chip label={t('home.corporateData')} size="small" sx={{ bgcolor: 'secondary.light', color: 'secondary.dark', mb: 2, fontWeight: 700, width: 'fit-content' }} />
-                                        <Typography variant="h5" sx={{ fontWeight: 800, lineHeight: 1.3, mb: 1.5 }}>
-                                            {t('home.infographicTitle')}
-                                        </Typography>
-                                        <Typography color="text.secondary" sx={{ fontSize: '0.9375rem', mb: 3, lineHeight: 1.65 }}>
-                                            {t('home.infographicSub')}
-                                        </Typography>
-                                        <Box sx={{ bgcolor: '#f8fafc', borderRadius: 2, p: 2.5, border: '1px solid', borderColor: 'divider', flexGrow: 1 }}>
-                                            <MiniHBarChart rows={infographicBars} />
-                                        </Box>
-                                        <Stack direction={{ xs: 'column', sm: 'row' }} alignItems={{ sm: 'center' }} justifyContent="space-between" gap={2} sx={{ mt: 3 }}>
-                                            <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
-                                                <Chip label={t('home.freePreview')} size="small" sx={{ bgcolor: 'rgba(13,148,136,0.1)', color: 'success.dark', fontWeight: 700 }} />
-                                                <Typography variant="caption" color="text.secondary">{t('common.source')}: ITU, 2024</Typography>
-                                            </Stack>
-                                            <Button component={Link} to="/reports/1" variant="contained" color="secondary" size="small" sx={{ fontWeight: 700 }} disableElevation>
-                                                {t('home.viewFullReport')}
-                                            </Button>
-                                        </Stack>
-                                    </Box>
-                                </Card>
-                            </Grid>
-                            <Grid size={{ xs: 12, md: 5 }}>
-                                <Stack spacing={3} sx={{ height: '100%' }}>
-                                    {sideReports.map((s, i) => (
-                                        <Card key={i} component={Link} to="/reports/1" sx={{ textDecoration: 'none', p: 3, flex: 1, transition: 'box-shadow 0.2s', '&:hover': { boxShadow: '0 6px 24px rgba(26,35,50,0.07)' } }}>
-                                            <Chip label={s.tag} size="small" sx={{ bgcolor: 'rgba(75,91,114,0.08)', color: 'primary.main', fontWeight: 700, mb: 1.5, fontSize: '0.7rem' }} />
-                                            <Typography variant="body2" fontWeight={600} sx={{ mb: 2, lineHeight: 1.5 }}>{s.title}</Typography>
-                                            <Box sx={{ bgcolor: '#f8fafc', borderRadius: 1.5, p: 1.5, border: '1px solid', borderColor: 'divider' }}>
-                                                <Typography variant="h6" sx={{ fontWeight: 900, color: 'primary.main', mb: 0.5 }}>{s.value}</Typography>
-                                                <MiniBarChart bars={s.bars} />
-                                            </Box>
-                                            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1.5 }}>{t('common.updated')} {s.date}</Typography>
-                                        </Card>
-                                    ))}
-                                </Stack>
-                            </Grid>
-                        </Grid>
-                    </Container>
-                </Box>
+                <HomeInsightsHighlight
+                    sideReports={sideReports}
+                    featuredHref={featuredReports[0] ? reportPublicPath(featuredReports[0]) : '/reports'}
+                />
 
                 {/* ═══ PRICING PLANS ═══════════════════════════════════════════ */}
                 <Box sx={{ bgcolor: '#fff', py: { xs: 8, md: 11 } }}>
                     <Container maxWidth="lg">
+                        <MotionInView>
                         <Box sx={{ textAlign: 'center', mb: 8 }}>
                             <Typography variant="overline" sx={{ color: 'secondary.main', fontWeight: 800, letterSpacing: '0.12em' }}>{t('home.pricingOverline')}</Typography>
-                            <Typography variant="h4" sx={{ fontWeight: 800, mt: 0.5, mb: 1.5 }}>{t('home.choosePlan')}</Typography>
-                            <Typography color="text.secondary">{t('home.pricingSub')}</Typography>
+                            <Typography variant="h4" sx={{ fontWeight: 800, mt: 0.5, mb: 1.5, fontFamily: '"League Spartan", sans-serif' }}>{t('home.choosePlan')}</Typography>
+                            <Typography color="text.secondary" sx={{ maxWidth: 520, mx: 'auto', lineHeight: 1.7 }}>{t('home.pricingSub')}</Typography>
                         </Box>
+                        </MotionInView>
+                        <MotionStagger style={{ width: '100%' }}>
                         <Grid container spacing={4} alignItems="stretch">
                             {pricingPlans.map((plan, i) => (
                                 <Grid key={i} size={{ xs: 12, md: 4 }}>
-                                    <Card sx={{
-                                        p: 4, height: '100%', display: 'flex', flexDirection: 'column', position: 'relative',
-                                        overflow: 'visible',
-                                        ...(plan.highlight === true && {
-                                            border: '2px solid',
-                                            borderColor: 'secondary.main',
-                                            boxShadow: 'none',
-                                            mt: 2,
-                                        }),
-                                    }}>
+                                    <MotionStaggerItem style={{ height: '100%' }}>
+                                    <Card
+                                        component={motion.div}
+                                        whileHover={{ y: -6, transition: { type: 'spring', stiffness: 280, damping: 22 } }}
+                                        sx={{
+                                            p: 4,
+                                            height: '100%',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            position: 'relative',
+                                            overflow: 'visible',
+                                            borderRadius: 3,
+                                            border: '1px solid',
+                                            borderColor: plan.highlight ? 'secondary.main' : 'divider',
+                                            boxShadow: plan.highlight ? '0 12px 40px rgba(25, 127, 148, 0.12)' : '0 4px 24px rgba(15, 23, 42, 0.05)',
+                                            ...(plan.highlight === true && { mt: 2 }),
+                                        }}
+                                    >
                                         {plan.highlight === true && (
                                             <Chip label={t('home.mostPopularChip')} size="small" color="primary"
                                                 sx={{ position: 'absolute', top: -14, left: '50%', transform: 'translateX(-50%)', fontWeight: 700, px: 1 }} />
@@ -811,13 +330,24 @@ export default function HomePage() {
                                                 </Stack>
                                             ))}
                                         </Stack>
-                                        <Button component={Link} to="/pricing" variant={plan.variant} color={plan.highlight ? 'secondary' : 'primary'} fullWidth size="large" sx={{ fontWeight: 700, py: 1.5 }} disableElevation>
+                                        <Button
+                                            component={Link}
+                                            to={plan.link || '/pricing'}
+                                            variant={plan.variant}
+                                            color={plan.highlight ? 'secondary' : 'primary'}
+                                            fullWidth
+                                            size="large"
+                                            sx={{ fontWeight: 700, py: 1.5 }}
+                                            disableElevation
+                                        >
                                             {plan.cta}
                                         </Button>
                                     </Card>
+                                    </MotionStaggerItem>
                                 </Grid>
                             ))}
                         </Grid>
+                        </MotionStagger>
                     </Container>
                 </Box>
 
@@ -833,21 +363,25 @@ export default function HomePage() {
                         }}
                     />
                     <Container maxWidth="md" sx={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
-                        <Typography variant="h3" sx={{ color: '#fff', fontWeight: 800, mb: 2.5, fontSize: { xs: '1.75rem', md: '2.5rem' } }}>
+                        <MotionInView>
+                        <Typography variant="h3" sx={{ color: '#fff', fontWeight: 800, mb: 2.5, fontSize: { xs: '1.75rem', md: '2.5rem' }, fontFamily: '"League Spartan", sans-serif' }}>
                             {t('home.trustTitle')}
                         </Typography>
                         <Typography sx={{ color: '#cbd5e1', fontSize: '1.0625rem', mb: 5, lineHeight: 1.75, maxWidth: 520, mx: 'auto' }}>
                             {t('home.trustSub')}
                         </Typography>
+                        </MotionInView>
+                        <MotionFadeInUp delay={0.15}>
                         <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="center" gap={2}>
-                            <Button component={Link} to="/pricing" variant="contained" color="secondary" size="large" sx={{ px: 6, py: 1.75, fontWeight: 700, fontSize: '1rem' }} disableElevation>
+                            <Button component={Link} to="/pricing" variant="contained" color="secondary" size="large" sx={{ px: 6, py: 1.75, fontWeight: 700, fontSize: '1rem', borderRadius: 2 }} disableElevation>
                                 {t('home.startTrial')}
                             </Button>
                             <Button component={Link} to="/reports" variant="outlined" size="large"
-                                sx={{ px: 6, py: 1.75, fontWeight: 700, fontSize: '1rem', color: '#fff', borderColor: 'rgba(255,255,255,0.2)', '&:hover': { bgcolor: 'rgba(255,255,255,0.06)', borderColor: 'rgba(255,255,255,0.4)' } }}>
+                                sx={{ px: 6, py: 1.75, fontWeight: 700, fontSize: '1rem', borderRadius: 2, color: '#fff', borderColor: 'rgba(255,255,255,0.2)', '&:hover': { bgcolor: 'rgba(255,255,255,0.06)', borderColor: 'rgba(255,255,255,0.4)' } }}>
                                 {t('home.browseData')}
                             </Button>
                         </Stack>
+                        </MotionFadeInUp>
                     </Container>
                 </Box>
 
@@ -866,6 +400,7 @@ export default function HomePage() {
                     <Container maxWidth="lg">
                         <Grid container spacing={{ xs: 4, md: 6 }} alignItems="center">
                             <Grid size={{ xs: 12, md: 5 }}>
+                                <MotionRevealLeft>
                                 <Box id="methodology" sx={{ scrollMarginTop: '88px', width: '100%' }}>
                                     <Box sx={{ mb: 3 }}>
                                         <Typography variant="overline" sx={{ color: 'secondary.main', fontWeight: 800, letterSpacing: '0.12em' }}>
@@ -883,9 +418,12 @@ export default function HomePage() {
                                         </Typography>
                                     </Box>
                                 </Box>
+                                </MotionRevealLeft>
                             </Grid>
                             <Grid size={{ xs: 12, md: 7 }}>
+                                <MotionRevealRight delay={0.08}>
                                 <Paper
+                                    component={motion.div}
                                     elevation={0}
                                     sx={{
                                         p: { xs: 3, md: 4 },
@@ -893,7 +431,7 @@ export default function HomePage() {
                                         bgcolor: '#fff',
                                         border: '1px solid',
                                         borderColor: 'divider',
-                                        boxShadow: '0 4px 24px rgba(0,0,0,0.02)',
+                                        boxShadow: '0 8px 32px rgba(25, 127, 148, 0.08)',
                                     }}
                                 >
                                     <Grid container spacing={4}>
@@ -917,7 +455,7 @@ export default function HomePage() {
 
                                                 <Box>
                                                     <Stack direction="row" justifyContent="space-between" mb={1}>
-                                                        <Typography variant="subtitle2" fontWeight={700}>{t('methodology.margin')} (%)</Typography>
+                                                        <Typography variant="subtitle2" fontWeight={700}>{t('methodology.margin')}</Typography>
                                                         <Typography variant="body2" color="text.secondary" fontWeight={600}>{margin}%</Typography>
                                                     </Stack>
                                                     <Slider
@@ -932,21 +470,34 @@ export default function HomePage() {
                                                 </Box>
 
                                                 <Box>
-                                                    <Typography variant="subtitle2" fontWeight={700} mb={1.5}>{t('methodology.confidence')}</Typography>
-                                                    <ToggleButtonGroup
+                                                    <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1} gap={1}>
+                                                        <Typography variant="subtitle2" fontWeight={700}>{t('methodology.confidence')}</Typography>
+                                                        <TextField
+                                                            size="small"
+                                                            type="number"
+                                                            value={confidence}
+                                                            onChange={e => setConfidence(clampConfidencePct(e.target.value))}
+                                                            slotProps={{
+                                                                htmlInput: { min: 1, max: 99.99, step: 0.1 },
+                                                                input: {
+                                                                    endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                                                                },
+                                                            }}
+                                                            sx={{ width: 100, '& input': { textAlign: 'right', fontWeight: 600 } }}
+                                                        />
+                                                    </Stack>
+                                                    <Slider
                                                         value={confidence}
-                                                        exclusive
-                                                        onChange={(e, val) => { if(val !== null) setConfidence(val) }}
-                                                        fullWidth
-                                                        size="small"
+                                                        onChange={(e, val) => setConfidence(clampConfidencePct(val))}
+                                                        min={50}
+                                                        max={99.9}
+                                                        step={0.1}
                                                         color="secondary"
-                                                    >
-                                                        {confidenceLevels.map(opt => (
-                                                            <ToggleButton key={opt.value} value={opt.value} sx={{ fontWeight: 600 }}>
-                                                                {opt.label}
-                                                            </ToggleButton>
-                                                        ))}
-                                                    </ToggleButtonGroup>
+                                                        valueLabelDisplay="off"
+                                                    />
+                                                    <Typography variant="caption" color="text.secondary">
+                                                        {t('methodology.confidenceHint')}
+                                                    </Typography>
                                                 </Box>
                                             </Stack>
                                         </Grid>
@@ -970,18 +521,26 @@ export default function HomePage() {
                                                 <Typography variant="overline" color="secondary.main" sx={{ fontWeight: 800, letterSpacing: '0.1em', mb: 1 }}>
                                                     {t('methodology.result')}
                                                 </Typography>
-                                                <Typography
-                                                    variant="h2"
-                                                    sx={{
-                                                        fontWeight: 900,
-                                                        color: '#1a2332',
-                                                        lineHeight: 1,
-                                                        fontFamily: '"League Spartan", sans-serif',
-                                                        mb: 1.5,
-                                                    }}
+                                                <Box
+                                                    component={motion.div}
+                                                    key={sampleResult}
+                                                    initial={{ opacity: 0, y: 12, scale: 0.96 }}
+                                                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                                                    transition={{ type: 'spring', stiffness: 200, damping: 22 }}
                                                 >
-                                                    {sampleResult?.toLocaleString() || 0}
-                                                </Typography>
+                                                    <Typography
+                                                        variant="h2"
+                                                        sx={{
+                                                            fontWeight: 900,
+                                                            color: '#1a2332',
+                                                            lineHeight: 1,
+                                                            fontFamily: '"League Spartan", sans-serif',
+                                                            mb: 1.5,
+                                                        }}
+                                                    >
+                                                        {sampleResult?.toLocaleString() || 0}
+                                                    </Typography>
+                                                </Box>
                                                 
                                                 <Chip 
                                                     icon={<InfoOutlinedIcon sx={{ fontSize: '16px !important' }}/>} 
@@ -995,6 +554,7 @@ export default function HomePage() {
                                         </Grid>
                                     </Grid>
                                 </Paper>
+                                </MotionRevealRight>
                             </Grid>
                         </Grid>
                     </Container>
@@ -1012,24 +572,38 @@ export default function HomePage() {
                     <Container maxWidth="lg" sx={{ px: { xs: 2, md: 3 } }}>
                         <Box id="corporate" sx={{ scrollMarginTop: '88px' }}>
                             <Grid container spacing={{ xs: 4, md: 8 }} alignItems="stretch">
-                                <Grid size={{ xs: 12, md: 6 }}>
+                                <Grid size={{ xs: 12, md: 6 }} sx={{ display: 'flex' }}>
+                                    <MotionRevealLeft style={{ flex: 1, display: 'flex', minHeight: 0, width: '100%' }}>
                                     <Box
-                                        component="img"
-                                        src="/contact.png"
-                                        alt="Contact Us"
                                         sx={{
+                                            flex: 1,
+                                            display: 'flex',
+                                            minHeight: { xs: 300, md: 0 },
                                             width: '100%',
-                                            height: '100%',
-                                            minHeight: { xs: 300, md: 400 },
-                                            objectFit: 'cover',
-                                            borderRadius: 3,
-                                            display: 'block',
-                                            boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
                                         }}
-                                    />
+                                    >
+                                        <Box
+                                            component={motion.img}
+                                            src="/contact.png"
+                                            alt="Contact Us"
+                                            whileHover={{ scale: 1.02 }}
+                                            transition={{ type: 'spring', stiffness: 200, damping: 24 }}
+                                            sx={{
+                                                width: '100%',
+                                                height: '100%',
+                                                flex: 1,
+                                                objectFit: 'cover',
+                                                borderRadius: 3,
+                                                display: 'block',
+                                                boxShadow: '0 12px 40px rgba(0,0,0,0.25)',
+                                            }}
+                                        />
+                                    </Box>
+                                    </MotionRevealLeft>
                                 </Grid>
-                                <Grid size={{ xs: 12, md: 6 }}>
-                                    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%' }}>
+                                <Grid size={{ xs: 12, md: 6 }} sx={{ display: 'flex' }}>
+                                    <MotionRevealRight delay={0.1} style={{ flex: 1, display: 'flex', width: '100%' }}>
+                                    <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', flex: 1 }}>
                                         <Typography
                                             id="home-corporate-heading"
                                             variant="h4"
@@ -1051,17 +625,90 @@ export default function HomePage() {
                                                 boxShadow: '0 4px 24px rgba(0,0,0,0.1)'
                                             }}
                                         >
-                                            <Stack spacing={2.5} component="form" onSubmit={e => e.preventDefault()}>
-                                                <TextField label={t('corporate.name')} name="name" autoComplete="name" fullWidth />
-                                                <TextField label={t('corporate.email')} name="email" type="email" autoComplete="email" fullWidth />
-                                                <TextField label={t('corporate.subject')} name="subject" fullWidth />
-                                                <TextField label={t('corporate.body')} name="body" multiline rows={4} fullWidth />
-                                                <Button type="submit" variant="contained" color="secondary" disableElevation fullWidth size="large" sx={{ fontWeight: 700, py: 1.5, mt: 1 }}>
-                                                    {t('corporate.send')}
+                                            <Stack
+                                                spacing={2.5}
+                                                component="form"
+                                                onSubmit={async e => {
+                                                    e.preventDefault()
+                                                    if (!supabase || corporateSubmitting) return
+                                                    setCorporateNotice(null)
+                                                    setCorporateSubmitting(true)
+                                                    try {
+                                                        await submitCorporateMessage(supabase, corporateForm)
+                                                        setCorporateForm({ name: '', email: '', subject: '', body: '' })
+                                                        setCorporateNotice({ severity: 'success', text: t('corporate.sentSuccess') })
+                                                    } catch (err) {
+                                                        const code = err?.code || err?.message
+                                                        const text =
+                                                            code === 'invalid_email' || code === 'email'
+                                                                ? t('corporate.invalidEmail')
+                                                                : code === 'missing_fields' || code === 'missing'
+                                                                  ? t('corporate.fillAll')
+                                                                  : t('corporate.sentError')
+                                                        setCorporateNotice({ severity: 'error', text })
+                                                    } finally {
+                                                        setCorporateSubmitting(false)
+                                                    }
+                                                }}
+                                            >
+                                                {corporateNotice && (
+                                                    <Alert severity={corporateNotice.severity} onClose={() => setCorporateNotice(null)}>
+                                                        {corporateNotice.text}
+                                                    </Alert>
+                                                )}
+                                                <TextField
+                                                    label={t('corporate.name')}
+                                                    name="name"
+                                                    autoComplete="name"
+                                                    fullWidth
+                                                    required
+                                                    value={corporateForm.name}
+                                                    onChange={ev => setCorporateForm(f => ({ ...f, name: ev.target.value }))}
+                                                />
+                                                <TextField
+                                                    label={t('corporate.email')}
+                                                    name="email"
+                                                    type="email"
+                                                    autoComplete="email"
+                                                    fullWidth
+                                                    required
+                                                    value={corporateForm.email}
+                                                    onChange={ev => setCorporateForm(f => ({ ...f, email: ev.target.value }))}
+                                                />
+                                                <TextField
+                                                    label={t('corporate.subject')}
+                                                    name="subject"
+                                                    fullWidth
+                                                    required
+                                                    value={corporateForm.subject}
+                                                    onChange={ev => setCorporateForm(f => ({ ...f, subject: ev.target.value }))}
+                                                />
+                                                <TextField
+                                                    label={t('corporate.body')}
+                                                    name="body"
+                                                    multiline
+                                                    rows={4}
+                                                    fullWidth
+                                                    required
+                                                    value={corporateForm.body}
+                                                    onChange={ev => setCorporateForm(f => ({ ...f, body: ev.target.value }))}
+                                                />
+                                                <Button
+                                                    type="submit"
+                                                    variant="contained"
+                                                    color="secondary"
+                                                    disableElevation
+                                                    fullWidth
+                                                    size="large"
+                                                    disabled={corporateSubmitting || !supabase}
+                                                    sx={{ fontWeight: 700, py: 1.5, mt: 1 }}
+                                                >
+                                                    {corporateSubmitting ? t('corporate.sending') : t('corporate.send')}
                                                 </Button>
                                             </Stack>
                                         </Paper>
                                     </Box>
+                                    </MotionRevealRight>
                                 </Grid>
                             </Grid>
                         </Box>

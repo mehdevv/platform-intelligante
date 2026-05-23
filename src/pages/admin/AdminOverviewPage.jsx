@@ -18,22 +18,13 @@ import AdminStorageUsage from '../../components/admin/AdminStorageUsage'
 import AdminGoogleAnalyticsEmbed from '../../components/admin/AdminGoogleAnalyticsEmbed'
 import { useAuth } from '../../context/AuthContext'
 import { formatPriceFromCents } from '../../lib/moneyFormat'
+import { enrichPaymentRowsWithBundleSectors, paymentRequestKindLabel } from '../../lib/paymentRequestDisplay'
 
 function monthRangeIso() {
     const now = new Date()
     const start = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0)
     const end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999)
     return { startIso: start.toISOString(), endIso: end.toISOString(), label: start.toLocaleString(undefined, { month: 'long', year: 'numeric' }) }
-}
-
-function paymentItemLabel(row) {
-    if (row.kind === 'sector_subscription') {
-        return row.sectors?.name || 'Sector'
-    }
-    if (row.kind === 'report') {
-        return row.reports?.title || 'Report'
-    }
-    return row.kind || '—'
 }
 
 function userLabel(p) {
@@ -71,6 +62,7 @@ export default function AdminOverviewPage() {
     const [revenueMonthCents, setRevenueMonthCents] = useState(0)
     const [recentPayments, setRecentPayments] = useState([])
     const [approvedHistory, setApprovedHistory] = useState([])
+    const [newCorporateCount, setNewCorporateCount] = useState(0)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
 
@@ -95,6 +87,7 @@ export default function AdminOverviewPage() {
                 rMonthApproved,
                 rRecent,
                 rApprovedList,
+                rCorporateNew,
             ] = await Promise.all([
                 supabase.from('profiles').select('*', { count: 'exact', head: true }),
                 supabase.from('reports').select('*', { count: 'exact', head: true }).eq('status', 'published'),
@@ -122,6 +115,7 @@ export default function AdminOverviewPage() {
                     .eq('status', 'approved')
                     .order('reviewed_at', { ascending: false, nullsFirst: false })
                     .limit(12),
+                supabase.from('corporate_messages').select('*', { count: 'exact', head: true }).eq('status', 'new'),
             ])
 
             if (cancelled) return
@@ -134,7 +128,8 @@ export default function AdminOverviewPage() {
                 rPending.error?.message ||
                 rMonthApproved.error?.message ||
                 rRecent.error?.message ||
-                rApprovedList.error?.message
+                rApprovedList.error?.message ||
+                rCorporateNew.error?.message
             if (err) setError(err)
 
             const monthRows = rMonthApproved.data || []
@@ -148,8 +143,13 @@ export default function AdminOverviewPage() {
             })
             setPendingPayments(rPending.count ?? 0)
             setRevenueMonthCents(revenueSum)
-            setRecentPayments(rRecent.data || [])
-            setApprovedHistory(rApprovedList.data || [])
+            const [recentEnriched, approvedEnriched] = await Promise.all([
+                enrichPaymentRowsWithBundleSectors(supabase, rRecent.data || []),
+                enrichPaymentRowsWithBundleSectors(supabase, rApprovedList.data || []),
+            ])
+            setRecentPayments(recentEnriched)
+            setApprovedHistory(approvedEnriched)
+            setNewCorporateCount(rCorporateNew.count ?? 0)
             setLoading(false)
         })()
         return () => {
@@ -264,7 +264,7 @@ export default function AdminOverviewPage() {
                                                     <TableRow key={row.id}>
                                                         <TableCell sx={{ whiteSpace: 'nowrap' }}>{new Date(row.created_at).toLocaleString()}</TableCell>
                                                         <TableCell>{userLabel(row.profiles)}</TableCell>
-                                                        <TableCell>{paymentItemLabel(row)}</TableCell>
+                                                        <TableCell>{paymentRequestKindLabel(row)}</TableCell>
                                                         <TableCell>{formatPriceFromCents(row.amount_cents, row.currency || 'DZD') || '—'}</TableCell>
                                                         <TableCell>
                                                             <Chip size="small" label={chip.label} color={chip.color} variant={row.status === 'rejected' ? 'outlined' : 'filled'} />
@@ -312,7 +312,7 @@ export default function AdminOverviewPage() {
                                                         {row.reviewed_at ? new Date(row.reviewed_at).toLocaleString() : '—'}
                                                     </TableCell>
                                                     <TableCell>{userLabel(row.profiles)}</TableCell>
-                                                    <TableCell>{paymentItemLabel(row)}</TableCell>
+                                                    <TableCell>{paymentRequestKindLabel(row)}</TableCell>
                                                     <TableCell>{formatPriceFromCents(row.amount_cents, row.currency || 'DZD') || '—'}</TableCell>
                                                 </TableRow>
                                             ))
@@ -354,6 +354,17 @@ export default function AdminOverviewPage() {
                             </Grid>
                             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                                 <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700 }}>
+                                    Corporate inbox
+                                </Typography>
+                                <Typography variant="h6" fontWeight={700}>
+                                    {newCorporateCount} new
+                                </Typography>
+                                <Button component={RouterLink} to="/admin/corporate" size="small" variant="outlined" color="secondary" sx={{ mt: 1, fontWeight: 700 }}>
+                                    Open inbox
+                                </Button>
+                            </Grid>
+                            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                                <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700 }}>
                                     Audit trail
                                 </Typography>
                                 <Button component={RouterLink} to="/admin/audit" size="small" sx={{ mt: 0.5, fontWeight: 700 }}>
@@ -374,6 +385,9 @@ export default function AdminOverviewPage() {
                             </Button>
                             <Button component={RouterLink} to="/admin/settings" variant="outlined" size="small">
                                 Bank RIB
+                            </Button>
+                            <Button component={RouterLink} to="/admin/corporate" variant="outlined" size="small">
+                                Corporate inbox
                             </Button>
                         </Stack>
                     </Card>

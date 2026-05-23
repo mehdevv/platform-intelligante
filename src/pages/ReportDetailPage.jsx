@@ -23,10 +23,11 @@ import { useAuth } from '../context/AuthContext'
 import { formatPriceFromCents } from '../lib/moneyFormat'
 import { isUuid } from '../lib/reportPath'
 import { REPORT_PDFS_BUCKET } from '../lib/reportPdfStorage'
+import { REPORT_PDF_SIGNED_URL_TTL_SEC } from '../lib/reportPdfAccess'
 
 export default function ReportDetailPage() {
     const { id } = useParams()
-    const { supabase, user } = useAuth()
+    const { supabase, user, isStaff } = useAuth()
     const [report, setReport] = useState(null)
     const [entitled, setEntitled] = useState(false)
     const [loading, setLoading] = useState(true)
@@ -88,15 +89,16 @@ export default function ReportDetailPage() {
                     .or(`expires_at.is.null,expires_at.gt.${nowIso}`)
                     .limit(1)
                 if (!cancelled) setEntitled(Array.isArray(ent) && ent.length > 0)
-            } else {
+            } else if (!cancelled) {
                 setEntitled(false)
             }
+            if (!cancelled && isStaff) setEntitled(true)
             setLoading(false)
         })()
         return () => {
             cancelled = true
         }
-    }, [supabase, id, user])
+    }, [supabase, id, user, isStaff])
 
     useEffect(() => {
         let cancelled = false
@@ -138,7 +140,9 @@ export default function ReportDetailPage() {
                 setPreviewPdfLoading(false)
                 return
             }
-            const { data, error: signErr } = await supabase.storage.from(REPORT_PDFS_BUCKET).createSignedUrl(ra.storage_path, 3600)
+            const { data, error: signErr } = await supabase.storage
+                .from(REPORT_PDFS_BUCKET)
+                .createSignedUrl(ra.storage_path, REPORT_PDF_SIGNED_URL_TTL_SEC)
             if (!cancelled) {
                 setPreviewPdfUrl(!signErr && data?.signedUrl ? data.signedUrl : null)
                 setPreviewPdfLoading(false)
@@ -292,7 +296,9 @@ export default function ReportDetailPage() {
                                             </Typography>
                                         </Box>
                                     )}
-                                    {previewPdfUrl && <ReportFirstPagePdfPreview signedUrl={previewPdfUrl} title="Preview — page 1" />}
+                                    {!entitled && previewPdfUrl && (
+                                        <ReportFirstPagePdfPreview signedUrl={previewPdfUrl} title="Preview — page 1" />
+                                    )}
                                     <Divider />
                                     {!entitled && report.status === 'published' && (
                                         <Card variant="outlined" sx={{ p: 3, borderStyle: 'dashed' }}>
@@ -334,9 +340,6 @@ export default function ReportDetailPage() {
                                             </Stack>
                                         </Card>
                                     )}
-                                    {entitled && (
-                                        <Alert severity="success">You have access to this report. Download links will use signed URLs once storage is wired.</Alert>
-                                    )}
                                 </Stack>
                             </Grid>
                             <Grid size={{ xs: 12, lg: 5 }}>
@@ -352,42 +355,65 @@ export default function ReportDetailPage() {
                                         </Box>
                                         <CardContent sx={{ p: 3 }}>
                                             <Stack spacing={2}>
-                                                <Button
-                                                    fullWidth
-                                                    variant="contained"
-                                                    color="secondary"
-                                                    size="large"
-                                                    disableElevation
-                                                    component={Link}
-                                                    to={user ? `/checkout?reportId=${report.id}` : '/login'}
-                                                    state={user ? undefined : { redirectTo: `/checkout?reportId=${report.id}` }}
-                                                    sx={{ py: 1.5 }}
-                                                >
-                                                    Buy this report
-                                                </Button>
-                                                {report.sectors?.id && (
-                                                    <Button
-                                                        fullWidth
-                                                        variant="outlined"
-                                                        size="large"
-                                                        component={Link}
-                                                        to={user ? `/checkout?sectorId=${report.sectors.id}` : '/login'}
-                                                        state={user ? undefined : { redirectTo: `/checkout?sectorId=${report.sectors.id}` }}
-                                                        sx={{ py: 1.5 }}
-                                                    >
-                                                        Subscribe to {report.sectors.name} sector
-                                                    </Button>
+                                                {entitled && user ? (
+                                                    <>
+                                                        <Alert severity="success" sx={{ py: 0.5 }}>
+                                                            You have access. Read the full report in the secure viewer — download is disabled.
+                                                        </Alert>
+                                                        <Button
+                                                            fullWidth
+                                                            variant="contained"
+                                                            color="secondary"
+                                                            size="large"
+                                                            component={Link}
+                                                            to={`/reports/${report.slug || report.id}/read`}
+                                                            sx={{ py: 1.5 }}
+                                                        >
+                                                            Read full report
+                                                        </Button>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Button
+                                                            fullWidth
+                                                            variant="contained"
+                                                            color="secondary"
+                                                            size="large"
+                                                            disableElevation
+                                                            component={Link}
+                                                            to={user ? `/checkout?reportId=${report.id}` : '/login'}
+                                                            state={user ? undefined : { redirectTo: `/checkout?reportId=${report.id}` }}
+                                                            sx={{ py: 1.5 }}
+                                                        >
+                                                            Buy this report
+                                                        </Button>
+                                                        {report.sectors?.id && (
+                                                            <Button
+                                                                fullWidth
+                                                                variant="outlined"
+                                                                size="large"
+                                                                component={Link}
+                                                                to={user ? `/checkout?sectorId=${report.sectors.id}` : '/login'}
+                                                                state={
+                                                                    user ? undefined : { redirectTo: `/checkout?sectorId=${report.sectors.id}` }
+                                                                }
+                                                                sx={{ py: 1.5 }}
+                                                            >
+                                                                Subscribe to {report.sectors.name} sector
+                                                            </Button>
+                                                        )}
+                                                        <Button fullWidth variant="outlined" color="secondary" component={Link} to="/pricing">
+                                                            Compare sector subscriptions
+                                                        </Button>
+                                                        <Divider />
+                                                        <Stack direction="row" gap={1} alignItems="center">
+                                                            <PictureAsPdfIcon color="primary" fontSize="small" />
+                                                            <Typography variant="body2" color="text.secondary">
+                                                                Full PDF in secure viewer after your receipt is approved
+                                                            </Typography>
+                                                        </Stack>
+                                                    </>
                                                 )}
-                                                <Button fullWidth variant="text" component={Link} to="/pricing">
-                                                    Compare sector subscriptions
-                                                </Button>
-                                                <Divider />
-                                                <Stack direction="row" gap={1} alignItems="center">
-                                                    <PictureAsPdfIcon color="primary" fontSize="small" />
-                                                    <Typography variant="body2" color="text.secondary">
-                                                        Full PDF after the admin approves your receipt
-                                                    </Typography>
-                                                </Stack>
                                             </Stack>
                                         </CardContent>
                                     </Card>

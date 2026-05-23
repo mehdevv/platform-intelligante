@@ -21,8 +21,15 @@ import Alert from '@mui/material/Alert'
 import CircularProgress from '@mui/material/CircularProgress'
 import { useAuth } from '../../context/AuthContext'
 import { logAdminAction } from '../../lib/adminAudit'
+import { notifyPaymentEvent } from '../../lib/paymentNotify'
 import { formatPriceFromCents } from '../../lib/moneyFormat'
 import { getReceiptSignedUrl } from '../../lib/paymentReceiptUpload'
+import {
+    enrichPaymentRowsWithBundleSectors,
+    grantSectorSubscriptionAccess,
+    paymentRequestKindLabel,
+    sectorIdsForPaymentApproval,
+} from '../../lib/paymentRequestDisplay'
 
 const TABS = [
     { value: 'pending', label: 'Pending' },
@@ -34,12 +41,6 @@ const STATUS_COLOUR = {
     pending: 'warning',
     approved: 'success',
     rejected: 'default',
-}
-
-function kindLabel(row) {
-    if (row.kind === 'sector_subscription') return `Sector — ${row.sectors?.name || row.sector_id?.slice(0, 8)}`
-    if (row.kind === 'report') return `Report — ${row.reports?.title || row.report_id?.slice(0, 8)}`
-    return row.kind
 }
 
 function userLabel(profile) {
@@ -75,13 +76,13 @@ export default function AdminPaymentsPage() {
         const { data, error } = await supabase
             .from('payment_requests')
             .select(
-                'id, user_id, kind, report_id, sector_id, amount_cents, currency, receipt_storage_path, status, reviewed_by, reviewed_at, admin_note, created_at, profiles:user_id ( id, full_name, notification_email ), reports:report_id ( id, title, slug ), sectors:sector_id ( id, name, slug )',
+                'id, user_id, kind, report_id, sector_id, bundle_sector_ids, amount_cents, currency, receipt_storage_path, status, reviewed_by, reviewed_at, admin_note, created_at, profiles:user_id ( id, full_name, notification_email ), reports:report_id ( id, title, slug ), sectors:sector_id ( id, name, slug )',
             )
             .eq('status', status)
             .order('created_at', { ascending: false })
             .limit(200)
         if (error) setErr(error.message)
-        else setRows(data || [])
+        else setRows(await enrichPaymentRowsWithBundleSectors(supabase, data || []))
         setLoading(false)
     }
 
@@ -138,29 +139,14 @@ export default function AdminPaymentsPage() {
                             })
                         if (error) throw new Error(error.message)
                     }
-                } else if (reviewRow.kind === 'sector_subscription') {
-                    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-                    const notes = reviewNote.trim() || null
-                    const { data: existing, error: selErr } = await supabase
-                        .from('user_report_entitlements')
-                        .select('id')
-                        .eq('user_id', reviewRow.user_id)
-                        .eq('sector_id', reviewRow.sector_id)
-                        .maybeSingle()
-                    if (selErr) throw new Error(selErr.message)
-                    const patch = { source: 'subscription', expires_at: expiresAt, notes }
-                    if (existing?.id) {
-                        const { error } = await supabase.from('user_report_entitlements').update(patch).eq('id', existing.id)
-                        if (error) throw new Error(error.message)
-                    } else {
-                        const { error } = await supabase
-                            .from('user_report_entitlements')
-                            .insert({
-                                user_id: reviewRow.user_id,
-                                sector_id: reviewRow.sector_id,
-                                ...patch,
-                            })
-                        if (error) throw new Error(error.message)
+                } else {
+                    const sectorIds = sectorIdsForPaymentApproval(reviewRow)
+                    if (sectorIds.length) {
+                        await grantSectorSubscriptionAccess(supabase, {
+                            userId: reviewRow.user_id,
+                            sectorIds,
+                            notes: reviewNote.trim() || null,
+                        })
                     }
                 }
             }
@@ -180,7 +166,25 @@ export default function AdminPaymentsPage() {
                 entityId: reviewRow.id,
                 diff: { kind: reviewRow.kind, target: reviewRow.report_id || reviewRow.sector_id },
             })
-            setNotice(reviewAction === 'approve' ? 'Receipt approved and access granted.' : 'Receipt rejected.')
+            const reviewStatus = reviewAction === 'approve' ? 'approved' : 'rejected'
+            const emailResult = await notifyPaymentEvent(supabase, {
+                event: 'reviewed',
+                paymentRequestId: reviewRow.id,
+                reviewStatus,
+            })
+            const bundleN = reviewRow.kind === 'sector_bundle' ? reviewRow.bundle_sector_ids?.length || 0 : 0
+            let noticeText =
+                reviewAction === 'approve'
+                    ? reviewRow.kind === 'sector_bundle'
+                        ? `Receipt approved — access granted for ${bundleN} sectors in one payment.`
+                        : 'Receipt approved and access granted.'
+                    : 'Receipt rejected.'
+            if (!emailResult.ok) {
+                const detail = emailResult.emails?.[0]?.reason || emailResult.reason || 'unknown'
+                noticeText += ` Email not sent (${detail}). Check console & EmailJS template uses {{to_email}}.`
+                if (emailResult.hint) noticeText += ` ${emailResult.hint}`
+            }
+            setNotice(noticeText)
             closeReview()
             load()
         } catch (ex) {
@@ -238,7 +242,7 @@ export default function AdminPaymentsPage() {
                                             <Typography variant="caption" color="text.secondary">{userSubLabel(r.profiles)}</Typography>
                                         )}
                                     </TableCell>
-                                    <TableCell>{kindLabel(r)}</TableCell>
+                                    <TableCell>{paymentRequestKindLabel(r)}</TableCell>
                                     <TableCell>{formatPriceFromCents(r.amount_cents, r.currency || 'DZD')}</TableCell>
                                     <TableCell>
                                         <Chip size="small" label={r.status} color={STATUS_COLOUR[r.status] || 'default'} variant={r.status === 'rejected' ? 'outlined' : 'filled'} />
@@ -296,7 +300,16 @@ export default function AdminPaymentsPage() {
                                 </Box>
                                 <Box sx={{ flex: 1 }}>
                                     <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700 }}>FOR</Typography>
-                                    <Typography variant="body2">{kindLabel(reviewRow)}</Typography>
+                                    <Typography variant="body2">{paymentRequestKindLabel(reviewRow)}</Typography>
+                                    {reviewRow.kind === 'sector_bundle' && reviewRow.bundle_sectors?.length > 0 && (
+                                        <Box component="ul" sx={{ m: '8px 0 0', pl: 2.5 }}>
+                                            {reviewRow.bundle_sectors.map(s => (
+                                                <Typography key={s.id} component="li" variant="caption" color="text.secondary">
+                                                    {s.name}
+                                                </Typography>
+                                            ))}
+                                        </Box>
+                                    )}
                                 </Box>
                                 <Box sx={{ flex: 1 }}>
                                     <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700 }}>AMOUNT</Typography>

@@ -73,3 +73,41 @@ Bucket id is defined in code as:
 `src/lib/reportPdfStorage.js` → `REPORT_PDFS_BUCKET = 'report-pdfs'`
 
 Keep this in sync with the migration if you rename the bucket.
+
+---
+
+## 7. Secure in-app reader (no download)
+
+Entitled users read the **full PDF** inside the app (`SecureReportPdfViewer` on the report page and `/reports/:slug/read`). The file is **not** offered as a download link.
+
+| Layer | What it does |
+|--------|----------------|
+| **Storage RLS** | `full_pdf` objects only for staff or `has_report_entitlement(report_id)`. |
+| **Edge Function** `report-pdf-stream` | Optional stream with JWT + entitlement check. See deploy steps below. |
+| **Client default** | Short-lived signed URL (3 min) fetched into memory; works without Edge Function. |
+| **Client opt-in stream** | Set `VITE_USE_PDF_EDGE_STREAM=true` in `.env` after the function is deployed. |
+| **UI** | Watermark, no context menu, blocks Ctrl+S / Ctrl+P, hidden when printing. |
+
+**Note:** A determined user can still capture content (screenshots, devtools). This is **deterrent + access control**, not DRM. For stronger protection, add server-side watermarking per user and a commercial PDF SDK.
+
+### Deploy `report-pdf-stream` (fixes CORS / preflight errors)
+
+If the browser shows **CORS blocked** on `/functions/v1/report-pdf-stream`, the function is not deployed or OPTIONS is rejected. The app **works without it** (signed URL path). To enable streaming:
+
+1. Install [Supabase CLI](https://supabase.com/docs/guides/cli) and log in: `supabase login`
+2. Link the project: `supabase link --project-ref YOUR_PROJECT_REF`
+3. Deploy:
+
+```bash
+supabase functions deploy report-pdf-stream
+```
+
+4. In `.env` add:
+
+```env
+VITE_USE_PDF_EDGE_STREAM=true
+```
+
+5. Restart Vite (`npm run dev`).
+
+`supabase/config.toml` sets `verify_jwt = false` so **OPTIONS** preflight succeeds; the function still checks the Bearer token with `auth.getUser()`.

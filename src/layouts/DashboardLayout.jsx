@@ -9,19 +9,16 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 import { useTheme } from '@mui/material/styles'
 import MenuIcon from '@mui/icons-material/Menu'
 import CloseIcon from '@mui/icons-material/Close'
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
 import BrandLogo from '../components/BrandLogo'
+import NotificationBell from '../components/notifications/NotificationBell'
 import { useAuth } from '../context/AuthContext'
 
 const drawerWidth = 268
 
 const nav = [
     { to: '/dashboard', label: 'Overview', end: true },
-    { to: '/dashboard/reports', label: 'Reports library' },
-    { to: '/dashboard/watchlist', label: 'Watchlist' },
+    { to: '/dashboard/library', label: 'Library' },
     { to: '/dashboard/payments', label: 'Payments' },
-    { to: '/dashboard/activity', label: 'Activity' },
-    { to: '/dashboard/statistics', label: 'Statistics' },
     { to: '/dashboard/billing', label: 'Billing' },
     { to: '/dashboard/settings', label: 'Settings' },
 ]
@@ -158,9 +155,7 @@ export default function DashboardLayout() {
                         </Typography>
                     </Stack>
                     <Stack direction="row" alignItems="center" gap={1}>
-                        <IconButton size="small" aria-label="notifications">
-                            <NotificationsNoneIcon fontSize="small" />
-                        </IconButton>
+                        <NotificationBell paymentsHref="/dashboard/payments" emptyLabel="Aucune nouvelle notification" />
                         <Typography component={Link} to="/profile" variant="body2" sx={{ fontWeight: 600, color: 'text.primary', textDecoration: 'none', ml: 0.5 }}>
                             Profile
                         </Typography>

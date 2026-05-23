@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import LinearProgress from '@mui/material/LinearProgress'
@@ -82,6 +83,14 @@ export default function AdminStorageUsage({ variant = 'card' }) {
                 <LinearProgress variant="determinate" value={pct} sx={{ height: isSidebar ? 4 : 8, borderRadius: 1 }} color={pct > 90 ? 'error' : pct > 75 ? 'warning' : 'secondary'} />
                 <Typography variant="caption" color="text.secondary" sx={{ mt: 0.75, display: 'block', lineHeight: 1.35 }}>
                     {label}
+                </Typography>
+                <Typography
+                    component={Link}
+                    to="/admin/storage"
+                    variant="caption"
+                    sx={{ mt: 0.75, display: 'block', fontWeight: 700, color: 'secondary.main', textDecoration: 'none' }}
+                >
+                    Manage files →
                 </Typography>
             </Box>
         </Tooltip>

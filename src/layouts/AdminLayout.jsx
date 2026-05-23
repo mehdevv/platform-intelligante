@@ -10,8 +10,8 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 import { useTheme } from '@mui/material/styles'
 import MenuIcon from '@mui/icons-material/Menu'
 import CloseIcon from '@mui/icons-material/Close'
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
 import BrandLogo from '../components/BrandLogo'
+import NotificationBell from '../components/notifications/NotificationBell'
 import AdminStorageUsage from '../components/admin/AdminStorageUsage'
 
 const drawerWidth = 268
@@ -22,6 +22,8 @@ const nav = [
     { to: '/admin/sectors', label: 'Sectors' },
     { to: '/admin/blog', label: 'Blog' },
     { to: '/admin/payments', label: 'Payments' },
+    { to: '/admin/corporate', label: 'Corporate inbox' },
+    { to: '/admin/storage', label: 'Storage' },
     { to: '/admin/users', label: 'Users' },
     { to: '/admin/audit', label: 'Audit log' },
     { to: '/admin/settings', label: 'Settings' },
@@ -65,17 +67,34 @@ function NavBlock({ onNavigate }) {
 function SidebarBody({ onClose }) {
     return (
         <Stack sx={{ height: '100%', bgcolor: 'background.paper' }}>
-            <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ px: 2.5, pt: 3, pb: 1 }}>
-                <BrandLogo />
+            <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                sx={{ px: 2, pt: 2, pb: 1.5, gap: 0.5, minHeight: 40 }}
+            >
+                <Stack direction="row" alignItems="center" spacing={1} sx={{ minWidth: 0, flex: 1 }}>
+                    <BrandLogo size="small" />
+                    <Typography
+                        variant="caption"
+                        sx={{
+                            color: 'text.secondary',
+                            letterSpacing: '0.06em',
+                            fontWeight: 700,
+                            fontSize: '0.7rem',
+                            lineHeight: 1.2,
+                            whiteSpace: 'nowrap',
+                        }}
+                    >
+                        Administration
+                    </Typography>
+                </Stack>
                 {onClose && (
-                    <IconButton onClick={onClose} size="small" sx={{ display: { md: 'none' } }}>
+                    <IconButton onClick={onClose} size="small" sx={{ display: { md: 'none' }, flexShrink: 0 }}>
                         <CloseIcon />
                     </IconButton>
                 )}
             </Stack>
-            <Typography variant="caption" sx={{ px: 3, pt: 1, pb: 0.5, color: 'text.secondary', letterSpacing: '0.08em', fontWeight: 700 }}>
-                Administration
-            </Typography>
             <NavBlock onNavigate={onClose} />
             <Box sx={{ flex: 1 }} />
             <Box sx={{ px: 2.5, py: 2, borderTop: '1px solid', borderColor: 'divider' }}>
@@ -149,9 +168,7 @@ export default function AdminLayout() {
                         </Typography>
                     </Stack>
                     <Stack direction="row" alignItems="center" gap={1}>
-                        <IconButton size="small" aria-label="notifications">
-                            <NotificationsNoneIcon fontSize="small" />
-                        </IconButton>
+                        <NotificationBell paymentsHref="/admin/payments" emptyLabel="No new payment alerts" />
                         <Chip label="Admin" size="small" color="secondary" variant="outlined" sx={{ fontWeight: 700 }} />
                     </Stack>
                 </Box>

@@ -4,8 +4,6 @@ import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
-import TextField from '@mui/material/TextField'
-import InputAdornment from '@mui/material/InputAdornment'
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Drawer from '@mui/material/Drawer'
@@ -14,12 +12,12 @@ import ListItem from '@mui/material/ListItem'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemText from '@mui/material/ListItemText'
 import Divider from '@mui/material/Divider'
-import SearchIcon from '@mui/icons-material/Search'
 import MenuIcon from '@mui/icons-material/Menu'
 import CloseIcon from '@mui/icons-material/Close'
 import { useTranslation } from 'react-i18next'
 import BrandLogo from './BrandLogo'
 import LanguageSwitcher from './LanguageSwitcher'
+import LiveCatalogSearch from './search/LiveCatalogSearch'
 import { useAuth } from '../context/AuthContext'
 
 export default function Header() {
@@ -28,7 +26,6 @@ export default function Header() {
     const navigate = useNavigate()
     const [visible, setVisible] = useState(true)
     const [mobileOpen, setMobileOpen] = useState(false)
-    const [searchQ, setSearchQ] = useState('')
     const lastScrollY = useRef(0)
 
     const navLinks = [
@@ -51,11 +48,6 @@ export default function Header() {
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
 
-    const submitSearch = () => {
-        const q = searchQ.trim()
-        if (q) navigate(`/search?q=${encodeURIComponent(q)}`)
-    }
-
     return (
         <>
             <AppBar
@@ -73,21 +65,7 @@ export default function Header() {
                     <BrandLogo />
 
                     <Box sx={{ flex: 1, maxWidth: 360, display: { xs: 'none', md: 'block' } }}>
-                        <TextField
-                            fullWidth
-                            size="small"
-                            value={searchQ}
-                            onChange={e => setSearchQ(e.target.value)}
-                            onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), submitSearch())}
-                            placeholder={t('search.placeholder')}
-                            slotProps={{
-                                input: {
-                                    startAdornment: (
-                                        <InputAdornment position="start"><SearchIcon sx={{ color: 'text.secondary' }} /></InputAdornment>
-                                    ),
-                                },
-                            }}
-                        />
+                        <LiveCatalogSearch variant="header" />
                     </Box>
 
                     <Stack direction="row" gap={{ lg: 2, xl: 2.5 }} alignItems="center" sx={{ display: { xs: 'none', lg: 'flex' }, flexShrink: 0 }}>
@@ -109,7 +87,7 @@ export default function Header() {
                     <Stack direction="row" gap={1} alignItems="center" sx={{ flexShrink: 0, display: { xs: 'none', md: 'flex' }, ml: { md: 'auto' } }}>
                         {user ? (
                             <>
-                                <Button component={Link} to="/profile" sx={{ color: 'text.primary', fontWeight: 700 }}>
+                                <Button component={Link} to="/profile" variant="outlined" size="small" color="primary">
                                     {t('nav.profile', { defaultValue: 'Profile' })}
                                 </Button>
                                 <Button
@@ -126,7 +104,9 @@ export default function Header() {
                             </>
                         ) : (
                             <>
-                                <Button component={Link} to="/login" sx={{ color: 'text.primary', fontWeight: 700 }}>{t('common.login')}</Button>
+                                <Button component={Link} to="/login" variant="outlined" size="small" color="primary">
+                                    {t('common.login')}
+                                </Button>
                                 <Button component={Link} to="/pricing" variant="contained" color="secondary" size="small">
                                     {t('common.getAccess')}
                                 </Button>
@@ -150,21 +130,7 @@ export default function Header() {
                     <IconButton onClick={() => setMobileOpen(false)}><CloseIcon /></IconButton>
                 </Box>
                 <Box sx={{ p: 2 }}>
-                    <TextField
-                        fullWidth
-                        size="small"
-                        value={searchQ}
-                        onChange={e => setSearchQ(e.target.value)}
-                        onKeyDown={e => e.key === 'Enter' && (submitSearch(), setMobileOpen(false))}
-                        placeholder={t('search.placeholder')}
-                        slotProps={{
-                            input: {
-                                startAdornment: (
-                                    <InputAdornment position="start"><SearchIcon sx={{ color: 'text.secondary' }} /></InputAdornment>
-                                ),
-                            },
-                        }}
-                    />
+                    <LiveCatalogSearch variant="header" onNavigate={() => setMobileOpen(false)} />
                 </Box>
                 <Box sx={{ px: 2, pb: 2 }}><LanguageSwitcher size="small" /></Box>
                 <List disablePadding>

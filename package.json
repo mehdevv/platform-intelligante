@@ -7,9 +7,11 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "functions:payment-notify": "npx supabase functions serve payment-notify --env-file supabase/.env.local --no-verify-jwt"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.3.8",
@@ -38,7 +40,7 @@
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
     "postcss": "^8.5.6",
-    "puppeteer": "^25.0.4",
+    "supabase": "^2.72.8",
     "tailwindcss": "^4.2.1",
     "vite": "^7.3.1"
   }

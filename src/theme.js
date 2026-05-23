@@ -72,17 +72,81 @@ const theme = createTheme({
     },
     components: {
         MuiButton: {
+            defaultProps: {
+                variant: 'outlined',
+                disableElevation: true,
+            },
             styleOverrides: {
                 root: {
                     borderRadius: 10,
                     padding: '10px 24px',
                     fontSize: '0.875rem',
+                    fontWeight: 700,
                     boxShadow: 'none',
+                    textTransform: 'none',
                     '&:hover': { boxShadow: 'none' },
                 },
+                sizeSmall: {
+                    padding: '6px 14px',
+                    fontSize: '0.8125rem',
+                },
+                outlined: {
+                    borderWidth: '1px',
+                },
+                outlinedPrimary: {
+                    borderColor: AEM.bleu,
+                    color: AEM.bleu,
+                    '&:hover': {
+                        borderWidth: '1px',
+                        borderColor: AEM.bleu,
+                        backgroundColor: 'rgba(75, 91, 114, 0.08)',
+                    },
+                },
+                outlinedSecondary: {
+                    borderColor: AEM.azur,
+                    color: AEM.azur,
+                    '&:hover': {
+                        borderWidth: '1px',
+                        borderColor: AEM.azurSharp,
+                        backgroundColor: AEM.azurLight,
+                    },
+                },
+                outlinedError: {
+                    borderColor: '#dc2626',
+                    '&:hover': {
+                        borderWidth: '1px',
+                        backgroundColor: 'rgba(220, 38, 38, 0.06)',
+                    },
+                },
+                contained: {
+                    borderWidth: '1px',
+                    borderStyle: 'solid',
+                },
+                containedPrimary: {
+                    borderColor: '#3a4759',
+                    '&:hover': { borderColor: '#3a4759' },
+                },
                 containedSecondary: {
-                    boxShadow: 'none',
-                    '&:hover': { boxShadow: '0 2px 8px rgba(14, 116, 144, 0.2)' },
+                    borderColor: AEM.azurSharp,
+                    '&:hover': {
+                        borderColor: '#0c6378',
+                        boxShadow: 'none',
+                    },
+                },
+                containedSuccess: {
+                    borderColor: '#0f766e',
+                },
+                containedError: {
+                    borderColor: '#b91c1c',
+                },
+                text: {
+                    border: `1px solid ${AEM.border}`,
+                    color: AEM.text,
+                    padding: '9px 23px',
+                    '&:hover': {
+                        backgroundColor: 'rgba(75, 91, 114, 0.06)',
+                        borderColor: AEM.bleu,
+                    },
                 },
             },
         },
